@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://dwjkjd2k4as0b"]
+
+[ext_resource type="PackedScene" uid="uid://bdpqjbpepjerm" path="res://scenes/building.tscn" id="1_bih7l"]
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_txhch"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_txhch"]
+
+[node name="Root" type="Node3D" unique_id=1113144064]
+
+[node name="City" type="Node3D" parent="." unique_id=1868198735]
+
+[node name="Floor" type="StaticBody3D" parent="City" unique_id=9849778]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="City/Floor" unique_id=1975950874]
+shape = SubResource("WorldBoundaryShape3D_txhch")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="City/Floor" unique_id=1453015730]
+transform = Transform3D(30, 0, 0, 0, -1.3113416e-06, 30, 0, -30, -1.3113416e-06, 0, 0, 0)
+mesh = SubResource("QuadMesh_txhch")
+
+[node name="Building" parent="City" unique_id=1938395040 instance=ExtResource("1_bih7l")]
+
+[node name="Building2" parent="City" unique_id=2027924629 instance=ExtResource("1_bih7l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3215046, 0, 1.5453005)
+
+[node name="Building3" parent="City" unique_id=1432516044 instance=ExtResource("1_bih7l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.14980793, 0, 1.6315012)
+
+[node name="Building4" parent="City" unique_id=454528628 instance=ExtResource("1_bih7l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5382395, 0, 4.7702713)
+
+[node name="Building5" parent="City" unique_id=1601874788 instance=ExtResource("1_bih7l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.055991173, 0, 4.7782683)
+
+[node name="Building6" parent="City" unique_id=1509517152 instance=ExtResource("1_bih7l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6029406, 9.536743e-07, 6.181801)
+
+[node name="Building7" parent="City" unique_id=2081810140 instance=ExtResource("1_bih7l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.15513515, 9.536743e-07, 6.1779656)
+
+[node name="Building8" parent="City" unique_id=643451990 instance=ExtResource("1_bih7l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.246192, 9.536743e-07, 7.4848666)
+
+[node name="Building9" parent="City" unique_id=141715387 instance=ExtResource("1_bih7l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6792841, 9.536743e-07, 7.640103)
