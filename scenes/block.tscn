@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://c0tkec1d21liq"]
+
+[ext_resource type="PackedScene" uid="uid://bdpqjbpepjerm" path="res://scenes/building.tscn" id="1_8r6n6"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_oacpt"]
+
+[node name="Block" type="Node3D" unique_id=1111003388]
+
+[node name="Building4" parent="." unique_id=1938395040 instance=ExtResource("1_8r6n6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8417299, 1.9073486e-06, -0.72394943)
+
+[node name="Building5" parent="." unique_id=564561828 instance=ExtResource("1_8r6n6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.88138795, 9.536743e-07, -0.75569224)
+
+[node name="Building6" parent="." unique_id=1514036910 instance=ExtResource("1_8r6n6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.93657875, 3.8146973e-06, 0.7322478)
+
+[node name="Building7" parent="." unique_id=458905193 instance=ExtResource("1_8r6n6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9725523, 4.7683716e-06, 0.72877204)
+
+[node name="Foundation" type="MeshInstance3D" parent="." unique_id=1454595816]
+transform = Transform3D(3.7323349, 0, 0, 0, 0.16773956, 0, 0, 0, 3.2005415, 0, 0, 0)
+mesh = SubResource("BoxMesh_oacpt")

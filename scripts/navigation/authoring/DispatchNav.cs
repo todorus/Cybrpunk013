@@ -33,32 +33,42 @@ public partial class DispatchNav : Node3D
 
     [Export]
     public float EdgeThickness { get; set; } = 2f;
+    
+    private bool _rebuildQueued = false;
 
     public void RebuildGraph()
     {
-        var nodes = CollectNavNodes();
+        if (!Engine.IsEditorHint())
+            return;
+
+        if (_rebuildQueued)
+            return;
+
+        _rebuildQueued = true;
+        CallDeferred(nameof(EditorRebuildGraphDeferred));
+    }
+
+    private void EditorRebuildGraphDeferred()
+    {
+        _rebuildQueued = false;
+
+        var nodes = new List<NavNode>();
+        CollectNavNodes(this, nodes);
+
         Graph = DispatchNavGraphBuilder.RebuildGraph(nodes);
 
-        GD.Print("Dispatch graph rebuilt");
-        NotifyPropertyListChanged();
+        // Redraw this node's gizmo.
         UpdateGizmos();
     }
 
-    private List<NavNode> CollectNavNodes()
-    {
-        var list = new List<NavNode>();
-        Collect(this, list);
-        return list;
-    }
-
-    private static void Collect(Node node, List<NavNode> result)
+    private static void CollectNavNodes(Node node, List<NavNode> result)
     {
         foreach (Node child in node.GetChildren())
         {
-            if (child is NavNode nav)
-                result.Add(nav);
+            if (child is NavNode navNode)
+                result.Add(navNode);
 
-            Collect(child, result);
+            CollectNavNodes(child, result);
         }
     }
 }
