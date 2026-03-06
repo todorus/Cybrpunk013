@@ -11,12 +11,16 @@ config_version=5
 [application]
 
 config/name="SurveillanceState-godot"
-config/features=PackedStringArray("4.6", "GL Compatibility")
+config/features=PackedStringArray("4.6", "C#", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [dotnet]
 
 project/assembly_name="SurveillanceState-godot"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/dispatch_nav/plugin.cfg")
 
 [physics]
 
