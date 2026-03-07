@@ -3,12 +3,20 @@
 [ext_resource type="Script" uid="uid://io3vdu8k6nb0" path="res://scripts/control/mouse/MouseSignals.cs" id="1_2jj31"]
 [ext_resource type="Script" uid="uid://bxrpl5mnnnfrm" path="res://scripts/control/camera/PanCamera.cs" id="1_8uhr2"]
 [ext_resource type="PackedScene" uid="uid://c0tkec1d21liq" path="res://scenes/block.tscn" id="1_oacpt"]
+[ext_resource type="Script" uid="uid://dd5p2h61x7m2b" path="res://scripts/interaction/CityscapeClickHandler.cs" id="2_4lp1f"]
+[ext_resource type="Script" uid="uid://bvh322aluhy58" path="res://scripts/navigation/runtime/DispatchNavAgentSpawner.cs" id="2_07bxp"]
 [ext_resource type="Script" uid="uid://cx38cosoi2eq8" path="res://scripts/control/mouse/Cursor.cs" id="2_drx7m"]
 [ext_resource type="Script" uid="uid://dftotlkcpdb05" path="res://scripts/navigation/authoring/DispatchNav.cs" id="2_rqxma"]
 [ext_resource type="Script" uid="uid://dcbooviv3dt56" path="res://scripts/navigation/authoring/NavNode.cs" id="3_movw8"]
 [ext_resource type="Script" uid="uid://bl7w3ed4ndm1a" path="res://scripts/navigation/graph/DispatchNavNodeData.cs" id="3_oacpt"]
 [ext_resource type="Script" uid="uid://2dv840td66r" path="res://scripts/navigation/graph/DispatchNavGraph.cs" id="4_2jj31"]
 [ext_resource type="Script" uid="uid://doia2rsd1vhtj" path="res://scripts/navigation/control/DispatchNavCursor.cs" id="4_3br4m"]
+[ext_resource type="PackedScene" uid="uid://b802cfio1m1f7" path="res://scenes/agent_on_map.tscn" id="4_q8eg3"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_07bxp"]
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_q8eg3"]
+albedo_color = Color(0, 0.6462672, 0.94133115, 1)
 
 [sub_resource type="SphereMesh" id="SphereMesh_2jj31"]
 
@@ -18,73 +26,65 @@ albedo_color = Color(0, 0.68139553, 0.7689386, 1)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8uhr2"]
 albedo_color = Color(0.77, 0, 0, 1)
 
-[sub_resource type="BoxMesh" id="BoxMesh_bih7l"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_58ubr"]
-albedo_color = Color(0.18860002, 0.20964667, 0.82, 1)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_bih7l"]
-size = Vector3(0.4144745, 0.27001953, 0.7464905)
-
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_txhch"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_txhch"]
 
-[sub_resource type="Resource" id="Resource_4lp1f"]
+[sub_resource type="Resource" id="Resource_07bxp"]
 script = ExtResource("3_oacpt")
 Id = "Node"
 Position = Vector3(2.4938307, 0, 2.7392218)
 Outgoing = Array[int]([1, 8])
 
-[sub_resource type="Resource" id="Resource_07bxp"]
+[sub_resource type="Resource" id="Resource_q8eg3"]
 script = ExtResource("3_oacpt")
 Id = "Node2"
 Position = Vector3(2.072, 0, 9.405)
 Outgoing = Array[int]([2])
 
-[sub_resource type="Resource" id="Resource_q8eg3"]
+[sub_resource type="Resource" id="Resource_obbxu"]
 script = ExtResource("3_oacpt")
 Id = "Node9"
 Position = Vector3(-3.746861, 0, 9.488001)
 Outgoing = Array[int]([3])
 
-[sub_resource type="Resource" id="Resource_obbxu"]
+[sub_resource type="Resource" id="Resource_hlin5"]
 script = ExtResource("3_oacpt")
 Id = "Node3"
 Position = Vector3(-10.202908, 0, 8.668036)
 Outgoing = Array[int]([4])
 
-[sub_resource type="Resource" id="Resource_hlin5"]
+[sub_resource type="Resource" id="Resource_hyhbb"]
 script = ExtResource("3_oacpt")
 Id = "Node4"
 Position = Vector3(-9.06818, -9.536743e-07, 1.6362879)
 
-[sub_resource type="Resource" id="Resource_hyhbb"]
+[sub_resource type="Resource" id="Resource_f7b0s"]
 script = ExtResource("3_oacpt")
 Id = "Node7"
 Position = Vector3(-5.7891464, -9.536743e-07, 1.9411521)
 Outgoing = Array[int]([4, 6, 7])
 
-[sub_resource type="Resource" id="Resource_f7b0s"]
+[sub_resource type="Resource" id="Resource_dqb0a"]
 script = ExtResource("3_oacpt")
 Id = "Node8"
 Position = Vector3(-1.8786058, -9.536743e-07, 2.5961754)
 Outgoing = Array[int]([0])
 
-[sub_resource type="Resource" id="Resource_dqb0a"]
+[sub_resource type="Resource" id="Resource_agolw"]
 script = ExtResource("3_oacpt")
 Id = "Node5"
 Position = Vector3(-4.798525, 0, -5.225782)
 Outgoing = Array[int]([8])
 
-[sub_resource type="Resource" id="Resource_agolw"]
+[sub_resource type="Resource" id="Resource_yles7"]
 script = ExtResource("3_oacpt")
 Id = "Node6"
 Position = Vector3(2.9466138, 0, -3.963666)
 
-[sub_resource type="Resource" id="Resource_yles7"]
+[sub_resource type="Resource" id="Resource_ibljb"]
 script = ExtResource("4_2jj31")
-Nodes = Array[ExtResource("3_oacpt")]([SubResource("Resource_4lp1f"), SubResource("Resource_07bxp"), SubResource("Resource_q8eg3"), SubResource("Resource_obbxu"), SubResource("Resource_hlin5"), SubResource("Resource_hyhbb"), SubResource("Resource_f7b0s"), SubResource("Resource_dqb0a"), SubResource("Resource_agolw")])
+Nodes = Array[ExtResource("3_oacpt")]([SubResource("Resource_07bxp"), SubResource("Resource_q8eg3"), SubResource("Resource_obbxu"), SubResource("Resource_hlin5"), SubResource("Resource_hyhbb"), SubResource("Resource_f7b0s"), SubResource("Resource_dqb0a"), SubResource("Resource_agolw"), SubResource("Resource_yles7")])
 
 [node name="Root" type="Node3D" unique_id=1113144064]
 
@@ -95,6 +95,25 @@ size = 15.873
 near = 0.001
 far = 1000.0
 script = ExtResource("1_8uhr2")
+
+[node name="Spawning" type="Node" parent="." unique_id=59707178]
+
+[node name="Spawner" type="Node" parent="Spawning" unique_id=614302884 node_paths=PackedStringArray("DispatchNav", "SpawnParent")]
+script = ExtResource("2_07bxp")
+DispatchNav = NodePath("../../Graph")
+SpawnParent = NodePath("../..")
+
+[node name="SpawnLocation" type="MeshInstance3D" parent="Spawning" unique_id=53172613]
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 2, 3.575, 1, -0.021)
+mesh = SubResource("BoxMesh_07bxp")
+surface_material_override/0 = SubResource("ORMMaterial3D_q8eg3")
+
+[node name="CityScapeClickHandler" type="Node" parent="." unique_id=817772007 node_paths=PackedStringArray("_dispatchNav", "_spawner", "_spawnWorldPosition")]
+script = ExtResource("2_4lp1f")
+_agentScene = ExtResource("4_q8eg3")
+_dispatchNav = NodePath("../Graph")
+_spawner = NodePath("../Spawning/Spawner")
+_spawnWorldPosition = NodePath("../Spawning/SpawnLocation")
 
 [node name="Mouse" type="Node" parent="." unique_id=2134513342 node_paths=PackedStringArray("Camera")]
 script = ExtResource("1_2jj31")
@@ -113,18 +132,6 @@ mesh = SubResource("SphereMesh_2jj31")
 surface_material_override/0 = SubResource("StandardMaterial3D_8uhr2")
 script = ExtResource("4_3br4m")
 DispatchNav = NodePath("../Graph")
-
-[node name="Vehicle" type="CharacterBody3D" parent="." unique_id=241892129]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.0324116, 0, -0.45386887)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Vehicle" unique_id=238266045]
-transform = Transform3D(0.42000002, 0, 0, 0, 0.27, 0, 0, 0, 0.76800007, 0, 0.25, 0)
-mesh = SubResource("BoxMesh_bih7l")
-surface_material_override/0 = SubResource("StandardMaterial3D_58ubr")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Vehicle" unique_id=470098084]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0042037964, 0.24829102, 0.009536743)
-shape = SubResource("BoxShape3D_bih7l")
 
 [node name="City" type="Node3D" parent="." unique_id=1868198735]
 
@@ -171,7 +178,7 @@ transform = Transform3D(0.9883482, 0, -0.15220965, 0, 1, 0, 0.15220965, 0, 0.988
 
 [node name="Graph" type="Node3D" parent="." unique_id=1366666781]
 script = ExtResource("2_rqxma")
-Graph = SubResource("Resource_yles7")
+Graph = SubResource("Resource_ibljb")
 NodeColor = Color(0.32000005, 0.19999999, 1, 1)
 NodeRadius = 0.2
 EdgeThickness = 1.0
@@ -222,6 +229,7 @@ script = ExtResource("3_movw8")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1429199080]
 transform = Transform3D(0.12940952, 0.9659258, -0.2241439, -0.48296288, 0.25881907, 0.8365163, 0.86602545, 0, 0.49999997, 0, 9, 0)
 
+[connection signal="LeftMouse" from="Mouse" to="CityScapeClickHandler" method="HandleClick" flags=3]
 [connection signal="Move" from="Mouse" to="Cursor" method="OnMove" flags=3]
 [connection signal="Move" from="Mouse" to="NavCursor" method="OnMove" flags=3]
 [connection signal="Pan" from="Mouse" to="Camera3D" method="HandlePan" flags=3]

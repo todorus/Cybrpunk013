@@ -5,39 +5,61 @@ namespace SurveillanceStategodot.scripts.navigation.runtime;
 
 public partial class DispatchNavPathFollower : Node3D
 {
-    [Signal] 
+    [Signal]
     public delegate void DestinationReachedEventHandler();
-    
-    [Export] 
-    private float _speed = 3f;
-    
+
+    [Export]
+    public float Speed { get; set; } = 3f;
+
     public DispatchNavPath CurrentPath { get; private set; }
     public int SegmentIndex { get; private set; }
-    public bool HasPath => CurrentPath != null && CurrentPath.IsValid && CurrentPath.WorldPoints.Count >= 2;
-    
+
+    public bool HasPath =>
+        CurrentPath != null &&
+        CurrentPath.IsValid &&
+        CurrentPath.WorldPoints != null &&
+        CurrentPath.WorldPoints.Count >= 2;
+
     public override void _PhysicsProcess(double delta)
     {
-        if (!HasPath) return;
-        
-        Vector3 nextPos;
-        Advance(GlobalPosition, _speed * (float)delta, out nextPos);
+        if (!HasPath)
+            return;
+
+        Advance(GlobalPosition, Speed * (float)delta, out var nextPos);
         GlobalPosition = nextPos;
         ResetIfFinished();
     }
 
     private void ResetIfFinished()
     {
-        if (!IsFinished(GlobalPosition)) return;
-        
-        CurrentPath = null;
-        SegmentIndex = 0;
-        EmitSignalDestinationReached();
+        if (!IsFinished(GlobalPosition))
+            return;
+
+        ClearPath();
+        EmitSignal(SignalName.DestinationReached);
     }
 
-    public void SetPath(DispatchNavPath path)
+    public void SetPath(DispatchNavPath path, bool snapToStart = false)
     {
         CurrentPath = path;
         SegmentIndex = 0;
+
+        if (snapToStart && HasPath)
+            GlobalPosition = CurrentPath.StartPosition;
+    }
+
+    public void ClearPath()
+    {
+        CurrentPath = null;
+        SegmentIndex = 0;
+    }
+
+    public void SnapToPathStart()
+    {
+        if (!HasPath)
+            return;
+
+        GlobalPosition = CurrentPath.StartPosition;
     }
 
     public Vector3 GetCurrentTarget()
@@ -53,7 +75,8 @@ public partial class DispatchNavPathFollower : Node3D
     {
         newPosition = currentPosition;
 
-        if (!HasPath) return false;
+        if (!HasPath)
+            return false;
 
         while (SegmentIndex < CurrentPath.WorldPoints.Count - 1)
         {
@@ -83,7 +106,8 @@ public partial class DispatchNavPathFollower : Node3D
 
     public bool IsFinished(Vector3 currentPosition, float epsilon = 0.05f)
     {
-        if (!HasPath) return true;
+        if (!HasPath)
+            return true;
 
         return SegmentIndex >= CurrentPath.WorldPoints.Count - 1 &&
                currentPosition.DistanceTo(CurrentPath.EndPosition) <= epsilon;

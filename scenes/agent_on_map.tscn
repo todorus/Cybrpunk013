@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://b802cfio1m1f7"]
+
+[ext_resource type="Script" uid="uid://0sxlyajjkymy" path="res://scripts/navigation/runtime/DispatchNavPathFollower.cs" id="1_xsps3"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_bih7l"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_58ubr"]
+albedo_color = Color(0.18860002, 0.20964667, 0.82, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bih7l"]
+size = Vector3(0.4144745, 0.27001953, 0.7464905)
+
+[node name="AgentOnMap" type="Node3D" unique_id=1436344233]
+script = ExtResource("1_xsps3")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=778791982]
+transform = Transform3D(0.42000002, 0, 0, 0, 0.27, 0, 0, 0, 0.76800007, 0, 0.25, 0)
+mesh = SubResource("BoxMesh_bih7l")
+surface_material_override/0 = SubResource("StandardMaterial3D_58ubr")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=806644141]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0042037964, 0.24829102, 0.009536743)
+shape = SubResource("BoxShape3D_bih7l")
+disabled = true
