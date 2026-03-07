@@ -29,11 +29,16 @@ public static class DispatchNavGraphBuilder
             });
         }
 
-        // Second pass: normalize outgoing edges
+        // Second pass: normalize adjacency as bidirectional
+        var outgoingSets = new List<SortedSet<int>>(sourceNodes.Count);
+        for (int i = 0; i < sourceNodes.Count; i++)
+        {
+            outgoingSets.Add(new SortedSet<int>());
+        }
+
         for (int i = 0; i < sourceNodes.Count; i++)
         {
             var source = sourceNodes[i];
-            var outgoingSet = new SortedSet<int>();
 
             foreach (var target in source.ConnectedNodes)
             {
@@ -46,10 +51,16 @@ public static class DispatchNavGraphBuilder
                 if (!indexByNode.TryGetValue(target, out int targetIndex))
                     continue;
 
-                outgoingSet.Add(targetIndex);
+                // Bake both directions into the graph.
+                outgoingSets[i].Add(targetIndex);
+                outgoingSets[targetIndex].Add(i);
             }
+        }
 
-            foreach (int targetIndex in outgoingSet)
+        // Final pass: copy normalized adjacency into resource arrays
+        for (int i = 0; i < sourceNodes.Count; i++)
+        {
+            foreach (int targetIndex in outgoingSets[i])
             {
                 dataNodes[i].Outgoing.Add(targetIndex);
             }

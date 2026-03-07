@@ -44,22 +44,7 @@ public partial class DispatchNavGizmoPlugin : EditorNode3DGizmoPlugin
         var navNodes = new List<NavNode>();
         CollectNavNodes(dispatchNav, navNodes);
 
-        var lines = new List<Vector3>();
-
-        foreach (var node in navNodes)
-        {
-            var from = dispatchNav.ToLocal(node.GlobalPosition);
-
-            foreach (var connected in node.ConnectedNodes)
-            {
-                if (connected == null)
-                    continue;
-
-                var to = dispatchNav.ToLocal(connected.GlobalPosition);
-                lines.Add(from);
-                lines.Add(to);
-            }
-        }
+        var lines = BuildBidirectionalLines(dispatchNav, navNodes);
 
         if (lines.Count > 0)
             gizmo.AddLines(lines.ToArray(), edgeMaterial, false);
@@ -77,12 +62,55 @@ public partial class DispatchNavGizmoPlugin : EditorNode3DGizmoPlugin
         }
     }
 
+    private static List<Vector3> BuildBidirectionalLines(DispatchNav dispatchNav, List<NavNode> navNodes)
+    {
+        var result = new List<Vector3>();
+        var nodeIndex = new Dictionary<NavNode, int>(navNodes.Count);
+        var uniqueEdges = new HashSet<EdgeKey>();
+
+        for (int i = 0; i < navNodes.Count; i++)
+            nodeIndex[navNodes[i]] = i;
+
+        foreach (var node in navNodes)
+        {
+            if (!nodeIndex.TryGetValue(node, out int fromIndex))
+                continue;
+
+            Vector3 from = dispatchNav.ToLocal(node.GlobalPosition);
+
+            foreach (var connected in node.ConnectedNodes)
+            {
+                if (connected == null)
+                    continue;
+
+                if (!nodeIndex.TryGetValue(connected, out int toIndex))
+                    continue;
+
+                if (fromIndex == toIndex)
+                    continue;
+
+                var key = new EdgeKey(fromIndex, toIndex);
+                if (!uniqueEdges.Add(key))
+                    continue;
+
+                Vector3 to = dispatchNav.ToLocal(connected.GlobalPosition);
+                result.Add(from);
+                result.Add(to);
+            }
+        }
+
+        return result;
+    }
+
     private static StandardMaterial3D MakeMaterial(Color color)
     {
-        var material = new StandardMaterial3D();
-        material.ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded;
-        material.AlbedoColor = color;
-        material.NoDepthTest = false;
+        var material = new StandardMaterial3D
+        {
+            ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+            AlbedoColor = color,
+            NoDepthTest = false
+        };
+
         return material;
     }
 
@@ -94,6 +122,26 @@ public partial class DispatchNavGizmoPlugin : EditorNode3DGizmoPlugin
                 result.Add(navNode);
 
             CollectNavNodes(child, result);
+        }
+    }
+
+    private readonly struct EdgeKey
+    {
+        public readonly int A;
+        public readonly int B;
+
+        public EdgeKey(int x, int y)
+        {
+            if (x < y)
+            {
+                A = x;
+                B = y;
+            }
+            else
+            {
+                A = y;
+                B = x;
+            }
         }
     }
 }

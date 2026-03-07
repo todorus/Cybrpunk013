@@ -7,8 +7,6 @@ namespace SurveillanceStategodot.scripts.navigation.query;
 
 public static class DispatchNavPathfinder
 {
-    public static bool AllowReverseTravelOnAnchoredEdge = true;
-
     private struct AnchorCandidate
     {
         public int NodeIndex;
@@ -23,13 +21,43 @@ public static class DispatchNavPathfinder
         if (graph == null || graph.Nodes.Count == 0)
             return InvalidPath();
 
-        DispatchNavEdgeAnchor startAnchor = DispatchNavQueries.GetClosestPointOnGraph(graph, startWorldPos);
-        DispatchNavEdgeAnchor endAnchor = DispatchNavQueries.GetClosestPointOnGraph(graph, endWorldPos);
+        DispatchNavEdgeAnchor startHit = DispatchNavQueries.GetClosestPointOnGraph(graph, startWorldPos);
+        DispatchNavEdgeAnchor endHit = DispatchNavQueries.GetClosestPointOnGraph(graph, endWorldPos);
 
-        if (!startAnchor.Valid || !endAnchor.Valid)
+        if (!startHit.Valid || !endHit.Valid)
             return InvalidPath();
 
-        return FindPath(graph, startAnchor, endAnchor);
+        return FindPath(graph, startHit, endHit);
+    }
+
+    public static DispatchNavPath FindPath(
+        DispatchNavGraph graph,
+        DispatchNavEdgeAnchor start,
+        Vector3 endWorldPos)
+    {
+        if (graph == null || graph.Nodes.Count == 0)
+            return InvalidPath();
+
+        DispatchNavEdgeAnchor endHit = DispatchNavQueries.GetClosestPointOnGraph(graph, endWorldPos);
+        if (!endHit.Valid)
+            return InvalidPath();
+
+        return FindPath(graph, start, endHit);
+    }
+
+    public static DispatchNavPath FindPath(
+        DispatchNavGraph graph,
+        Vector3 startWorldPos,
+        DispatchNavEdgeAnchor end)
+    {
+        if (graph == null || graph.Nodes.Count == 0)
+            return InvalidPath();
+
+        DispatchNavEdgeAnchor startHit = DispatchNavQueries.GetClosestPointOnGraph(graph, startWorldPos);
+        if (!startHit.Valid)
+            return InvalidPath();
+
+        return FindPath(graph, startHit, end);
     }
 
     public static DispatchNavPath FindPath(
@@ -40,13 +68,16 @@ public static class DispatchNavPathfinder
         if (graph == null || !start.Valid || !end.Valid)
             return InvalidPath();
 
-        // Special case: both points are on the exact same directed edge.
+        // Same physical edge, same direction
         if (start.FromNode == end.FromNode && start.ToNode == end.ToNode)
         {
-            if (end.T >= start.T || AllowReverseTravelOnAnchoredEdge)
-            {
-                return BuildSameEdgePath(start, end);
-            }
+            return BuildSameEdgePath(start, end);
+        }
+
+        // Same physical edge, reversed direction
+        if (start.FromNode == end.ToNode && start.ToNode == end.FromNode)
+        {
+            return BuildSameEdgePath(start, end);
         }
 
         var startCandidates = GetStartCandidates(graph, start);
@@ -81,51 +112,45 @@ public static class DispatchNavPathfinder
 
     private static List<AnchorCandidate> GetStartCandidates(DispatchNavGraph graph, DispatchNavEdgeAnchor start)
     {
-        var result = new List<AnchorCandidate>();
-
-        // Forward along the directed edge.
-        result.Add(new AnchorCandidate
+        var result = new List<AnchorCandidate>(2)
         {
-            NodeIndex = start.ToNode,
-            Cost = graph.GetAnchorToNodeDistance(start, start.ToNode)
-        });
-
-        if (AllowReverseTravelOnAnchoredEdge)
-        {
-            result.Add(new AnchorCandidate
+            new AnchorCandidate
             {
                 NodeIndex = start.FromNode,
                 Cost = graph.GetAnchorToNodeDistance(start, start.FromNode)
-            });
-        }
+            },
+            new AnchorCandidate
+            {
+                NodeIndex = start.ToNode,
+                Cost = graph.GetAnchorToNodeDistance(start, start.ToNode)
+            }
+        };
 
         return result;
     }
 
     private static List<AnchorCandidate> GetEndCandidates(DispatchNavGraph graph, DispatchNavEdgeAnchor end)
     {
-        var result = new List<AnchorCandidate>();
-
-        // Standard approach to a point on edge From -> To is via From.
-        result.Add(new AnchorCandidate
+        var result = new List<AnchorCandidate>(2)
         {
-            NodeIndex = end.FromNode,
-            Cost = graph.GetNodeToAnchorDistance(end.FromNode, end)
-        });
-
-        if (AllowReverseTravelOnAnchoredEdge)
-        {
-            result.Add(new AnchorCandidate
+            new AnchorCandidate
+            {
+                NodeIndex = end.FromNode,
+                Cost = graph.GetNodeToAnchorDistance(end.FromNode, end)
+            },
+            new AnchorCandidate
             {
                 NodeIndex = end.ToNode,
                 Cost = graph.GetNodeToAnchorDistance(end.ToNode, end)
-            });
-        }
+            }
+        };
 
         return result;
     }
 
-    private static DispatchNavPath BuildSameEdgePath(DispatchNavEdgeAnchor start, DispatchNavEdgeAnchor end)
+    private static DispatchNavPath BuildSameEdgePath(
+        DispatchNavEdgeAnchor start,
+        DispatchNavEdgeAnchor end)
     {
         var path = new DispatchNavPath
         {
@@ -155,7 +180,9 @@ public static class DispatchNavPathfinder
         points.Add(start.Position);
 
         for (int i = 0; i < nodePath.Count; i++)
+        {
             points.Add(graph.Nodes[nodePath[i]].Position);
+        }
 
         points.Add(end.Position);
 
@@ -178,13 +205,20 @@ public static class DispatchNavPathfinder
     private static float ComputeNodePathLength(DispatchNavGraph graph, List<int> path)
     {
         float total = 0f;
+
         for (int i = 1; i < path.Count; i++)
+        {
             total += graph.Nodes[path[i - 1]].Position.DistanceTo(graph.Nodes[path[i]].Position);
+        }
+
         return total;
     }
 
     private static DispatchNavPath InvalidPath()
     {
-        return new DispatchNavPath { IsValid = false };
+        return new DispatchNavPath
+        {
+            IsValid = false
+        };
     }
 }
