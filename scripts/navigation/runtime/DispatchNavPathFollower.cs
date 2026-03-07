@@ -78,6 +78,9 @@ public partial class DispatchNavPathFollower : Node3D
         if (!HasPath)
             return false;
 
+        // remember the starting position so we can compute facing direction later
+        Vector3 startPosition = currentPosition;
+
         while (SegmentIndex < CurrentPath.WorldPoints.Count - 1)
         {
             Vector3 a = newPosition;
@@ -93,6 +96,7 @@ public partial class DispatchNavPathFollower : Node3D
             if (moveDistance < dist)
             {
                 newPosition = a.MoveToward(b, moveDistance);
+                FaceMovementDirection(startPosition, newPosition);
                 return true;
             }
 
@@ -101,7 +105,24 @@ public partial class DispatchNavPathFollower : Node3D
             SegmentIndex++;
         }
 
+        FaceMovementDirection(startPosition, newPosition);
         return true;
+    }
+
+    // new helper to face in the horizontal direction of movement (no pitch)
+    private void FaceMovementDirection(Vector3 from, Vector3 to)
+    {
+        Vector3 movement = to - from;
+        // ignore tiny movements and vertical component to only rotate around Y
+        if (movement.LengthSquared() <= 1e-6f)
+            return;
+
+        Vector3 flat = new Vector3(movement.X, 0f, movement.Z);
+        if (flat.LengthSquared() <= 1e-6f)
+            return;
+
+        // LookAt target in the same horizontal plane as 'from' to avoid pitching up/down
+        LookAt(from + flat, Vector3.Up);
     }
 
     public bool IsFinished(Vector3 currentPosition, float epsilon = 0.05f)
