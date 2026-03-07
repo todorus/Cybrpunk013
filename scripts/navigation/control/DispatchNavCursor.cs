@@ -13,7 +13,7 @@ public partial class DispatchNavCursor : Node3D
         if (DispatchNav?.Graph == null)
             return;
 
-        GraphHit hit = DispatchNavQueries.GetClosestPointOnGraph(DispatchNav.Graph, position);
+        DispatchNavEdgeAnchor hit = DispatchNavQueries.GetClosestPointOnGraph(DispatchNav.Graph, position);
 
         if (hit.Valid)
             GlobalPosition = hit.Position;
