@@ -10,8 +10,10 @@ albedo_color = Color(0.18860002, 0.20964667, 0.82, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_bih7l"]
 size = Vector3(0.4144745, 0.27001953, 0.7464905)
 
-[node name="AgentOnMap" type="Node3D" unique_id=1436344233]
+[node name="AgentOnMap" type="MeshInstance3D" unique_id=317268424]
 script = ExtResource("1_8oifj")
+_verticalOffset = 0.055
+LineColor = Color(1, 1, 1, 1)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=778791982]
 transform = Transform3D(0.42000002, 0, 0, 0, 0.27, 0, 0, 0, 0.76800007, 0, 0.25, 0)
