@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="SiteResource" format=3 uid="uid://cb7hj8aw6mvvs"]
+
+[ext_resource type="Script" uid="uid://bwm1lii5mww5x" path="res://scripts/authoring/SiteResource.cs" id="1_qpllv"]
+
+[resource]
+script = ExtResource("1_qpllv")
+Label = "Owes you money"
+metadata/_custom_type_script = "uid://bwm1lii5mww5x"

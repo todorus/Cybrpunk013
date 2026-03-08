@@ -17,6 +17,9 @@
 [ext_resource type="Script" uid="uid://bmrxenuvdlkao" path="res://scripts/presentation/movement/PathPreviewVisual.cs" id="5_f7b0s"]
 [ext_resource type="Script" uid="uid://butuburmsj1ka" path="res://scripts/interaction/CityscapeHoverHandler.cs" id="7_dqb0a"]
 [ext_resource type="Resource" uid="uid://loons0u6n63u" path="res://data/plots/debug/FriendsHouse.tres" id="11_hlin5"]
+[ext_resource type="PackedScene" uid="uid://bdpqjbpepjerm" path="res://scenes/building.tscn" id="13_f7b0s"]
+[ext_resource type="Resource" uid="uid://cb7hj8aw6mvvs" path="res://data/plots/debug/OwesYouMoney.tres" id="14_dqb0a"]
+[ext_resource type="Resource" uid="uid://b7tckol5hd2qo" path="res://data/plots/debug/Supermarket.tres" id="16_ibljb"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_2jj31"]
 
@@ -35,63 +38,65 @@ albedo_color = Color(0.18, 0.28933322, 1, 1)
 
 [sub_resource type="QuadMesh" id="QuadMesh_txhch"]
 
-[sub_resource type="Resource" id="Resource_dqb0a"]
+[sub_resource type="BoxMesh" id="BoxMesh_oacpt"]
+
+[sub_resource type="Resource" id="Resource_8y5tq"]
 script = ExtResource("3_oacpt")
 Id = "Node"
 Position = Vector3(2.8938308, 0, 2.7392218)
 Outgoing = Array[int]([1, 6, 8])
 
-[sub_resource type="Resource" id="Resource_agolw"]
+[sub_resource type="Resource" id="Resource_k0m58"]
 script = ExtResource("3_oacpt")
 Id = "Node2"
 Position = Vector3(2.072, 0, 9.405)
 Outgoing = Array[int]([0, 2])
 
-[sub_resource type="Resource" id="Resource_yles7"]
+[sub_resource type="Resource" id="Resource_7tlau"]
 script = ExtResource("3_oacpt")
 Id = "Node9"
 Position = Vector3(-3.746861, 0, 9.488001)
 Outgoing = Array[int]([1, 3])
 
-[sub_resource type="Resource" id="Resource_ibljb"]
+[sub_resource type="Resource" id="Resource_ikoiv"]
 script = ExtResource("3_oacpt")
 Id = "Node3"
 Position = Vector3(-10.202908, 0, 8.668036)
 Outgoing = Array[int]([2, 4])
 
-[sub_resource type="Resource" id="Resource_8y5tq"]
+[sub_resource type="Resource" id="Resource_kg0fi"]
 script = ExtResource("3_oacpt")
 Id = "Node4"
 Position = Vector3(-9.06818, -9.536743e-07, 1.6362879)
 Outgoing = Array[int]([3, 5])
 
-[sub_resource type="Resource" id="Resource_k0m58"]
+[sub_resource type="Resource" id="Resource_0orsp"]
 script = ExtResource("3_oacpt")
 Id = "Node7"
 Position = Vector3(-5.7891464, -9.536743e-07, 1.9411521)
 Outgoing = Array[int]([4, 6, 7])
 
-[sub_resource type="Resource" id="Resource_7tlau"]
+[sub_resource type="Resource" id="Resource_h3250"]
 script = ExtResource("3_oacpt")
 Id = "Node8"
 Position = Vector3(-1.8786058, -9.536743e-07, 2.5961754)
 Outgoing = Array[int]([0, 5])
 
-[sub_resource type="Resource" id="Resource_ikoiv"]
+[sub_resource type="Resource" id="Resource_my70f"]
 script = ExtResource("3_oacpt")
 Id = "Node5"
 Position = Vector3(-4.798525, 0, -5.225782)
 Outgoing = Array[int]([5, 8])
 
-[sub_resource type="Resource" id="Resource_kg0fi"]
+[sub_resource type="Resource" id="Resource_86b61"]
 script = ExtResource("3_oacpt")
 Id = "Node6"
 Position = Vector3(2.9466138, 0, -3.963666)
 Outgoing = Array[int]([0, 7])
 
-[sub_resource type="Resource" id="Resource_0orsp"]
+[sub_resource type="Resource" id="Resource_nmpot"]
 script = ExtResource("4_2jj31")
-Nodes = Array[ExtResource("3_oacpt")]([SubResource("Resource_dqb0a"), SubResource("Resource_agolw"), SubResource("Resource_yles7"), SubResource("Resource_ibljb"), SubResource("Resource_8y5tq"), SubResource("Resource_k0m58"), SubResource("Resource_7tlau"), SubResource("Resource_ikoiv"), SubResource("Resource_kg0fi")])
+Nodes = Array[ExtResource("3_oacpt")]([SubResource("Resource_8y5tq"), SubResource("Resource_k0m58"), SubResource("Resource_7tlau"), SubResource("Resource_ikoiv"), SubResource("Resource_kg0fi"), SubResource("Resource_0orsp"), SubResource("Resource_h3250"), SubResource("Resource_my70f"), SubResource("Resource_86b61")])
 
 [node name="Root" type="Node3D" unique_id=1113144064]
 
@@ -175,8 +180,25 @@ mesh = SubResource("QuadMesh_txhch")
 [node name="Block" parent="City" unique_id=1111003388 instance=ExtResource("1_oacpt")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15259238, 9.536743e-07, 0.5919982)
 
-[node name="Block5" parent="City" unique_id=1203536967 instance=ExtResource("1_oacpt")]
+[node name="Block5" type="Node3D" parent="City" unique_id=1203536967]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.11477204, 9.536743e-07, 4.675147)
+
+[node name="Building4" parent="City/Block5" unique_id=1938395040 instance=ExtResource("13_f7b0s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8417299, 1.9073486e-06, -0.72394943)
+
+[node name="Building5" parent="City/Block5" unique_id=564561828 instance=ExtResource("13_f7b0s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.88138795, 9.536743e-07, -0.75569224)
+
+[node name="Building6" parent="City/Block5" unique_id=1514036910 instance=ExtResource("13_f7b0s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.93657875, 3.8146973e-06, 0.7322478)
+
+[node name="Building7" parent="City/Block5" unique_id=458905193 instance=ExtResource("13_f7b0s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9725523, 4.7683716e-06, 0.72877204)
+siteResource = ExtResource("14_dqb0a")
+
+[node name="Foundation" type="MeshInstance3D" parent="City/Block5" unique_id=1454595816]
+transform = Transform3D(3.7323349, 0, 0, 0, 0.16773956, 0, 0, 0, 3.2005415, 0, 0, 0)
+mesh = SubResource("BoxMesh_oacpt")
 
 [node name="Block10" parent="City" unique_id=653744309 instance=ExtResource("1_oacpt")]
 transform = Transform3D(0.99985284, 0, -0.017155753, 0, 1, 0, 0.017155753, 0, 0.99985284, -0.24719243, 9.536743e-07, 7.4799)
@@ -193,21 +215,52 @@ transform = Transform3D(0.9940278, 0, -0.10912712, 0, 1, 0, 0.10912712, 0, 0.994
 [node name="Block8" parent="City" unique_id=1225844246 instance=ExtResource("1_oacpt")]
 transform = Transform3D(0.9940278, 0, -0.10912712, 0, 1, 0, 0.10912712, 0, 0.9940278, -7.20836, 9.536743e-07, 7.1103945)
 
-[node name="Block9" parent="City" unique_id=1383580 instance=ExtResource("1_oacpt")]
+[node name="Block9" type="Node3D" parent="City" unique_id=1383580]
 transform = Transform3D(0.9990338, 0, -0.043950684, 0, 1, 0, 0.043950684, 0, 0.9990338, -3.8305345, 9.536743e-07, 7.424258)
 
-[node name="Building7" parent="City/Block9" index="3" unique_id=458905193]
+[node name="Building4" parent="City/Block9" unique_id=1264695778 instance=ExtResource("13_f7b0s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8417299, 1.9073486e-06, -0.72394943)
+
+[node name="Building5" parent="City/Block9" unique_id=647218552 instance=ExtResource("13_f7b0s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.88138795, 9.536743e-07, -0.75569224)
+
+[node name="Building6" parent="City/Block9" unique_id=1942641663 instance=ExtResource("13_f7b0s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.93657875, 3.8146973e-06, 0.7322478)
+
+[node name="Building7" parent="City/Block9" unique_id=1614660195 instance=ExtResource("13_f7b0s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9725523, 4.7683716e-06, 0.72877204)
 siteResource = ExtResource("11_hlin5")
+
+[node name="Foundation" type="MeshInstance3D" parent="City/Block9" unique_id=953068637]
+transform = Transform3D(3.7323349, 0, 0, 0, 0.16773956, 0, 0, 0, 3.2005415, 0, 0, 0)
+mesh = SubResource("BoxMesh_oacpt")
 
 [node name="Block3" parent="City" unique_id=192962760 instance=ExtResource("1_oacpt")]
 transform = Transform3D(0.985259, 0, -0.17106937, 0, 1, 0, 0.17106937, 0, 0.985259, -2.7489638, 9.536743e-07, -2.7471366)
 
-[node name="Block4" parent="City" unique_id=1147488442 instance=ExtResource("1_oacpt")]
+[node name="Block4" type="Node3D" parent="City" unique_id=1147488442]
 transform = Transform3D(0.9883482, 0, -0.15220965, 0, 1, 0, 0.15220965, 0, 0.9883482, 0.4411955, 9.536743e-07, -2.2639995)
+
+[node name="Building4" parent="City/Block4" unique_id=79513252 instance=ExtResource("13_f7b0s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8417299, 1.9073486e-06, -0.72394943)
+
+[node name="Building5" parent="City/Block4" unique_id=1548993301 instance=ExtResource("13_f7b0s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.88138795, 9.536743e-07, -0.75569224)
+
+[node name="Building6" parent="City/Block4" unique_id=469421212 instance=ExtResource("13_f7b0s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.93657875, 3.8146973e-06, 0.7322478)
+
+[node name="Building7" parent="City/Block4" unique_id=959295781 instance=ExtResource("13_f7b0s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9725523, 4.7683716e-06, 0.72877204)
+siteResource = ExtResource("16_ibljb")
+
+[node name="Foundation" type="MeshInstance3D" parent="City/Block4" unique_id=1439065564]
+transform = Transform3D(3.7323349, 0, 0, 0, 0.16773956, 0, 0, 0, 3.2005415, 0, 0, 0)
+mesh = SubResource("BoxMesh_oacpt")
 
 [node name="Graph" type="Node3D" parent="." unique_id=1366666781]
 script = ExtResource("2_rqxma")
-Graph = SubResource("Resource_0orsp")
+Graph = SubResource("Resource_nmpot")
 NodeColor = Color(0.32000005, 0.19999999, 1, 1)
 NodeRadius = 0.2
 EdgeThickness = 1.0
@@ -260,9 +313,7 @@ transform = Transform3D(0.12940952, 0.9659258, -0.2241439, -0.48296288, 0.258819
 
 [connection signal="PathPreviewChanged" from="Interaction/CityScapeHoverHandler" to="MovementPresentation/MovementPreview" method="OnPathPreviewChanged" flags=3]
 [connection signal="LeftMouse" from="Mouse" to="Interaction/CityScapeClickHandler" method="HandleClick" flags=3]
+[connection signal="Move" from="Mouse" to="Interaction/CityScapeHoverHandler" method="HandleMove" flags=3]
 [connection signal="Move" from="Mouse" to="Cursor" method="OnMove" flags=3]
 [connection signal="Move" from="Mouse" to="NavCursor" method="OnMove" flags=3]
-[connection signal="Move" from="Mouse" to="Interaction/CityScapeHoverHandler" method="HandleMove" flags=3]
 [connection signal="Pan" from="Mouse" to="Camera3D" method="HandlePan" flags=3]
-
-[editable path="City/Block9"]

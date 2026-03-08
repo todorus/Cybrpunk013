@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="SiteResource" format=3 uid="uid://b7tckol5hd2qo"]
+
+[ext_resource type="Script" uid="uid://bwm1lii5mww5x" path="res://scripts/authoring/SiteResource.cs" id="1_x4xdx"]
+
+[resource]
+script = ExtResource("1_x4xdx")
+Label = "Supermarket"
+metadata/_custom_type_script = "uid://bwm1lii5mww5x"
