@@ -28,4 +28,6 @@ public partial class SiteNode : Node3D
         
         GD.Print($"SiteNode ready with site: {site.Id}, label: {site.Label}");
     }
+
+    public bool IsActive => siteResource != null;
 }

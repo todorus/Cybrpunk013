@@ -131,12 +131,14 @@ PositionCollisionMask = 2
 
 [node name="Cursor" type="MeshInstance3D" parent="." unique_id=1452748290]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 5.7114635, 0, 4.707142)
+visible = false
 mesh = SubResource("SphereMesh_2jj31")
 surface_material_override/0 = SubResource("StandardMaterial3D_drx7m")
 script = ExtResource("2_drx7m")
 
 [node name="NavCursor" type="MeshInstance3D" parent="." unique_id=1957001416 node_paths=PackedStringArray("DispatchNav")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 8.560308, 0, 0.88367224)
+visible = false
 mesh = SubResource("SphereMesh_2jj31")
 surface_material_override/0 = SubResource("StandardMaterial3D_8uhr2")
 script = ExtResource("4_3br4m")
