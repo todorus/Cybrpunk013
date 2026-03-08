@@ -43,7 +43,7 @@ public sealed class Movement
         if (HasArrived || !Path.IsValid || Path.WorldPoints.Count < 2)
             return;
 
-        var result = DispatchNavPath.Advance(Path, SegmentIndex, CurrentWorldPosition, travelDistance);
+        var result = Path.Advance(SegmentIndex, CurrentWorldPosition, travelDistance);
 
         var oldPosition = CurrentWorldPosition;
 
