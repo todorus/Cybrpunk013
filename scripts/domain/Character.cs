@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using SurveillanceStategodot.scripts.domain.communication;
 using SurveillanceStategodot.scripts.domain.movement;
 using SurveillanceStategodot.scripts.domain.operation;
+using SurveillanceStategodot.scripts.domain.schedule;
 
 namespace SurveillanceStategodot.scripts.domain;
 
