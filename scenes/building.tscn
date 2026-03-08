@@ -1,11 +1,16 @@
 [gd_scene format=3 uid="uid://bdpqjbpepjerm"]
 
+[ext_resource type="Script" uid="uid://d0owhhyut81gm" path="res://scripts/presentation/sites/SiteNode.cs" id="1_n8bkc"]
+[ext_resource type="Material" uid="uid://c7qel3ob6mxts" path="res://materials/SiteMaterial.tres" id="2_uvy8r"]
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_txhch"]
 size = Vector3(1, 2.0065918, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_bih7l"]
 
 [node name="Building" type="StaticBody3D" unique_id=1938395040]
+script = ExtResource("1_n8bkc")
+activeSiteMaterial = ExtResource("2_uvy8r")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1022238311]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0008545, 0)
@@ -14,3 +19,11 @@ shape = SubResource("BoxShape3D_txhch")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=355567131]
 transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 1, 0)
 mesh = SubResource("BoxMesh_bih7l")
+
+[node name="Label3D" type="Label3D" parent="." unique_id=1948630712]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3901458, 0)
+billboard = 1
+no_depth_test = true
+
+[connection signal="LabelChanged" from="." to="Label3D" method="set_text" flags=3]
+[connection signal="MaterialChanged" from="." to="MeshInstance3D" method="set_material_override" flags=3]
