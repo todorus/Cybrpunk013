@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://io3vdu8k6nb0" path="res://scripts/control/mouse/MouseSignals.cs" id="1_2jj31"]
 [ext_resource type="Script" uid="uid://bxrpl5mnnnfrm" path="res://scripts/control/camera/PanCamera.cs" id="1_8uhr2"]
+[ext_resource type="Script" uid="uid://dylp83d75t25y" path="res://scripts/authoring/ScenarioBootstrapper.cs" id="1_8y5tq"]
 [ext_resource type="Script" uid="uid://c2hordplrvtjs" path="res://scripts/interaction/SimulationController.cs" id="1_hyhbb"]
 [ext_resource type="PackedScene" uid="uid://c0tkec1d21liq" path="res://scenes/block.tscn" id="1_oacpt"]
 [ext_resource type="Script" uid="uid://dd5p2h61x7m2b" path="res://scripts/interaction/CityscapeClickHandler.cs" id="2_4lp1f"]
@@ -40,65 +41,69 @@ albedo_color = Color(0.18, 0.28933322, 1, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_oacpt"]
 
-[sub_resource type="Resource" id="Resource_ibljb"]
+[sub_resource type="Resource" id="Resource_k0m58"]
 script = ExtResource("3_oacpt")
 Id = "Node"
-Position = Vector3(2.8938308, 0, 2.7392218)
+Position = Vector3(2.4595463, 0, 2.5864043)
 Outgoing = Array[int]([1, 6, 8])
 
-[sub_resource type="Resource" id="Resource_8y5tq"]
+[sub_resource type="Resource" id="Resource_7tlau"]
 script = ExtResource("3_oacpt")
 Id = "Node2"
 Position = Vector3(2.072, 0, 9.405)
 Outgoing = Array[int]([0, 2])
 
-[sub_resource type="Resource" id="Resource_k0m58"]
+[sub_resource type="Resource" id="Resource_ikoiv"]
 script = ExtResource("3_oacpt")
 Id = "Node9"
 Position = Vector3(-3.746861, 0, 9.488001)
 Outgoing = Array[int]([1, 3])
 
-[sub_resource type="Resource" id="Resource_7tlau"]
+[sub_resource type="Resource" id="Resource_kg0fi"]
 script = ExtResource("3_oacpt")
 Id = "Node3"
 Position = Vector3(-10.202908, 0, 8.668036)
 Outgoing = Array[int]([2, 4])
 
-[sub_resource type="Resource" id="Resource_ikoiv"]
+[sub_resource type="Resource" id="Resource_0orsp"]
 script = ExtResource("3_oacpt")
 Id = "Node4"
 Position = Vector3(-9.06818, -9.536743e-07, 1.6362879)
 Outgoing = Array[int]([3, 5])
 
-[sub_resource type="Resource" id="Resource_kg0fi"]
+[sub_resource type="Resource" id="Resource_h3250"]
 script = ExtResource("3_oacpt")
 Id = "Node7"
 Position = Vector3(-5.7891464, -9.536743e-07, 1.9411521)
 Outgoing = Array[int]([4, 6, 7])
 
-[sub_resource type="Resource" id="Resource_0orsp"]
+[sub_resource type="Resource" id="Resource_my70f"]
 script = ExtResource("3_oacpt")
 Id = "Node8"
 Position = Vector3(-1.8786058, -9.536743e-07, 2.5961754)
 Outgoing = Array[int]([0, 5])
 
-[sub_resource type="Resource" id="Resource_h3250"]
+[sub_resource type="Resource" id="Resource_86b61"]
 script = ExtResource("3_oacpt")
 Id = "Node5"
 Position = Vector3(-4.798525, 0, -5.225782)
 Outgoing = Array[int]([5, 8])
 
-[sub_resource type="Resource" id="Resource_my70f"]
+[sub_resource type="Resource" id="Resource_nmpot"]
 script = ExtResource("3_oacpt")
 Id = "Node6"
 Position = Vector3(2.9466138, 0, -3.963666)
 Outgoing = Array[int]([0, 7])
 
-[sub_resource type="Resource" id="Resource_86b61"]
+[sub_resource type="Resource" id="Resource_hks51"]
 script = ExtResource("4_2jj31")
-Nodes = Array[ExtResource("3_oacpt")]([SubResource("Resource_ibljb"), SubResource("Resource_8y5tq"), SubResource("Resource_k0m58"), SubResource("Resource_7tlau"), SubResource("Resource_ikoiv"), SubResource("Resource_kg0fi"), SubResource("Resource_0orsp"), SubResource("Resource_h3250"), SubResource("Resource_my70f")])
+Nodes = Array[ExtResource("3_oacpt")]([SubResource("Resource_k0m58"), SubResource("Resource_7tlau"), SubResource("Resource_ikoiv"), SubResource("Resource_kg0fi"), SubResource("Resource_0orsp"), SubResource("Resource_h3250"), SubResource("Resource_my70f"), SubResource("Resource_86b61"), SubResource("Resource_nmpot")])
 
 [node name="Root" type="Node3D" unique_id=1113144064]
+
+[node name="Bootstrap" type="Node" parent="." unique_id=1907404859 node_paths=PackedStringArray("_simulationController")]
+script = ExtResource("1_8y5tq")
+_simulationController = NodePath("../Simulation")
 
 [node name="Simulation" type="Node" parent="." unique_id=488995100]
 script = ExtResource("1_hyhbb")
@@ -260,7 +265,7 @@ mesh = SubResource("BoxMesh_oacpt")
 
 [node name="Graph" type="Node3D" parent="." unique_id=1366666781]
 script = ExtResource("2_rqxma")
-Graph = SubResource("Resource_86b61")
+Graph = SubResource("Resource_hks51")
 NodeColor = Color(0.32000005, 0.19999999, 1, 1)
 NodeRadius = 0.2
 EdgeThickness = 1.0

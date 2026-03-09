@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Godot;
 using SurveillanceStategodot.scripts.domain.communication;
 
 namespace SurveillanceStategodot.scripts.domain.operation;
@@ -11,6 +12,7 @@ public sealed class Site
     public string BuildingId { get; }
     public SiteVisibility Visibility { get; set; } = SiteVisibility.Hidden;
     public string? BlockId { get; set; }
+    public Vector3 GlobalPosition { get; set; }
 
     public List<Character> Occupants => ActiveOperations
         .SelectMany(operation => operation.Participants)
@@ -19,10 +21,11 @@ public sealed class Site
     public List<Operation> ActiveOperations { get; } = new();
     public List<Interceptor> Interceptors { get; } = new();
 
-    public Site(string id, string label, string buildingId)
+    public Site(string id, string label, string buildingId, Vector3 globalPosition)
     {
         Id = id;
         Label = label;
         BuildingId = buildingId;
+        GlobalPosition = globalPosition;
     }
 }

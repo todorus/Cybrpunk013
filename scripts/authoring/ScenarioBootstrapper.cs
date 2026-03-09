@@ -1,0 +1,20 @@
+using Godot;
+using SurveillanceStategodot.scripts.interaction;
+using SurveillanceStategodot.scripts.presentation.sites;
+using SurveillanceStategodot.scripts.util;
+
+namespace SurveillanceStategodot.scripts.authoring;
+
+public partial class ScenarioBootstrapper : Node
+{
+    [Export]
+    private SimulationController _simulationController;
+
+    public override void _Ready()
+    {
+        base._Ready();
+        
+        GetTree().Root.FindAllChildrenOfType<SiteNode>()
+            .ForEach(siteNode => siteNode.SimulationController = _simulationController);
+    }
+}

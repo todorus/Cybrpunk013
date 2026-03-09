@@ -21,4 +21,20 @@ public sealed class WorldState
     {
         Time += delta;
     }
+    
+    public void RegisterSite(Site site)
+    {
+        if (!Sites.Contains(site))
+        {
+            Sites.Add(site);
+        }
+    }
+
+    public void RegisterCharacter(Character character)
+    {
+        if (!Characters.Contains(character))
+        {
+            Characters.Add(character);
+        }
+    }
 }

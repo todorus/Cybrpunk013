@@ -13,5 +13,5 @@ public partial class SiteResource : Resource
     [Export]
     private string Label = string.Empty;
     
-    public Site ToSite() => new(Id, Label, string.Empty);
+    public Site ToSite(Vector3 globalPosition) => new(Id, Label, string.Empty, globalPosition);
 }

@@ -5,4 +5,9 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>SurveillanceStategodot</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="scripts\util\FpsCounter.cs.uid" />
+    <Content Include="scripts\util\MeshExt.cs.uid" />
+    <Content Include="scripts\util\NodeExt.cs.uid" />
+  </ItemGroup>
 </Project>
