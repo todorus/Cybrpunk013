@@ -24,3 +24,9 @@ surface_material_override/0 = SubResource("StandardMaterial3D_58ubr")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0042037964, 0.24829102, 0.009536743)
 shape = SubResource("BoxShape3D_bih7l")
 disabled = true
+
+[node name="Label3D" type="Label3D" parent="." unique_id=357428787]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0053201, 0)
+billboard = 1
+
+[connection signal="CharacterNameChanged" from="." to="Label3D" method="set_text" flags=3]

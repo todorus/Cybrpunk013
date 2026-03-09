@@ -4,5 +4,5 @@
 
 [resource]
 script = ExtResource("1_x4xdx")
-Label = "Supermarket"
+_label = "Supermarket"
 metadata/_custom_type_script = "uid://bwm1lii5mww5x"

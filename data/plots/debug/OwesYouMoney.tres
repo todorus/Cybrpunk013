@@ -4,5 +4,5 @@
 
 [resource]
 script = ExtResource("1_qpllv")
-Label = "Owes you money"
+_label = "Owes you Money"
 metadata/_custom_type_script = "uid://bwm1lii5mww5x"

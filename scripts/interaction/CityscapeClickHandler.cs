@@ -1,5 +1,6 @@
 using System;
 using Godot;
+using SurveillanceStategodot.scripts.domain;
 using SurveillanceStategodot.scripts.domain.assignment;
 using SurveillanceStategodot.scripts.domain.movement;
 using SurveillanceStategodot.scripts.domain.operation;
@@ -15,6 +16,8 @@ public partial class CityscapeClickHandler : Node
     [Export] private Node3D _spawnWorldPosition = null!;
     [Export] private Node3D _operatorBaseWorldPosition = null!;
     [Export] private SimulationController _simulationController = null!;
+    
+    private static int _operatorCount = 0;
 
     public void HandleClick(GodotObject obj, Vector3 position, bool isDown)
     {
@@ -39,9 +42,14 @@ public partial class CityscapeClickHandler : Node
         var endPoint = DispatchNavQueries.GetClosestPointOnGraph(_dispatchNav.Graph, site.GlobalPosition);
         var path = DispatchNavPathfinder.FindPath(_dispatchNav.Graph, spawnPosition, endPoint);
 
+        var character = new Character(
+            id: Guid.NewGuid().ToString(),
+            displayName: $"Operator {_operatorCount++}"
+        );
+        
         var movement = new Movement(
             id: Guid.NewGuid().ToString(),
-            character: null,
+            character: character,
             origin: null,
             destination: site,
             path: path,
@@ -58,7 +66,7 @@ public partial class CityscapeClickHandler : Node
 
         var assignment = new Assignment(
             id: Guid.NewGuid().ToString(),
-            character: null,
+            character: character,
             operation: operation,
             currentMovement: movement)
         {

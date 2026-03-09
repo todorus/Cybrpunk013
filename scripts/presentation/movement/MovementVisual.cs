@@ -5,6 +5,9 @@ namespace SurveillanceStategodot.scripts.presentation.movement;
 
 public partial class MovementVisual : Node3D
 {
+    [Signal]
+    public delegate void CharacterNameChangedEventHandler(string newName);
+    
     [Export] private float _verticalOffset = 0.05f;
     [Export] public Color LineColor = new Color(0.2f, 1f, 0.2f);
 
@@ -38,6 +41,8 @@ public partial class MovementVisual : Node3D
 
         _movement = movement;
         SubscribeToMovement();
+        
+        EmitSignalCharacterNameChanged(movement?.Character?.DisplayName);
 
         SyncImmediate();
     }
