@@ -1,6 +1,5 @@
 using System.Collections.Generic;
-using SurveillanceStategodot.scripts.domain.communication;
-using SurveillanceStategodot.scripts.domain.movement;
+using SurveillanceStategodot.scripts.domain.assignment;
 using SurveillanceStategodot.scripts.domain.operation;
 
 namespace SurveillanceStategodot.scripts.domain.system;
@@ -9,25 +8,31 @@ public sealed class WorldState
 {
     public double Time { get; private set; }
 
-    public List<Character> Characters { get; } = new();
     public List<Site> Sites { get; } = new();
-    public List<Movement> ActiveMovements { get; } = new();
-    public List<Operation> ActiveOperations { get; } = new();
-    public List<Communication> Communications { get; } = new();
-    public List<Intercept> Intercepts { get; } = new();
-    // public List<Interrupt> PendingInterrupts { get; } = new();
+    public List<Character> Characters { get; } = new();
+    public List<Assignment> Assignments { get; } = new();
+
+    private readonly Dictionary<string, Site> _sitesById = new();
+    private readonly Dictionary<string, Assignment> _assignmentsByMovementId = new();
+    private readonly Dictionary<string, Assignment> _assignmentsByOperationId = new();
 
     public void AdvanceTime(double delta)
     {
         Time += delta;
     }
-    
+
     public void RegisterSite(Site site)
     {
-        if (!Sites.Contains(site))
-        {
-            Sites.Add(site);
-        }
+        if (_sitesById.ContainsKey(site.Id))
+            return;
+
+        _sitesById.Add(site.Id, site);
+        Sites.Add(site);
+    }
+
+    public Site GetSite(string id)
+    {
+        return _sitesById[id];
     }
 
     public void RegisterCharacter(Character character)
@@ -36,5 +41,26 @@ public sealed class WorldState
         {
             Characters.Add(character);
         }
+    }
+
+    public void RegisterAssignment(Assignment assignment)
+    {
+        if (!Assignments.Contains(assignment))
+        {
+            Assignments.Add(assignment);
+        }
+
+        _assignmentsByMovementId[assignment.Movement.Id] = assignment;
+        _assignmentsByOperationId[assignment.Operation.Id] = assignment;
+    }
+
+    public bool TryGetAssignmentByMovementId(string movementId, out Assignment assignment)
+    {
+        return _assignmentsByMovementId.TryGetValue(movementId, out assignment!);
+    }
+
+    public bool TryGetAssignmentByOperationId(string operationId, out Assignment assignment)
+    {
+        return _assignmentsByOperationId.TryGetValue(operationId, out assignment!);
     }
 }

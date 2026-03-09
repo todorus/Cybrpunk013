@@ -1,5 +1,6 @@
 using System;
 using Godot;
+using SurveillanceStategodot.scripts.domain.assignment;
 using SurveillanceStategodot.scripts.domain.movement;
 using SurveillanceStategodot.scripts.domain.operation;
 using SurveillanceStategodot.scripts.navigation.authoring;
@@ -10,15 +11,21 @@ namespace SurveillanceStategodot.scripts.interaction;
 
 public partial class CityscapeClickHandler : Node
 {
-    [Export] private DispatchNav _dispatchNav;
-    [Export] private Node3D _spawnWorldPosition;
-    [Export] private SimulationController _simulationController;
-    
+    [Export] private DispatchNav _dispatchNav = null!;
+    [Export] private Node3D _spawnWorldPosition = null!;
+    [Export] private SimulationController _simulationController = null!;
+
     public void HandleClick(GodotObject obj, Vector3 position, bool isDown)
     {
-        if(!isDown) return;
-        
-        if(obj is SiteNode siteNode && siteNode.IsActive && DispatchNavSpawnQueries.TryGetSpawnPoint(_dispatchNav.Graph, _spawnWorldPosition.GlobalPosition, out var spawnAnchor))
+        if (!isDown)
+            return;
+
+        if (obj is SiteNode siteNode &&
+            siteNode.IsActive &&
+            DispatchNavSpawnQueries.TryGetSpawnPoint(
+                _dispatchNav.Graph,
+                _spawnWorldPosition.GlobalPosition,
+                out var spawnAnchor))
         {
             var site = siteNode.Site;
             GD.Print($"Clicked on site: {site.Label}");
@@ -30,16 +37,31 @@ public partial class CityscapeClickHandler : Node
     {
         var endPoint = DispatchNavQueries.GetClosestPointOnGraph(_dispatchNav.Graph, site.GlobalPosition);
         var path = DispatchNavPathfinder.FindPath(_dispatchNav.Graph, spawnPosition, endPoint);
-            
+
         var movement = new Movement(
             id: Guid.NewGuid().ToString(),
             character: null,
-            origin: null,
-            destination: null,
+            origin: null!,
+            destination: site,
             path: path,
             initialPosition: path.StartPosition);
 
+        var operation = new Operation(
+            id: Guid.NewGuid().ToString(),
+            label: $"Visit {site.Label}",
+            duration: 10.0)
+        {
+            SiteContext = site,
+            MovementContext = movement
+        };
+
+        var assignment = new Assignment(
+            id: Guid.NewGuid().ToString(),
+            character: null,
+            operation: operation,
+            movement: movement);
+
         _simulationController.EventBus.Publish(
-            new MovementStartedEvent(movement, _simulationController.World.Time));
+            new AssignmentCreatedEvent(assignment, _simulationController.World.Time));
     }
 }

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Godot;
+using SurveillanceStategodot.scripts.domain.assignment;
 using SurveillanceStategodot.scripts.domain.movement;
+using SurveillanceStategodot.scripts.domain.operation;
 using SurveillanceStategodot.scripts.domain.system;
 
 namespace SurveillanceStategodot.scripts.interaction;
@@ -17,12 +19,9 @@ public partial class SimulationController : Node
         World = new WorldState();
         EventBus = new SimulationEventBus();
 
+        _systems.Add(new AssignmentSystem());
         _systems.Add(new MovementSystem());
-        // _systems.Add(new OperationSystem());
-        // _systems.Add(new CommunicationSystem());
-        // _systems.Add(new InterceptionSystem());
-        // _systems.Add(new InterruptSystem());
-        // _systems.Add(new PlotReactionSystem());
+        _systems.Add(new OperationSystem());
 
         foreach (var system in _systems)
         {

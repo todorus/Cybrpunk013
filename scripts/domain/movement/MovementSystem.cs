@@ -8,19 +8,18 @@ public sealed class MovementSystem : ISimulationSystem
 {
     private WorldState _world = null!;
     private SimulationEventBus _eventBus = null!;
-    
+
     private readonly List<Movement> _activeMovements = new();
 
-    private static float Speed = 3f;
-    
+    private const float Speed = 3f;
+
     public void Initialize(WorldState world, SimulationEventBus eventBus)
     {
         _world = world;
         _eventBus = eventBus;
-        
+
         _eventBus.Subscribe<MovementStartedEvent>(OnMovementStarted);
     }
-
 
     public void Tick(double delta)
     {
@@ -29,16 +28,39 @@ public sealed class MovementSystem : ISimulationSystem
             var movement = _activeMovements[i];
             movement.Advance(Speed * (float)delta);
 
-            if (movement.HasArrived)
+            if (!movement.HasArrived)
+                continue;
+
+            _activeMovements.RemoveAt(i);
+
+            if (movement.Character != null)
             {
-                _activeMovements.RemoveAt(i);
-                // occupancy updates, site arrival logic, etc.
+                movement.Character.CurrentMovement = null;
+                movement.Character.CurrentSite = movement.Destination;
+
+                if (movement.Destination != null &&
+                    !movement.Destination.Occupants.Contains(movement.Character))
+                {
+                    movement.Destination.Occupants.Add(movement.Character);
+                }
             }
+
+            _eventBus.Publish(new MovementArrivedEvent(movement, _world.Time));
         }
     }
 
     private void OnMovementStarted(MovementStartedEvent evt)
     {
-        _activeMovements.Add(evt.Movement);
+        if (!_activeMovements.Contains(evt.Movement))
+        {
+            _activeMovements.Add(evt.Movement);
+        }
+
+        if (evt.Movement.Character != null)
+        {
+            evt.Movement.Character.CurrentMovement = evt.Movement;
+            evt.Movement.Character.CurrentSite?.Occupants.Remove(evt.Movement.Character);
+            evt.Movement.Character.CurrentSite = null;
+        }
     }
 }
