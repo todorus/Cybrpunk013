@@ -8,10 +8,13 @@ namespace SurveillanceStategodot.scripts.authoring;
 public partial class SiteResource : Resource
 {
     [Export]
-    private string Id = Guid.NewGuid().ToString();
+    private string _id = Guid.NewGuid().ToString();
     
     [Export]
-    private string Label = string.Empty;
+    private string _label = string.Empty;
+
+    [Export] 
+    private OperationResource _operations;
     
-    public Site ToSite(Vector3 globalPosition) => new(Id, Label, string.Empty, globalPosition);
+    public Site ToSite(Vector3 globalPosition) => new(_id, _label, string.Empty, globalPosition);
 }
