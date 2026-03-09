@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="OptionResource" format=3 uid="uid://b38a5m30hkg8e"]
+
+[ext_resource type="Script" uid="uid://qqovj6p5nanr" path="res://scripts/authoring/OptionResource.cs" id="1_s5mfy"]
+
+[resource]
+script = ExtResource("1_s5mfy")
+_label = "Scold"
+_duration = 2.0
+metadata/_custom_type_script = "uid://qqovj6p5nanr"

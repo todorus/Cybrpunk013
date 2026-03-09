@@ -55,14 +55,7 @@ public partial class CityscapeClickHandler : Node
             path: path,
             initialPosition: path.StartPosition);
 
-        var operation = new Operation(
-            id: Guid.NewGuid().ToString(),
-            label: $"Visit {site.Label}",
-            duration: 10.0)
-        {
-            SiteContext = site,
-            MovementContext = movement
-        };
+        var operation = EnsureOperation(site, movement);
 
         var assignment = new Assignment(
             id: Guid.NewGuid().ToString(),
@@ -76,5 +69,24 @@ public partial class CityscapeClickHandler : Node
 
         _simulationController.EventBus.Publish(
             new AssignmentCreatedEvent(assignment, _simulationController.World.Time));
+    }
+
+    private static Operation EnsureOperation(Site site, Movement movement)
+    {
+        if (site.AvailableOptions.Length == 0)
+        {
+            var operation = new Operation(
+                id: Guid.NewGuid().ToString(),
+                label: $"Visit {site.Label}",
+                duration: 10.0)
+            {
+                SiteContext = site,
+                MovementContext = movement
+            };
+            return operation;
+        }
+        
+        var option = site.AvailableOptions[0];
+        return option.ToOperation(movement, site);
     }
 }

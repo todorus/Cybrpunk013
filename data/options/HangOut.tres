@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="OptionResource" format=3 uid="uid://fno2stmo0eto"]
+
+[ext_resource type="Script" uid="uid://qqovj6p5nanr" path="res://scripts/authoring/OptionResource.cs" id="1_6o7re"]
+
+[resource]
+script = ExtResource("1_6o7re")
+_label = "Hang Out"
+_duration = 7.0
+metadata/_custom_type_script = "uid://qqovj6p5nanr"

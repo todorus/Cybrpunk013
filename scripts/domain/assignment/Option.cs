@@ -1,3 +1,4 @@
+using SurveillanceStategodot.scripts.domain.movement;
 using SurveillanceStategodot.scripts.domain.operation;
 
 namespace SurveillanceStategodot.scripts.domain.assignment;
@@ -15,14 +16,18 @@ public class Option
         Duration = duration;
     }
     
-    public Operation ToOperation()
+    public Operation ToOperation(Movement movement, Site site)
     {
         return new Operation
         (
             id: Id,
             label: Label,
             duration: Duration
-        );
+        )
+        {
+            SiteContext = site,
+            MovementContext = movement
+        };
     }
     
 }

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="OptionResource" format=3 uid="uid://dgdhjgo152efh"]
+
+[ext_resource type="Script" uid="uid://qqovj6p5nanr" path="res://scripts/authoring/OptionResource.cs" id="1_ves67"]
+
+[resource]
+script = ExtResource("1_ves67")
+_label = "Do Groceries"
+_duration = 3.0
+metadata/_custom_type_script = "uid://qqovj6p5nanr"

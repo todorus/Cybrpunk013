@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using SurveillanceStategodot.scripts.domain.operation;
 using SurveillanceStategodot.scripts.domain.system;
 
@@ -41,7 +42,7 @@ public sealed class MovementSystem : ISimulationSystem
                 if (movement.Destination != null &&
                     !movement.Destination.Occupants.Contains(movement.Character))
                 {
-                    movement.Destination.Occupants.Add(movement.Character);
+                    movement.Destination.AddOccupant(movement.Character);
                 }
             }
 
@@ -59,7 +60,7 @@ public sealed class MovementSystem : ISimulationSystem
         if (evt.Movement.Character != null)
         {
             evt.Movement.Character.CurrentMovement = evt.Movement;
-            evt.Movement.Character.CurrentSite?.Occupants.Remove(evt.Movement.Character);
+            evt.Movement.Character.CurrentSite?.RemoveOccupant(evt.Movement.Character);
             evt.Movement.Character.CurrentSite = null;
         }
     }

@@ -20,11 +20,25 @@ shape = SubResource("BoxShape3D_txhch")
 transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 1, 0)
 mesh = SubResource("BoxMesh_bih7l")
 
-[node name="Label3D" type="Label3D" parent="." unique_id=1948630712]
+[node name="SiteName" type="Label3D" parent="." unique_id=1948630712]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3901458, 0)
 billboard = 1
 no_depth_test = true
 font_size = 50
 
-[connection signal="LabelChanged" from="." to="Label3D" method="set_text" flags=3]
+[node name="OperationList" type="Label3D" parent="." unique_id=1231006534]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.112689, 3.3381412, 0)
+billboard = 1
+horizontal_alignment = 0
+vertical_alignment = 0
+
+[node name="OccupantList" type="Label3D" parent="." unique_id=1020377133]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.112689, 2.5216448, 0)
+billboard = 1
+horizontal_alignment = 0
+vertical_alignment = 0
+
+[connection signal="LabelChanged" from="." to="SiteName" method="set_text" flags=3]
 [connection signal="MaterialChanged" from="." to="MeshInstance3D" method="set_material_override" flags=3]
+[connection signal="OccupantsListChanged" from="." to="OccupantList" method="set_text" flags=3]
+[connection signal="OperationsListChanged" from="." to="OperationList" method="set_text" flags=3]

@@ -28,7 +28,7 @@ public sealed class OperationSystem : ISimulationSystem
                 continue;
 
             operation.State = OperationState.Completed;
-            operation.SiteContext?.ActiveOperations.Remove(operation);
+            operation.SiteContext?.RemoveActiveOperation(operation);
 
             _activeOperations.RemoveAt(i);
 
