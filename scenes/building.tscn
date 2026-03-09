@@ -24,6 +24,7 @@ mesh = SubResource("BoxMesh_bih7l")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3901458, 0)
 billboard = 1
 no_depth_test = true
+font_size = 50
 
 [connection signal="LabelChanged" from="." to="Label3D" method="set_text" flags=3]
 [connection signal="MaterialChanged" from="." to="MeshInstance3D" method="set_material_override" flags=3]
