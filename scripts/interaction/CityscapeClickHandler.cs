@@ -13,6 +13,7 @@ public partial class CityscapeClickHandler : Node
 {
     [Export] private DispatchNav _dispatchNav = null!;
     [Export] private Node3D _spawnWorldPosition = null!;
+    [Export] private Node3D _operatorBaseWorldPosition = null!;
     [Export] private SimulationController _simulationController = null!;
 
     public void HandleClick(GodotObject obj, Vector3 position, bool isDown)
@@ -41,7 +42,7 @@ public partial class CityscapeClickHandler : Node
         var movement = new Movement(
             id: Guid.NewGuid().ToString(),
             character: null,
-            origin: null!,
+            origin: null,
             destination: site,
             path: path,
             initialPosition: path.StartPosition);
@@ -59,7 +60,11 @@ public partial class CityscapeClickHandler : Node
             id: Guid.NewGuid().ToString(),
             character: null,
             operation: operation,
-            movement: movement);
+            currentMovement: movement)
+        {
+            CompletionBehavior = AssignmentCompletionBehavior.ReturnToBase,
+            BaseWorldPosition = _operatorBaseWorldPosition.GlobalPosition
+        };
 
         _simulationController.EventBus.Publish(
             new AssignmentCreatedEvent(assignment, _simulationController.World.Time));

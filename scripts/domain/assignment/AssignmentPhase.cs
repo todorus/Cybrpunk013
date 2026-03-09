@@ -1,10 +1,10 @@
 namespace SurveillanceStategodot.scripts.domain.assignment;
 
-public enum AssignmentState
+public enum AssignmentPhase
 {
-    Planned,
-    Moving,
-    Operating,
+    OutboundMovement,
+    OnSiteOperation,
+    ReturnMovement,
     Completed,
     Cancelled
 }

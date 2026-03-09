@@ -8,9 +8,9 @@ namespace SurveillanceStategodot.scripts.domain.movement;
 public sealed class Movement
 {
     public string Id { get; }
-    public Character Character { get; }
-    public Site Origin { get; }
-    public Site Destination { get; }
+    public Character? Character { get; }
+    public Site? Origin { get; }
+    public Site? Destination { get; }
 
     public Vector3 CurrentWorldPosition { get; private set; }
     public Vector3 CurrentForward { get; private set; } = Vector3.Forward;
@@ -24,9 +24,9 @@ public sealed class Movement
 
     public Movement(
         string id,
-        Character character,
-        Site origin,
-        Site destination,
+        Character? character,
+        Site? origin,
+        Site? destination,
         DispatchNavPath path,
         Vector3 initialPosition)
     {

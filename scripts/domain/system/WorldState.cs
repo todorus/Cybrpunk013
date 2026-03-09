@@ -13,7 +13,7 @@ public sealed class WorldState
     public List<Assignment> Assignments { get; } = new();
 
     private readonly Dictionary<string, Site> _sitesById = new();
-    private readonly Dictionary<string, Assignment> _assignmentsByMovementId = new();
+    private readonly Dictionary<string, Assignment> _assignmentsById = new();
     private readonly Dictionary<string, Assignment> _assignmentsByOperationId = new();
 
     public void AdvanceTime(double delta)
@@ -50,17 +50,27 @@ public sealed class WorldState
             Assignments.Add(assignment);
         }
 
-        _assignmentsByMovementId[assignment.Movement.Id] = assignment;
+        _assignmentsById[assignment.Id] = assignment;
         _assignmentsByOperationId[assignment.Operation.Id] = assignment;
-    }
-
-    public bool TryGetAssignmentByMovementId(string movementId, out Assignment assignment)
-    {
-        return _assignmentsByMovementId.TryGetValue(movementId, out assignment!);
     }
 
     public bool TryGetAssignmentByOperationId(string operationId, out Assignment assignment)
     {
         return _assignmentsByOperationId.TryGetValue(operationId, out assignment!);
+    }
+
+    public bool TryGetAssignmentByMovementId(string movementId, out Assignment? assignment)
+    {
+        foreach (var candidate in Assignments)
+        {
+            if (candidate.CurrentMovement?.Id == movementId)
+            {
+                assignment = candidate;
+                return true;
+            }
+        }
+
+        assignment = null;
+        return false;
     }
 }

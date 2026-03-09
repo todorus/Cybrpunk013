@@ -4,11 +4,14 @@ using SurveillanceStategodot.scripts.domain.assignment;
 using SurveillanceStategodot.scripts.domain.movement;
 using SurveillanceStategodot.scripts.domain.operation;
 using SurveillanceStategodot.scripts.domain.system;
+using SurveillanceStategodot.scripts.navigation.authoring;
 
 namespace SurveillanceStategodot.scripts.interaction;
 
 public partial class SimulationController : Node
 {
+    [Export] private DispatchNav _dispatchNav = null!;
+
     public WorldState World { get; private set; } = null!;
     public SimulationEventBus EventBus { get; private set; } = null!;
 
@@ -19,7 +22,7 @@ public partial class SimulationController : Node
         World = new WorldState();
         EventBus = new SimulationEventBus();
 
-        _systems.Add(new AssignmentSystem());
+        _systems.Add(new AssignmentSystem(_dispatchNav));
         _systems.Add(new MovementSystem());
         _systems.Add(new OperationSystem());
 

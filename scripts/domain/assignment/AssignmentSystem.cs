@@ -1,13 +1,24 @@
+using System;
+using Godot;
 using SurveillanceStategodot.scripts.domain.movement;
 using SurveillanceStategodot.scripts.domain.operation;
 using SurveillanceStategodot.scripts.domain.system;
+using SurveillanceStategodot.scripts.navigation.authoring;
+using SurveillanceStategodot.scripts.navigation.query;
 
 namespace SurveillanceStategodot.scripts.domain.assignment;
 
 public sealed class AssignmentSystem : ISimulationSystem
 {
+    private readonly DispatchNav _dispatchNav;
+
     private WorldState _world = null!;
     private SimulationEventBus _eventBus = null!;
+
+    public AssignmentSystem(DispatchNav dispatchNav)
+    {
+        _dispatchNav = dispatchNav;
+    }
 
     public void Initialize(WorldState world, SimulationEventBus eventBus)
     {
@@ -28,21 +39,63 @@ public sealed class AssignmentSystem : ISimulationSystem
         var assignment = evt.Assignment;
 
         _world.RegisterAssignment(assignment);
-        assignment.State = AssignmentState.Moving;
+        assignment.Phase = AssignmentPhase.OutboundMovement;
 
-        _eventBus.Publish(new MovementStartedEvent(assignment.Movement, evt.Time));
+        if (assignment.CurrentMovement != null)
+        {
+            _eventBus.Publish(new MovementStartedEvent(assignment.CurrentMovement, evt.Time));
+        }
+        else
+        {
+            StartOperationForAssignment(assignment, evt.Time);
+        }
     }
 
     private void OnMovementArrived(MovementArrivedEvent evt)
     {
-        if (!_world.TryGetAssignmentByMovementId(evt.Movement.Id, out var assignment))
+        if (!_world.TryGetAssignmentByMovementId(evt.Movement.Id, out var assignment) || assignment == null)
             return;
 
-        assignment.State = AssignmentState.Operating;
+        if (assignment.Phase == AssignmentPhase.OutboundMovement)
+        {
+            StartOperationForAssignment(assignment, evt.Time);
+            return;
+        }
+
+        if (assignment.Phase == AssignmentPhase.ReturnMovement)
+        {
+            assignment.CurrentMovement = null;
+            assignment.Phase = AssignmentPhase.Completed;
+            _eventBus.Publish(new AssignmentCompletedEvent(assignment, evt.Time));
+        }
+    }
+
+    private void OnOperationCompleted(OperationCompletedEvent evt)
+    {
+        if (!_world.TryGetAssignmentByOperationId(evt.Operation.Id, out var assignment))
+            return;
+
+        switch (assignment.CompletionBehavior)
+        {
+            case AssignmentCompletionBehavior.ReturnToBase:
+                StartReturnMovement(assignment, evt.Time);
+                break;
+
+            case AssignmentCompletionBehavior.AwaitSchedule:
+            case AssignmentCompletionBehavior.None:
+            default:
+                assignment.Phase = AssignmentPhase.Completed;
+                _eventBus.Publish(new AssignmentCompletedEvent(assignment, evt.Time));
+                break;
+        }
+    }
+
+    private void StartOperationForAssignment(Assignment assignment, double worldTime)
+    {
+        assignment.Phase = AssignmentPhase.OnSiteOperation;
+        assignment.CurrentMovement = null;
 
         var operation = assignment.Operation;
-        operation.MovementContext = evt.Movement;
-        operation.SiteContext ??= evt.Movement.Destination;
 
         if (assignment.Character != null && !operation.Participants.Contains(assignment.Character))
         {
@@ -62,17 +115,55 @@ public sealed class AssignmentSystem : ISimulationSystem
             }
         }
 
-        operation.Start(evt.Time);
-
-        _eventBus.Publish(new OperationStartedEvent(operation, evt.Time));
+        operation.Start(worldTime);
+        _eventBus.Publish(new OperationStartedEvent(operation, worldTime));
     }
 
-    private void OnOperationCompleted(OperationCompletedEvent evt)
+    private void StartReturnMovement(Assignment assignment, double worldTime)
     {
-        if (!_world.TryGetAssignmentByOperationId(evt.Operation.Id, out var assignment))
+        if (assignment.BaseWorldPosition == null)
+        {
+            assignment.Phase = AssignmentPhase.Completed;
+            _eventBus.Publish(new AssignmentCompletedEvent(assignment, worldTime));
             return;
+        }
 
-        assignment.State = AssignmentState.Completed;
-        _eventBus.Publish(new AssignmentCompletedEvent(assignment, evt.Time));
+        var operationSite = assignment.Operation.SiteContext;
+        if (operationSite == null)
+        {
+            assignment.Phase = AssignmentPhase.Completed;
+            _eventBus.Publish(new AssignmentCompletedEvent(assignment, worldTime));
+            return;
+        }
+
+        var startAnchor = DispatchNavQueries.GetClosestPointOnGraph(
+            _dispatchNav.Graph,
+            operationSite.GlobalPosition);
+
+        var returnPath = DispatchNavPathfinder.FindPath(
+            _dispatchNav.Graph,
+            startAnchor,
+            assignment.BaseWorldPosition.Value);
+
+        if (!returnPath.IsValid)
+        {
+            GD.PushWarning($"Return path for assignment {assignment.Id} is invalid.");
+            assignment.Phase = AssignmentPhase.Completed;
+            _eventBus.Publish(new AssignmentCompletedEvent(assignment, worldTime));
+            return;
+        }
+
+        var returnMovement = new Movement(
+            id: Guid.NewGuid().ToString(),
+            character: assignment.Character,
+            origin: operationSite,
+            destination: null,
+            path: returnPath,
+            initialPosition: returnPath.StartPosition);
+
+        assignment.CurrentMovement = returnMovement;
+        assignment.Phase = AssignmentPhase.ReturnMovement;
+
+        _eventBus.Publish(new MovementStartedEvent(returnMovement, worldTime));
     }
 }
