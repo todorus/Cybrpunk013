@@ -1,8 +1,10 @@
 [gd_resource type="Resource" script_class="SiteResource" format=3 uid="uid://cb7hj8aw6mvvs"]
 
+[ext_resource type="Resource" uid="uid://b38a5m30hkg8e" path="res://data/options/Scold.tres" id="1_kslea"]
 [ext_resource type="Script" uid="uid://bwm1lii5mww5x" path="res://scripts/authoring/SiteResource.cs" id="1_qpllv"]
 
 [resource]
 script = ExtResource("1_qpllv")
 _label = "Owes you Money"
+_options = [ExtResource("1_kslea")]
 metadata/_custom_type_script = "uid://bwm1lii5mww5x"

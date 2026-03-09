@@ -1,8 +1,10 @@
 [gd_resource type="Resource" script_class="SiteResource" format=3 uid="uid://b7tckol5hd2qo"]
 
+[ext_resource type="Resource" uid="uid://dgdhjgo152efh" path="res://data/options/DoGroceries.tres" id="1_2b0s4"]
 [ext_resource type="Script" uid="uid://bwm1lii5mww5x" path="res://scripts/authoring/SiteResource.cs" id="1_x4xdx"]
 
 [resource]
 script = ExtResource("1_x4xdx")
 _label = "Supermarket"
+_options = [ExtResource("1_2b0s4")]
 metadata/_custom_type_script = "uid://bwm1lii5mww5x"
