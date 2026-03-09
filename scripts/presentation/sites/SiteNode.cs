@@ -10,15 +10,7 @@ namespace SurveillanceStategodot.scripts.presentation.sites;
 public partial class SiteNode : Node3D
 {
     [Signal]
-    public delegate void LabelChangedEventHandler(string newLabel);
-    
-    [Signal]
     public delegate void MaterialChangedEventHandler(Material newMaterial);
-    
-    [Signal]
-    public delegate void OperationsListChangedEventHandler(string list);
-    [Signal]
-    public delegate void OccupantsListChangedEventHandler(string list);
     
     [Export]
     private SiteResource siteResource;
