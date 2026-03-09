@@ -1,3 +1,4 @@
+using System;
 using SurveillanceStategodot.scripts.domain.movement;
 using SurveillanceStategodot.scripts.domain.operation;
 
@@ -20,7 +21,7 @@ public class Option
     {
         return new Operation
         (
-            id: Id,
+            id: Guid.NewGuid().ToString(),
             label: Label,
             duration: Duration
         )
