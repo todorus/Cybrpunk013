@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://dncljerw8fgod"]
+
+[ext_resource type="Script" uid="uid://kj40i54ivot3" path="res://scripts/presentation/sites/SiteStatusWidget.cs" id="1_rqakp"]
+
+[node name="SiteWidget" type="VBoxContainer" unique_id=769993910]
+offset_right = 91.0
+offset_bottom = 77.0
+size_flags_horizontal = 2
+size_flags_vertical = 2
+script = ExtResource("1_rqakp")
+
+[node name="Label" type="Label" parent="." unique_id=1224850200]
+layout_mode = 2
+text = "Name"
+
+[node name="Occupants" type="VBoxContainer" parent="." unique_id=1543051981]
+layout_mode = 2
+
+[node name="Header" type="Label" parent="Occupants" unique_id=1009257376]
+layout_mode = 2
+text = "Occupants:"
+
+[node name="Operations" type="VBoxContainer" parent="." unique_id=942540541]
+layout_mode = 2
+
+[node name="Header" type="Label" parent="Operations" unique_id=1733904641]
+layout_mode = 2
+text = "Operations:"
+
+[connection signal="LabelChanged" from="." to="Label" method="set_text" flags=3]
+[connection signal="OccupantsListChanged" from="." to="Occupants/Header" method="set_text" flags=3]
+[connection signal="OperationsListChanged" from="." to="Operations/Header" method="set_text" flags=3]

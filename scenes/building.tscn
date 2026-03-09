@@ -8,9 +8,13 @@ size = Vector3(1, 2.0065918, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_bih7l"]
 
-[node name="Building" type="StaticBody3D" unique_id=1938395040]
+[node name="Building" type="StaticBody3D" unique_id=1938395040 node_paths=PackedStringArray("uiAnchor")]
 script = ExtResource("1_n8bkc")
 activeSiteMaterial = ExtResource("2_uvy8r")
+uiAnchor = NodePath("UiAnchor")
+
+[node name="UiAnchor" type="Node3D" parent="." unique_id=799730390]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.1856458, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1022238311]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0008545, 0)

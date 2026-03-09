@@ -25,8 +25,14 @@ public partial class SiteNode : Node3D
     
     [Export]
     private Material activeSiteMaterial;
+    
+    [Export]
+    private Node3D uiAnchor = null!;
+    
+    public Vector3 UiWorldAnchor => uiAnchor.GlobalPosition;
 
     private SimulationController _simulationController;
+    private SiteOverlayLayer? _overlayLayer;
 
     public SimulationController SimulationController
     {
@@ -44,14 +50,12 @@ public partial class SiteNode : Node3D
         get => _site;
         private set
         {
-            Unsubscribe();
             _site = value;
-            Subscribe();
-            EmitSignalLabelChanged(_site?.Label);
             if (_site != null)
             {
                 EmitSignalMaterialChanged(activeSiteMaterial);
                 Register();
+                _overlayLayer?.RefreshSite(this);
             }
         }
     }
@@ -62,40 +66,19 @@ public partial class SiteNode : Node3D
         if (siteResource == null) return;
         
         Site = siteResource.ToSite(GlobalPosition);
+
+        if (IsActive)
+            _overlayLayer?.ShowSite(this);
     }
 
-    public override void _ExitTree()
+    public void SetOverlayLayer(SiteOverlayLayer overlayLayer)
     {
-        base._ExitTree();
-        Unsubscribe();
-    }
+        _overlayLayer = overlayLayer;
 
-    private void Subscribe()
-    {
-        if (Site == null) return;
-        Site.ActiveOperationAdded += OnOperationsChanged;
-        Site.ActiveOperationRemoved += OnOperationsChanged;
-        Site.OccupantAdded += OnOccupantsChanged;
-        Site.OccupantRemoved += OnOccupantsChanged;
-    }
-    
-    private void Unsubscribe()
-    {
-        if (Site == null) return;
-        Site.ActiveOperationAdded -= OnOperationsChanged;
-        Site.ActiveOperationRemoved -= OnOperationsChanged;
-        Site.OccupantAdded -= OnOccupantsChanged;
-        Site.OccupantRemoved -= OnOccupantsChanged;
-    }
-    
-    private void OnOperationsChanged(Site site, Operation operation)
-    {
-        EmitSignalOperationsListChanged(string.Join(", ", site.ActiveOperations.Select(op => op.Label)));
-    }
-
-    private void OnOccupantsChanged(Site site, Character character)
-    {
-        EmitSignalOccupantsListChanged(string.Join(", ", site.Occupants.Select(op => op.DisplayName)));
+        if (IsActive)
+            _overlayLayer?.ShowSite(this);
+        else
+            _overlayLayer?.HideSite(this);
     }
 
     private void Register()

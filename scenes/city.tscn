@@ -21,6 +21,8 @@
 [ext_resource type="Resource" uid="uid://b7tckol5hd2qo" path="res://data/plots/debug/Supermarket.tres" id="16_ibljb"]
 [ext_resource type="Script" uid="uid://bl7w3ed4ndm1a" path="res://scripts/navigation/graph/DispatchNavNodeData.cs" id="19_8y5tq"]
 [ext_resource type="Script" uid="uid://2dv840td66r" path="res://scripts/navigation/graph/DispatchNavGraph.cs" id="20_k0m58"]
+[ext_resource type="Script" uid="uid://d1itmpfuekc75" path="res://scripts/presentation/sites/SiteOverlayLayer.cs" id="22_7tlau"]
+[ext_resource type="PackedScene" uid="uid://dncljerw8fgod" path="res://scenes/SiteWidget.tscn" id="23_ikoiv"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_2jj31"]
 
@@ -273,7 +275,7 @@ NodeRadius = 0.2
 EdgeThickness = 1.0
 
 [node name="Node" type="Node3D" parent="Graph" unique_id=379756053 node_paths=PackedStringArray("ConnectedNodes")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4595463, 0, 2.5864043)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3062737, 0, 2.5864043)
 script = ExtResource("3_movw8")
 ConnectedNodes = [NodePath("../Node2"), NodePath("../Node6")]
 
@@ -317,6 +319,19 @@ script = ExtResource("3_movw8")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1429199080]
 transform = Transform3D(0.12940952, 0.9659258, -0.2241439, -0.48296288, 0.25881907, 0.8365163, 0.86602545, 0, 0.49999997, 0, 9, 0)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1775578006]
+
+[node name="UiOverlay" type="Control" parent="CanvasLayer" unique_id=1382234530 node_paths=PackedStringArray("_camera")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("22_7tlau")
+_widgetScene = ExtResource("23_ikoiv")
+_camera = NodePath("../../Camera3D")
 
 [connection signal="PathPreviewChanged" from="Interaction/CityScapeHoverHandler" to="MovementPresentation/MovementPreview" method="OnPathPreviewChanged" flags=3]
 [connection signal="LeftMouse" from="Mouse" to="Interaction/CityScapeClickHandler" method="HandleClick" flags=3]
