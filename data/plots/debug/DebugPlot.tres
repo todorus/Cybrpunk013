@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="PlotResource" format=3 uid="uid://ds4ihbac04hn2"]
+
+[ext_resource type="Resource" uid="uid://blqnsbjfh8ac4" path="res://data/plots/debug/characters/Johnny.tres" id="1_5cpcp"]
+[ext_resource type="Script" uid="uid://bf1baktwficvn" path="res://scripts/authoring/PlotResource.cs" id="1_p28px"]
+
+[resource]
+script = ExtResource("1_p28px")
+_label = "Debug"
+_characters = [ExtResource("1_5cpcp")]
+metadata/_custom_type_script = "uid://bf1baktwficvn"

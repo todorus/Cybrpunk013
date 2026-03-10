@@ -7,9 +7,11 @@ namespace SurveillanceStategodot.scripts.authoring;
 public partial class ScheduleEntryResource : Resource
 {
     /// <summary>Must match the Id of a SiteResource in the scene.</summary>
-    [Export] public string SiteId { get; set; } = "";
+    [Export] 
+    private SiteResource _site;
 
-    [Export] public string OperationLabel { get; set; } = "";
+    [Export] 
+    private string OperationLabel { get; set; } = "";
 
     /// <summary>Dwell / operation duration in world-time seconds.</summary>
     [Export] public double Duration { get; set; } = 10.0;
@@ -17,7 +19,7 @@ public partial class ScheduleEntryResource : Resource
     public ScheduleEntry ToScheduleEntry()
     {
         return new ScheduleEntry(
-            siteId: SiteId,
+            siteId: _site.Id,
             operationLabel: OperationLabel,
             duration: Duration);
     }

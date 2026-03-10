@@ -10,22 +10,23 @@ namespace SurveillanceStategodot.scripts.authoring;
 public partial class ScenarioBootstrapper : Node
 {
     [Export]
-    private SimulationController _simulationController;
-    
-    [Export]
     private PlotResource[] _plotDefinitions = [];
 
-    public override void _Ready()
+    public void Init(SimulationController simulationController)
     {
-        base._Ready();
-        
-        GetTree().Root.FindAllChildrenOfType<SiteNode>()
-            .ForEach(siteNode => siteNode.SimulationController = _simulationController);
+        InitializeSites(simulationController);
+        InitializePlots(simulationController);
     }
-    
-    private void InitializePlots()
+
+    private void InitializeSites(SimulationController simulationController)
     {
-        var world = _simulationController.World;
+        GetTree().Root.FindAllChildrenOfType<SiteNode>()
+            .ForEach(siteNode => siteNode.SimulationController = simulationController);
+    }
+
+    private void InitializePlots(SimulationController simulationController)
+    {
+        var world = simulationController.World;
         foreach (var plotDefinition in _plotDefinitions)
         {
             var plot = plotDefinition.ToPlot();

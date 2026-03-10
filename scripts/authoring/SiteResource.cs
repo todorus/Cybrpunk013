@@ -10,6 +10,7 @@ public partial class SiteResource : Resource
 {
     [Export]
     private string _id = Guid.NewGuid().ToString();
+    public string Id => _id;
     
     [Export]
     private string _label = string.Empty;

@@ -34,7 +34,7 @@ public sealed class PlotSystem : ISimulationSystem
             var firstScheduleEntry = character.Schedule?.Entries[0];
             if (firstScheduleEntry != null)
             {
-                var initialSite = _world.GetSite(character.CurrentSite.Id);
+                var initialSite = _world.GetSite(firstScheduleEntry.SiteId);
                 character.CurrentSite = initialSite;
                 initialSite.AddOccupant(character);
             }

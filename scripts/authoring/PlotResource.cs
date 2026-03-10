@@ -1,11 +1,13 @@
+using System;
 using Godot;
 using SurveillanceStategodot.scripts.domain.plot;
 
 namespace SurveillanceStategodot.scripts.authoring;
 
-public class PlotResource
+[GlobalClass]
+public partial class PlotResource : Resource
 {
-    [Export] private string _id = "";
+    [Export] private string _id = Guid.NewGuid().ToString();
     [Export] private string _label = "";
     [Export] private CharacterResource[] _characters = [];
     

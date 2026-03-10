@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://dd5p2h61x7m2b" path="res://scripts/interaction/CityscapeClickHandler.cs" id="2_4lp1f"]
 [ext_resource type="Script" uid="uid://cx38cosoi2eq8" path="res://scripts/control/mouse/Cursor.cs" id="2_drx7m"]
 [ext_resource type="Script" uid="uid://bhho8byefctvm" path="res://scripts/presentation/movement/MovementPresenter.cs" id="2_f7b0s"]
+[ext_resource type="Resource" uid="uid://ds4ihbac04hn2" path="res://data/plots/debug/DebugPlot.tres" id="2_k0m58"]
 [ext_resource type="Script" uid="uid://dftotlkcpdb05" path="res://scripts/navigation/authoring/DispatchNav.cs" id="2_rqxma"]
 [ext_resource type="Script" uid="uid://b770gq30gc66e" path="res://scripts/presentation/movement/MovementVisualSpawner.cs" id="3_dqb0a"]
 [ext_resource type="Script" uid="uid://dcbooviv3dt56" path="res://scripts/navigation/authoring/NavNode.cs" id="3_movw8"]
@@ -15,10 +16,10 @@
 [ext_resource type="PackedScene" uid="uid://bddt707su5jqy" path="res://scenes/movementVisual.tscn" id="4_hyhbb"]
 [ext_resource type="Script" uid="uid://bmrxenuvdlkao" path="res://scripts/presentation/movement/PathPreviewVisual.cs" id="5_f7b0s"]
 [ext_resource type="Script" uid="uid://butuburmsj1ka" path="res://scripts/interaction/CityscapeHoverHandler.cs" id="7_dqb0a"]
-[ext_resource type="Resource" uid="uid://loons0u6n63u" path="res://data/plots/debug/FriendsHouse.tres" id="11_hlin5"]
+[ext_resource type="Resource" uid="uid://loons0u6n63u" path="res://data/plots/debug/sites/FriendsHouse.tres" id="11_hlin5"]
 [ext_resource type="PackedScene" uid="uid://bdpqjbpepjerm" path="res://scenes/building.tscn" id="13_f7b0s"]
-[ext_resource type="Resource" uid="uid://cb7hj8aw6mvvs" path="res://data/plots/debug/OwesYouMoney.tres" id="14_dqb0a"]
-[ext_resource type="Resource" uid="uid://b7tckol5hd2qo" path="res://data/plots/debug/Supermarket.tres" id="16_ibljb"]
+[ext_resource type="Resource" uid="uid://cb7hj8aw6mvvs" path="res://data/plots/debug/sites/OwesYouMoney.tres" id="14_dqb0a"]
+[ext_resource type="Resource" uid="uid://b7tckol5hd2qo" path="res://data/plots/debug/sites/Supermarket.tres" id="16_ibljb"]
 [ext_resource type="Script" uid="uid://bl7w3ed4ndm1a" path="res://scripts/navigation/graph/DispatchNavNodeData.cs" id="19_8y5tq"]
 [ext_resource type="Script" uid="uid://2dv840td66r" path="res://scripts/navigation/graph/DispatchNavGraph.cs" id="20_k0m58"]
 [ext_resource type="Script" uid="uid://d1itmpfuekc75" path="res://scripts/presentation/sites/SiteOverlayLayer.cs" id="22_7tlau"]
@@ -43,69 +44,69 @@ albedo_color = Color(0.18, 0.28933322, 1, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_oacpt"]
 
-[sub_resource type="Resource" id="Resource_7tlau"]
+[sub_resource type="Resource" id="Resource_ikoiv"]
 script = ExtResource("19_8y5tq")
 Id = "Node"
-Position = Vector3(2.4595463, 0, 2.5864043)
+Position = Vector3(2.3062735, 0, 2.5864043)
 Outgoing = Array[int]([1, 6, 8])
 
-[sub_resource type="Resource" id="Resource_ikoiv"]
+[sub_resource type="Resource" id="Resource_kg0fi"]
 script = ExtResource("19_8y5tq")
 Id = "Node2"
 Position = Vector3(2.072, 0, 9.405)
 Outgoing = Array[int]([0, 2])
 
-[sub_resource type="Resource" id="Resource_kg0fi"]
+[sub_resource type="Resource" id="Resource_0orsp"]
 script = ExtResource("19_8y5tq")
 Id = "Node9"
 Position = Vector3(-3.746861, 0, 9.488001)
 Outgoing = Array[int]([1, 3])
 
-[sub_resource type="Resource" id="Resource_0orsp"]
+[sub_resource type="Resource" id="Resource_h3250"]
 script = ExtResource("19_8y5tq")
 Id = "Node3"
 Position = Vector3(-10.202908, 0, 8.668036)
 Outgoing = Array[int]([2, 4])
 
-[sub_resource type="Resource" id="Resource_h3250"]
+[sub_resource type="Resource" id="Resource_my70f"]
 script = ExtResource("19_8y5tq")
 Id = "Node4"
 Position = Vector3(-9.06818, -9.536743e-07, 1.6362879)
 Outgoing = Array[int]([3, 5])
 
-[sub_resource type="Resource" id="Resource_my70f"]
+[sub_resource type="Resource" id="Resource_86b61"]
 script = ExtResource("19_8y5tq")
 Id = "Node7"
 Position = Vector3(-5.7891464, -9.536743e-07, 1.9411521)
 Outgoing = Array[int]([4, 6, 7])
 
-[sub_resource type="Resource" id="Resource_86b61"]
+[sub_resource type="Resource" id="Resource_nmpot"]
 script = ExtResource("19_8y5tq")
 Id = "Node8"
 Position = Vector3(-1.8786058, -9.536743e-07, 2.5961754)
 Outgoing = Array[int]([0, 5])
 
-[sub_resource type="Resource" id="Resource_nmpot"]
+[sub_resource type="Resource" id="Resource_hks51"]
 script = ExtResource("19_8y5tq")
 Id = "Node5"
 Position = Vector3(-4.798525, 0, -5.225782)
 Outgoing = Array[int]([5, 8])
 
-[sub_resource type="Resource" id="Resource_hks51"]
+[sub_resource type="Resource" id="Resource_gi457"]
 script = ExtResource("19_8y5tq")
 Id = "Node6"
 Position = Vector3(2.9466138, 0, -3.963666)
 Outgoing = Array[int]([0, 7])
 
-[sub_resource type="Resource" id="Resource_gi457"]
+[sub_resource type="Resource" id="Resource_w6q1s"]
 script = ExtResource("20_k0m58")
-Nodes = Array[ExtResource("19_8y5tq")]([SubResource("Resource_7tlau"), SubResource("Resource_ikoiv"), SubResource("Resource_kg0fi"), SubResource("Resource_0orsp"), SubResource("Resource_h3250"), SubResource("Resource_my70f"), SubResource("Resource_86b61"), SubResource("Resource_nmpot"), SubResource("Resource_hks51")])
+Nodes = Array[ExtResource("19_8y5tq")]([SubResource("Resource_ikoiv"), SubResource("Resource_kg0fi"), SubResource("Resource_0orsp"), SubResource("Resource_h3250"), SubResource("Resource_my70f"), SubResource("Resource_86b61"), SubResource("Resource_nmpot"), SubResource("Resource_hks51"), SubResource("Resource_gi457")])
 
 [node name="Root" type="Node3D" unique_id=1113144064]
 
-[node name="Bootstrap" type="Node" parent="." unique_id=1907404859 node_paths=PackedStringArray("_simulationController")]
+[node name="Bootstrap" type="Node" parent="." unique_id=1907404859]
 script = ExtResource("1_8y5tq")
-_simulationController = NodePath("../Simulation")
+_plotDefinitions = [ExtResource("2_k0m58")]
 
 [node name="Simulation" type="Node" parent="." unique_id=488995100 node_paths=PackedStringArray("_dispatchNav")]
 script = ExtResource("1_hyhbb")
@@ -269,13 +270,13 @@ mesh = SubResource("BoxMesh_oacpt")
 
 [node name="Graph" type="Node3D" parent="." unique_id=1366666781]
 script = ExtResource("2_rqxma")
-Graph = SubResource("Resource_gi457")
+Graph = SubResource("Resource_w6q1s")
 NodeColor = Color(0.32000005, 0.19999999, 1, 1)
 NodeRadius = 0.2
 EdgeThickness = 1.0
 
 [node name="Node" type="Node3D" parent="Graph" unique_id=379756053 node_paths=PackedStringArray("ConnectedNodes")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3062737, 0, 2.5864043)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3062735, 0, 2.5864043)
 script = ExtResource("3_movw8")
 ConnectedNodes = [NodePath("../Node2"), NodePath("../Node6")]
 
@@ -333,6 +334,7 @@ script = ExtResource("22_7tlau")
 _widgetScene = ExtResource("23_ikoiv")
 _camera = NodePath("../../Camera3D")
 
+[connection signal="SimulationInitialized" from="Simulation" to="Bootstrap" method="Init" flags=3]
 [connection signal="PathPreviewChanged" from="Interaction/CityScapeHoverHandler" to="MovementPresentation/MovementPreview" method="OnPathPreviewChanged" flags=3]
 [connection signal="LeftMouse" from="Mouse" to="Interaction/CityScapeClickHandler" method="HandleClick" flags=3]
 [connection signal="Move" from="Mouse" to="Interaction/CityScapeHoverHandler" method="HandleMove" flags=3]
