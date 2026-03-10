@@ -24,13 +24,10 @@ public partial class SimulationController : Node
         World = new WorldState();
         EventBus = new SimulationEventBus();
 
-        var scheduleSystem = new ScheduleSystem(_dispatchNav);
-        var interruptSystem = new InterruptSystem(scheduleSystem);
-
         // Order matters: Schedule and Interrupt decide what to issue,
         // then AssignmentSystem executes the resulting events in the same frame.
-        _systems.Add(scheduleSystem);
-        _systems.Add(interruptSystem);
+        _systems.Add(new ScheduleSystem(_dispatchNav));
+        _systems.Add(new InterruptSystem());
         _systems.Add(new AssignmentSystem(_dispatchNav));
         _systems.Add(new MovementSystem());
         _systems.Add(new OperationSystem());

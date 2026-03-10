@@ -1,21 +1,13 @@
 using Godot;
 using SurveillanceStategodot.scripts.domain.assignment;
-using SurveillanceStategodot.scripts.domain.schedule;
 using SurveillanceStategodot.scripts.domain.system;
 
 namespace SurveillanceStategodot.scripts.domain.interrupt;
 
 public sealed class InterruptSystem : ISimulationSystem
 {
-    private readonly ScheduleSystem _scheduleSystem;
-
     private WorldState _world = null!;
     private SimulationEventBus _eventBus = null!;
-
-    public InterruptSystem(ScheduleSystem scheduleSystem)
-    {
-        _scheduleSystem = scheduleSystem;
-    }
 
     public void Initialize(WorldState world, SimulationEventBus eventBus)
     {
@@ -58,25 +50,18 @@ public sealed class InterruptSystem : ISimulationSystem
                 case InterruptDisposition.Suspend:
                     // Save baseline assignment so it can be resumed later.
                     character.SuspendedAssignment = currentAssignment;
-                    _scheduleSystem.SuppressCharacter(character.Id);
                     CancelAssignment(currentAssignment, evt.Time);
                     break;
 
                 case InterruptDisposition.Replace:
-                    // Cancel without saving; schedule will issue next entry when interrupt clears.
+                    // Cancel without saving; schedule resumes from next entry when interrupt clears.
                     character.SuspendedAssignment = null;
-                    _scheduleSystem.SuppressCharacter(character.Id);
                     CancelAssignment(currentAssignment, evt.Time);
                     break;
             }
         }
-        else
-        {
-            // Character was idle; suppress schedule from issuing new work.
-            _scheduleSystem.SuppressCharacter(character.Id);
-        }
 
-        // Apply the interrupt.
+        // Apply the interrupt — state change before events.
         interrupt.IsActive = true;
         character.ActiveInterrupt = interrupt;
 
@@ -84,7 +69,6 @@ public sealed class InterruptSystem : ISimulationSystem
         interrupt.ReplacementAssignment.Source = AssignmentSource.Interrupt;
         interrupt.ReplacementAssignment.InterruptId = interrupt.Id;
 
-        // State change done — now publish events.
         _eventBus.Publish(new InterruptAppliedEvent(interrupt, evt.Time));
         _eventBus.Publish(new AssignmentCreatedEvent(interrupt.ReplacementAssignment, evt.Time));
     }
@@ -110,6 +94,7 @@ public sealed class InterruptSystem : ISimulationSystem
     {
         var character = interrupt.Character;
 
+        // State change first.
         interrupt.IsActive = false;
         character.ActiveInterrupt = null;
 
@@ -118,17 +103,14 @@ public sealed class InterruptSystem : ISimulationSystem
             var suspended = character.SuspendedAssignment;
             character.SuspendedAssignment = null;
 
-            _scheduleSystem.UnsuppressCharacter(character.Id);
-
             if (suspended != null)
             {
-                // Resume the suspended baseline assignment from scratch (re-issue it).
-                // We re-publish AssignmentCreatedEvent so AssignmentSystem handles it cleanly.
-                // Reset phase so AssignmentSystem starts it fresh from outbound movement.
+                // Re-issue the suspended baseline assignment from the start.
                 suspended.Phase = AssignmentPhase.OutboundMovement;
                 _eventBus.Publish(new AssignmentCreatedEvent(suspended, time));
             }
-            // If no suspended assignment, ScheduleSystem will issue the next entry on next Tick.
+            // If no suspended assignment, character.ActiveInterrupt is now null and
+            // ScheduleSystem.Tick will issue the next schedule entry on the next frame.
         }
 
         _eventBus.Publish(new InterruptClearedEvent(interrupt, time));
@@ -137,7 +119,6 @@ public sealed class InterruptSystem : ISimulationSystem
     private void CancelAssignment(Assignment assignment, double time)
     {
         assignment.Phase = AssignmentPhase.Cancelled;
-        // State change first, then event — MovementSystem will remove the in-flight movement.
         _eventBus.Publish(new AssignmentCancelledEvent(assignment, time));
     }
 
@@ -154,6 +135,3 @@ public sealed class InterruptSystem : ISimulationSystem
         return null;
     }
 }
-
-
-

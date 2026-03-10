@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Godot;
 using SurveillanceStategodot.scripts.domain.assignment;
 using SurveillanceStategodot.scripts.domain.movement;
@@ -17,10 +16,6 @@ public sealed class ScheduleSystem : ISimulationSystem
     private WorldState _world = null!;
     private SimulationEventBus _eventBus = null!;
 
-    // Characters whose schedule is currently suspended by an interrupt are excluded from
-    // idle-detection until the interrupt clears and this set is updated by InterruptSystem.
-    private readonly HashSet<string> _suppressedCharacterIds = new();
-
     public ScheduleSystem(DispatchNav dispatchNav)
     {
         _dispatchNav = dispatchNav;
@@ -30,8 +25,6 @@ public sealed class ScheduleSystem : ISimulationSystem
     {
         _world = world;
         _eventBus = eventBus;
-
-        _eventBus.Subscribe<AssignmentCompletedEvent>(OnAssignmentCompleted);
     }
 
     public void Tick(double delta)
@@ -41,9 +34,7 @@ public sealed class ScheduleSystem : ISimulationSystem
             if (character.Schedule == null || !character.Schedule.HasEntries)
                 continue;
 
-            if (_suppressedCharacterIds.Contains(character.Id))
-                continue;
-
+            // Skip characters under an active interrupt — InterruptSystem owns their assignment slot.
             if (character.ActiveInterrupt != null)
                 continue;
 
@@ -52,20 +43,6 @@ public sealed class ScheduleSystem : ISimulationSystem
 
             IssueNextScheduleAssignment(character);
         }
-    }
-
-    /// <summary>Called by InterruptSystem when it takes over a character's schedule slot.</summary>
-    public void SuppressCharacter(string characterId) =>
-        _suppressedCharacterIds.Add(characterId);
-
-    /// <summary>Called by InterruptSystem when an interrupt clears and baseline should resume.</summary>
-    public void UnsuppressCharacter(string characterId) =>
-        _suppressedCharacterIds.Remove(characterId);
-
-    private void OnAssignmentCompleted(AssignmentCompletedEvent evt)
-    {
-        // Nothing extra needed — Tick() will see the character is idle next frame and
-        // issue the next schedule entry automatically.
     }
 
     private void IssueNextScheduleAssignment(Character character)
@@ -131,6 +108,3 @@ public sealed class ScheduleSystem : ISimulationSystem
         _eventBus.Publish(new AssignmentCreatedEvent(assignment, _world.Time));
     }
 }
-
-
-
