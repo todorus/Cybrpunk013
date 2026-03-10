@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using SurveillanceStategodot.scripts.domain.assignment;
 using SurveillanceStategodot.scripts.domain.operation;
+using SurveillanceStategodot.scripts.domain.plot;
 
 namespace SurveillanceStategodot.scripts.domain.system;
 
@@ -11,6 +12,7 @@ public sealed class WorldState
     public List<Site> Sites { get; } = new();
     public List<Character> Characters { get; } = new();
     public List<Assignment> Assignments { get; } = new();
+    public List<Plot> Plots { get; } = new();
 
     private readonly Dictionary<string, Site> _sitesById = new();
     private readonly Dictionary<string, Assignment> _assignmentsById = new();
@@ -57,6 +59,19 @@ public sealed class WorldState
 
         _assignmentsById[assignment.Id] = assignment;
         _assignmentsByOperationId[assignment.Operation.Id] = assignment;
+    }
+    
+    public void RegisterPlot(Plot plot)
+    {
+        if (!Plots.Contains(plot))
+        {
+            Plots.Add(plot);
+        }
+        
+        foreach (var character in plot.Characters)
+        {
+            RegisterCharacter(character);
+        }
     }
 
     public bool TryGetAssignmentByOperationId(string operationId, out Assignment assignment)
