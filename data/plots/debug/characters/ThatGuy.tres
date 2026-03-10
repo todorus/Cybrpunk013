@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="CharacterResource" format=3 uid="uid://di3y6mgsgkv7d"]
+
+[ext_resource type="Script" uid="uid://c0yjrfoocvmxf" path="res://scripts/authoring/CharacterResource.cs" id="1_jq7el"]
+[ext_resource type="Resource" uid="uid://cbqxkjux6wtuw" path="res://data/plots/debug/characters/ThatGuySchedule.tres" id="1_mx4so"]
+
+[resource]
+script = ExtResource("1_jq7el")
+_displayName = "That Guy"
+Schedule = ExtResource("1_mx4so")
+metadata/_custom_type_script = "uid://c0yjrfoocvmxf"

@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://c2f64asqiu5x2" path="res://scripts/authoring/ScheduleResource.cs" id="1_ngw36"]
 [ext_resource type="Resource" uid="uid://loons0u6n63u" path="res://data/plots/debug/sites/FriendsHouse.tres" id="1_sdlkf"]
 [ext_resource type="Script" uid="uid://btw5fpkqcpsdy" path="res://scripts/authoring/ScheduleEntryResource.cs" id="2_d1u4u"]
-[ext_resource type="Resource" uid="uid://b7tckol5hd2qo" path="res://data/plots/debug/sites/Supermarket.tres" id="3_xltpj"]
+[ext_resource type="Resource" uid="uid://dtiqcvuk47nn7" path="res://data/plots/debug/schedule/DoGroceries.tres" id="3_sdlkf"]
 
 [sub_resource type="Resource" id="Resource_s771h"]
 script = ExtResource("2_d1u4u")
@@ -11,14 +11,7 @@ _site = ExtResource("1_sdlkf")
 OperationLabel = "Abide"
 metadata/_custom_type_script = "uid://btw5fpkqcpsdy"
 
-[sub_resource type="Resource" id="Resource_61htn"]
-script = ExtResource("2_d1u4u")
-_site = ExtResource("3_xltpj")
-OperationLabel = "Do Groceries"
-Duration = 2.0
-metadata/_custom_type_script = "uid://btw5fpkqcpsdy"
-
 [resource]
 script = ExtResource("1_ngw36")
-Entries = [SubResource("Resource_s771h"), SubResource("Resource_61htn")]
+Entries = [SubResource("Resource_s771h"), ExtResource("3_sdlkf")]
 metadata/_custom_type_script = "uid://c2f64asqiu5x2"

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ScheduleEntryResource" format=3 uid="uid://dtiqcvuk47nn7"]
+
+[ext_resource type="Resource" uid="uid://b7tckol5hd2qo" path="res://data/plots/debug/sites/Supermarket.tres" id="1_doy7i"]
+[ext_resource type="Script" uid="uid://btw5fpkqcpsdy" path="res://scripts/authoring/ScheduleEntryResource.cs" id="2_stjw6"]
+
+[resource]
+script = ExtResource("2_stjw6")
+_site = ExtResource("1_doy7i")
+OperationLabel = "Do Groceries"
+Duration = 2.0
+metadata/_custom_type_script = "uid://btw5fpkqcpsdy"

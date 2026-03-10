@@ -2,9 +2,10 @@
 
 [ext_resource type="Resource" uid="uid://blqnsbjfh8ac4" path="res://data/plots/debug/characters/Johnny.tres" id="1_5cpcp"]
 [ext_resource type="Script" uid="uid://bf1baktwficvn" path="res://scripts/authoring/PlotResource.cs" id="1_p28px"]
+[ext_resource type="Resource" uid="uid://di3y6mgsgkv7d" path="res://data/plots/debug/characters/ThatGuy.tres" id="2_accvb"]
 
 [resource]
 script = ExtResource("1_p28px")
 _label = "Debug"
-_characters = [ExtResource("1_5cpcp")]
+_characters = [ExtResource("1_5cpcp"), ExtResource("2_accvb")]
 metadata/_custom_type_script = "uid://bf1baktwficvn"
