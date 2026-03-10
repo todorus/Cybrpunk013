@@ -9,7 +9,7 @@ namespace SurveillanceStategodot.scripts.domain.vision;
 
 public sealed class VisionSystem : ISimulationSystem
 {
-    private const float DefaultOperatorVisionRange = 10f;
+    private readonly float _operatorVisionRange;
     private const string StakeoutOperationLabel = "Stakeout";
 
     private WorldState _world = null!;
@@ -21,6 +21,11 @@ public sealed class VisionSystem : ISimulationSystem
     // Prevent spam from emitting "moving" observations every frame.
     private readonly Dictionary<(string sourceId, string targetCharacterId, string operationId), double> _lastObservationTimes = new();
     private const double MovingObservationCooldownSeconds = 5.0;
+
+    public VisionSystem(float operatorVisionRange)
+    {
+        _operatorVisionRange = operatorVisionRange;
+    }
 
     public void Initialize(WorldState world, SimulationEventBus eventBus)
     {
@@ -49,7 +54,7 @@ public sealed class VisionSystem : ISimulationSystem
             id: $"movement:{evt.Movement.Id}",
             owner: character,
             type: VisionSourceType.MovingOperator,
-            range: DefaultOperatorVisionRange)
+            range: _operatorVisionRange)
         {
             WorldPosition = evt.Movement.CurrentWorldPosition
         };
@@ -101,6 +106,8 @@ public sealed class VisionSystem : ISimulationSystem
     {
         foreach (var source in EnumerateGraphVisionSources())
         {
+            if (evt.Character.IsOperator)
+                continue;
             if (source.WorldPosition.DistanceTo(evt.Site.GlobalPosition) > source.Range)
                 continue;
 
@@ -115,6 +122,8 @@ public sealed class VisionSystem : ISimulationSystem
     {
         foreach (var source in EnumerateGraphVisionSources())
         {
+            if (evt.Character.IsOperator)
+                continue;
             if (source.WorldPosition.DistanceTo(evt.Site.GlobalPosition) > source.Range)
                 continue;
 
@@ -143,7 +152,7 @@ public sealed class VisionSystem : ISimulationSystem
             id: $"operation:{operation.Id}",
             owner: owner,
             type: VisionSourceType.StakeoutPost,
-            range: DefaultOperatorVisionRange)
+            range: _operatorVisionRange)
         {
             SiteContext = operation.SiteContext,
             WorldPosition = operation.SiteContext.GlobalPosition

@@ -18,6 +18,8 @@ public partial class SimulationController : Node
     [Signal] 
     public delegate void SimulationInitializedEventHandler(SimulationController controller);
     
+    [Export] private float _operatorVisionRange = 3f;
+    
     [Export] private DispatchNav _dispatchNav = null!;
 
     public WorldState World { get; private set; } = null!;
@@ -41,7 +43,7 @@ public partial class SimulationController : Node
         _systems.Add(new MovementSystem());
         _systems.Add(new OperationSystem());
         
-        _systems.Add(new VisionSystem());
+        _systems.Add(new VisionSystem(_operatorVisionRange));
         _systems.Add(new ObservationLogSystem());
 
         foreach (var system in _systems)

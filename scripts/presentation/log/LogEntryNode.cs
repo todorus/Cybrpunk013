@@ -21,10 +21,10 @@ public partial class LogEntryNode : Control
     {
         set
         {
-            var site = WorldState.GetSite(value?.SiteId);
-            var character = WorldState.GetCharacter(value?.CharacterId);
-            EmitSignalSiteLabel(site.Label);
-            EmitSignalCharacterLabel(character.DisplayName);
+            var site = value?.SiteId != null ? WorldState.GetSite(value.SiteId) : null;
+            var character = value?.CharacterId != null ? WorldState.GetCharacter(value.CharacterId) : null;
+            EmitSignalSiteLabel(site?.Label);
+            EmitSignalCharacterLabel(character?.DisplayName);
         }
     }
 }
