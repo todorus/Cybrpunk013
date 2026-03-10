@@ -64,7 +64,8 @@ public partial class CityscapeClickHandler : Node
             currentMovement: movement)
         {
             CompletionBehavior = AssignmentCompletionBehavior.ReturnToBase,
-            BaseWorldPosition = _operatorBaseWorldPosition.GlobalPosition
+            BaseWorldPosition = _operatorBaseWorldPosition.GlobalPosition,
+            Source = AssignmentSource.PlayerOrder
         };
 
         _simulationController.EventBus.Publish(

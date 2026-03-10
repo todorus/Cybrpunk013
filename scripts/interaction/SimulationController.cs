@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using Godot;
 using SurveillanceStategodot.scripts.domain.assignment;
+using SurveillanceStategodot.scripts.domain.interrupt;
 using SurveillanceStategodot.scripts.domain.movement;
 using SurveillanceStategodot.scripts.domain.operation;
+using SurveillanceStategodot.scripts.domain.schedule;
 using SurveillanceStategodot.scripts.domain.system;
 using SurveillanceStategodot.scripts.navigation.authoring;
 
@@ -22,6 +24,13 @@ public partial class SimulationController : Node
         World = new WorldState();
         EventBus = new SimulationEventBus();
 
+        var scheduleSystem = new ScheduleSystem(_dispatchNav);
+        var interruptSystem = new InterruptSystem(scheduleSystem);
+
+        // Order matters: Schedule and Interrupt decide what to issue,
+        // then AssignmentSystem executes the resulting events in the same frame.
+        _systems.Add(scheduleSystem);
+        _systems.Add(interruptSystem);
         _systems.Add(new AssignmentSystem(_dispatchNav));
         _systems.Add(new MovementSystem());
         _systems.Add(new OperationSystem());

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using SurveillanceStategodot.scripts.domain.assignment;
 using SurveillanceStategodot.scripts.domain.operation;
 using SurveillanceStategodot.scripts.domain.system;
 
@@ -20,6 +21,7 @@ public sealed class MovementSystem : ISimulationSystem
         _eventBus = eventBus;
 
         _eventBus.Subscribe<MovementStartedEvent>(OnMovementStarted);
+        _eventBus.Subscribe<AssignmentCancelledEvent>(OnAssignmentCancelled);
     }
 
     public void Tick(double delta)
@@ -62,6 +64,21 @@ public sealed class MovementSystem : ISimulationSystem
             evt.Movement.Character.CurrentMovement = evt.Movement;
             evt.Movement.Character.CurrentSite?.RemoveOccupant(evt.Movement.Character);
             evt.Movement.Character.CurrentSite = null;
+        }
+    }
+
+    private void OnAssignmentCancelled(AssignmentCancelledEvent evt)
+    {
+        var movement = evt.Assignment.CurrentMovement;
+        if (movement == null)
+            return;
+
+        _activeMovements.Remove(movement);
+
+        if (movement.Character != null)
+        {
+            movement.Character.CurrentMovement = null;
+            // Character remains at CurrentSite (wherever they were when cancelled).
         }
     }
 }

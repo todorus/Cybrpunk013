@@ -14,6 +14,10 @@ public sealed class Assignment
 
     public AssignmentCompletionBehavior CompletionBehavior { get; set; } = AssignmentCompletionBehavior.None;
     public AssignmentPhase Phase { get; set; } = AssignmentPhase.OutboundMovement;
+    public AssignmentSource Source { get; set; } = AssignmentSource.PlayerOrder;
+
+    // Set when Source == Interrupt; links back to the originating CharacterInterrupt.
+    public string? InterruptId { get; set; }
 
     // Optional explicit home/base destination for return logic.
     public Vector3? BaseWorldPosition { get; set; }

@@ -35,6 +35,11 @@ public sealed class WorldState
         return _sitesById[id];
     }
 
+    public bool TryGetSite(string id, out Site? site)
+    {
+        return _sitesById.TryGetValue(id, out site);
+    }
+
     public void RegisterCharacter(Character character)
     {
         if (!Characters.Contains(character))
@@ -72,5 +77,32 @@ public sealed class WorldState
 
         assignment = null;
         return false;
+    }
+
+    /// <summary>
+    /// Returns true when a character has an assignment that is not yet completed or cancelled.
+    /// </summary>
+    public bool HasActiveAssignmentForCharacter(string characterId)
+    {
+        return GetActiveAssignmentForCharacter(characterId) != null;
+    }
+
+    /// <summary>
+    /// Returns the first non-completed, non-cancelled assignment for the given character, or null.
+    /// </summary>
+    public Assignment? GetActiveAssignmentForCharacter(string characterId)
+    {
+        foreach (var assignment in Assignments)
+        {
+            if (assignment.Character?.Id != characterId)
+                continue;
+
+            if (assignment.Phase is AssignmentPhase.Completed or AssignmentPhase.Cancelled)
+                continue;
+
+            return assignment;
+        }
+
+        return null;
     }
 }
