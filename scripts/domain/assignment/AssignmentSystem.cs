@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using Godot;
 using SurveillanceStategodot.scripts.domain.movement;
 using SurveillanceStategodot.scripts.domain.operation;
@@ -105,15 +104,12 @@ public sealed class AssignmentSystem : ISimulationSystem
 
         if (operation.SiteContext != null)
         {
-            if (assignment.Character != null && !operation.SiteContext.Occupants.Contains(assignment.Character))
+            if (assignment.Character != null)
             {
                 operation.SiteContext.AddOccupant(assignment.Character);
             }
 
-            if (!operation.SiteContext.ActiveOperations.Contains(operation))
-            {
-                operation.SiteContext.AddActiveOperation(operation);
-            }
+            operation.SiteContext.AddActiveOperation(operation);
         }
 
         operation.Start(worldTime);

@@ -44,7 +44,8 @@ public partial class CityscapeClickHandler : Node
 
         var character = new Character(
             id: Guid.NewGuid().ToString(),
-            displayName: $"Operator {_operatorCount++}"
+            displayName: $"Operator {_operatorCount++}",
+            isOperator: true
         );
         
         var movement = new Movement(

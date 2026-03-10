@@ -12,6 +12,8 @@ public sealed class Character
 {
     public string Id { get; }
     public string DisplayName { get; set; }
+    public bool IsOperator { get; set; }
+    
     public SuspicionLevel SuspicionLevel { get; set; } = SuspicionLevel.None;
 
     public Schedule? Schedule { get; set; }
@@ -29,9 +31,10 @@ public sealed class Character
 
     public List<Interceptor> Interceptors { get; } = new();
 
-    public Character(string id, string displayName)
+    public Character(string id, string displayName, bool isOperator = false)
     {
         Id = id;
         DisplayName = displayName;
+        IsOperator = isOperator;
     }
 }

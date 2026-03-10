@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using SurveillanceStategodot.scripts.domain.assignment;
 using SurveillanceStategodot.scripts.domain.operation;
 using SurveillanceStategodot.scripts.domain.system;
@@ -41,10 +40,15 @@ public sealed class MovementSystem : ISimulationSystem
                 movement.Character.CurrentMovement = null;
                 movement.Character.CurrentSite = movement.Destination;
 
-                if (movement.Destination != null &&
-                    !movement.Destination.Occupants.Contains(movement.Character))
+                if (movement.Destination != null)
                 {
                     movement.Destination.AddOccupant(movement.Character);
+
+                    _eventBus.Publish(new CharacterEnteredSiteEvent(
+                        movement.Character,
+                        movement.Destination,
+                        CurrentOperation: null,
+                        _world.Time));
                 }
             }
 
@@ -61,9 +65,23 @@ public sealed class MovementSystem : ISimulationSystem
 
         if (evt.Movement.Character != null)
         {
-            evt.Movement.Character.CurrentMovement = evt.Movement;
-            evt.Movement.Character.CurrentSite?.RemoveOccupant(evt.Movement.Character);
-            evt.Movement.Character.CurrentSite = null;
+            var character = evt.Movement.Character;
+            var previousSite = character.CurrentSite;
+
+            character.CurrentMovement = evt.Movement;
+
+            if (previousSite != null)
+            {
+                previousSite.RemoveOccupant(character);
+
+                _eventBus.Publish(new CharacterExitedSiteEvent(
+                    character,
+                    previousSite,
+                    CurrentOperation: null,
+                    _world.Time));
+            }
+
+            character.CurrentSite = null;
         }
     }
 
@@ -78,7 +96,6 @@ public sealed class MovementSystem : ISimulationSystem
         if (movement.Character != null)
         {
             movement.Character.CurrentMovement = null;
-            // Character remains at CurrentSite (wherever they were when cancelled).
         }
     }
 }
