@@ -7,6 +7,7 @@ public sealed class Observation
     public string? CharacterId { get; }
     public string? OperationId { get; }
     public double Time { get; }
+    public ObservationType ObservationType { get; }
 
     // Optional label snapshots for UI convenience.
     public string? SiteLabelSnapshot { get; }
@@ -19,6 +20,7 @@ public sealed class Observation
         string? characterId,
         string? operationId,
         double time,
+        ObservationType observationType,
         string? siteLabelSnapshot = null,
         string? characterLabelSnapshot = null,
         string? operationLabelSnapshot = null)
@@ -28,6 +30,7 @@ public sealed class Observation
         CharacterId = characterId;
         OperationId = operationId;
         Time = time;
+        ObservationType = observationType;
         SiteLabelSnapshot = siteLabelSnapshot;
         CharacterLabelSnapshot = characterLabelSnapshot;
         OperationLabelSnapshot = operationLabelSnapshot;

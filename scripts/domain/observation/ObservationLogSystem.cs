@@ -32,7 +32,8 @@ public sealed class ObservationLogSystem : ISimulationSystem
         var key = new ObservationLogKey(
             obs.SiteId,
             obs.CharacterId,
-            obs.OperationId);
+            obs.OperationId,
+            obs.ObservationType);
 
         if (_entries.TryGetValue(key, out var existing))
         {

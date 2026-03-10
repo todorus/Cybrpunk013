@@ -13,8 +13,12 @@ script = ExtResource("1_8keu2")
 [node name="Character" type="Label" parent="." unique_id=554729154]
 layout_mode = 2
 
+[node name="Action" type="Label" parent="." unique_id=1493459047]
+layout_mode = 2
+
 [node name="Site" type="Label" parent="." unique_id=1686595891]
 layout_mode = 2
 
 [connection signal="CharacterLabel" from="." to="Character" method="set_text" flags=3]
+[connection signal="OperationLabel" from="." to="Action" method="set_text" flags=3]
 [connection signal="SiteLabel" from="." to="Site" method="set_text" flags=3]

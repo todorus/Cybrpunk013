@@ -23,8 +23,10 @@ public partial class LogEntryNode : Control
         {
             var site = value?.SiteId != null ? WorldState.GetSite(value.SiteId) : null;
             var character = value?.CharacterId != null ? WorldState.GetCharacter(value.CharacterId) : null;
+            var type = value?.ObservationType.ToString();
             EmitSignalSiteLabel(site?.Label);
             EmitSignalCharacterLabel(character?.DisplayName);
+            EmitSignalOperationLabel(type);
         }
     }
 }

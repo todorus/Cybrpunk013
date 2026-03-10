@@ -98,7 +98,8 @@ public sealed class VisionSystem : ISimulationSystem
             PublishObservation(
                 site: null,
                 character: candidate,
-                operation: null);
+                operation: null,
+                observationType: ObservationType.SpottedMoving);
         }
     }
 
@@ -114,7 +115,8 @@ public sealed class VisionSystem : ISimulationSystem
             PublishObservation(
                 site: evt.Site,
                 character: evt.Character,
-                operation: evt.CurrentOperation);
+                operation: evt.CurrentOperation,
+                observationType: ObservationType.EnteredSite);
         }
     }
 
@@ -130,7 +132,8 @@ public sealed class VisionSystem : ISimulationSystem
             PublishObservation(
                 site: evt.Site,
                 character: evt.Character,
-                operation: evt.CurrentOperation);
+                operation: evt.CurrentOperation,
+                observationType: ObservationType.ExitedSite);
         }
     }
 
@@ -192,8 +195,8 @@ public sealed class VisionSystem : ISimulationSystem
     private void PublishObservation(
         Site? site,
         Character? character,
-        Operation? operation
-    )
+        Operation? operation,
+        ObservationType observationType)
     {
         var observation = new Observation(
             id: Guid.NewGuid().ToString(),
@@ -201,6 +204,7 @@ public sealed class VisionSystem : ISimulationSystem
             characterId: character?.Id,
             operationId: operation?.Id,
             time: _world.Time,
+            observationType: observationType,
             siteLabelSnapshot: site?.Label,
             characterLabelSnapshot: character?.DisplayName,
             operationLabelSnapshot: operation?.Label);

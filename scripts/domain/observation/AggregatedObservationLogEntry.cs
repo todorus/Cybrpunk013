@@ -6,6 +6,7 @@ public sealed class AggregatedObservationLogEntry
     public string SiteLabel { get; }
     public string CharacterLabel { get; }
     public string OperationLabel { get; }
+    public ObservationType ObservationType => Key.ObservationType;
 
     public int Count { get; private set; }
     public double FirstSeenTime { get; private set; }
