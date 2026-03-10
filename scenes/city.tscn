@@ -357,6 +357,7 @@ script = ExtResource("23_kg0fi")
 _simulationController = NodePath("../../../Simulation")
 _LogEntryScene = ExtResource("24_0orsp")
 
+[connection signal="OperaterVisionRangeChanged" from="Simulation" to="MovementPresentation/MovementSpawner" method="SetOperatorVisionRange" flags=3]
 [connection signal="SimulationInitialized" from="Simulation" to="Bootstrap" method="Init" flags=3]
 [connection signal="PathPreviewChanged" from="Interaction/CityScapeHoverHandler" to="MovementPresentation/MovementPreview" method="OnPathPreviewChanged" flags=3]
 [connection signal="LeftMouse" from="Mouse" to="Interaction/CityScapeClickHandler" method="HandleClick" flags=3]

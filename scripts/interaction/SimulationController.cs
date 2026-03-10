@@ -18,6 +18,9 @@ public partial class SimulationController : Node
     [Signal] 
     public delegate void SimulationInitializedEventHandler(SimulationController controller);
     
+    [Signal]
+    public delegate void OperaterVisionRangeChangedEventHandler(float range);
+    
     [Export] private float _operatorVisionRange = 3f;
     
     [Export] private DispatchNav _dispatchNav = null!;
@@ -29,6 +32,8 @@ public partial class SimulationController : Node
 
     public override void _Ready()
     {
+        EmitSignalOperaterVisionRangeChanged(_operatorVisionRange);
+        
         World = new WorldState();
         EventBus = new SimulationEventBus();
 

@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bddt707su5jqy"]
 
 [ext_resource type="Script" uid="uid://dc88n5xrsjwhv" path="res://scripts/presentation/movement/MovementVisual.cs" id="1_8oifj"]
+[ext_resource type="Script" uid="uid://tv5joni3f3f1" path="res://scripts/presentation/movement/RangeVisual.cs" id="2_2lj2e"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_bih7l"]
 
@@ -29,4 +30,9 @@ disabled = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0053201, 0)
 billboard = 1
 
+[node name="Vision" type="MeshInstance3D" parent="." unique_id=468167183]
+script = ExtResource("2_2lj2e")
+
 [connection signal="CharacterNameChanged" from="." to="Label3D" method="set_text" flags=3]
+[connection signal="ShowRangeVisual" from="." to="Vision" method="set_visible" flags=3]
+[connection signal="VisionRangeChanged" from="." to="Vision" method="SetRange" flags=3]
