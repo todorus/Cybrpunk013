@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://nbdp410wp7q8"]
+
+[ext_resource type="Script" uid="uid://3mjmxshjmmcm" path="res://scripts/presentation/log/LogEntryNode.cs" id="1_8keu2"]
+
+[node name="LogEntry" type="HBoxContainer" unique_id=1265574510]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_8keu2")
+
+[node name="Character" type="Label" parent="." unique_id=554729154]
+layout_mode = 2
+
+[node name="Site" type="Label" parent="." unique_id=1686595891]
+layout_mode = 2
+
+[connection signal="CharacterLabel" from="." to="Character" method="set_text" flags=3]
+[connection signal="SiteLabel" from="." to="Site" method="set_text" flags=3]

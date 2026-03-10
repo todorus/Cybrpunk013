@@ -15,6 +15,8 @@ public sealed class WorldState
     public List<Plot> Plots { get; } = new();
 
     private readonly Dictionary<string, Site> _sitesById = new();
+    private readonly Dictionary<string, Character> _charactersById = new();
+    
     private readonly Dictionary<string, Assignment> _assignmentsById = new();
     private readonly Dictionary<string, Assignment> _assignmentsByOperationId = new();
 
@@ -36,6 +38,11 @@ public sealed class WorldState
     {
         return _sitesById[id];
     }
+    
+    public Character GetCharacter(string id)
+    {
+        return _charactersById[id];
+    }
 
     public bool TryGetSite(string id, out Site? site)
     {
@@ -44,10 +51,11 @@ public sealed class WorldState
 
     public void RegisterCharacter(Character character)
     {
-        if (!Characters.Contains(character))
-        {
-            Characters.Add(character);
-        }
+        if (_charactersById.ContainsKey(character.Id))
+            return;
+
+        _charactersById.Add(character.Id, character);
+        Characters.Add(character);
     }
 
     public void RegisterAssignment(Assignment assignment)
