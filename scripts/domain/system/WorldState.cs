@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using SurveillanceStategodot.scripts.domain.assignment;
 using SurveillanceStategodot.scripts.domain.operation;
 using SurveillanceStategodot.scripts.domain.plot;
+using SurveillanceStategodot.scripts.domain.vision;
 
 namespace SurveillanceStategodot.scripts.domain.system;
 
@@ -13,6 +15,13 @@ public sealed class WorldState
     public List<Character> Characters { get; } = new();
     public List<Assignment> Assignments { get; } = new();
     public List<Plot> Plots { get; } = new();
+
+    // Vision sources are authoritative runtime state owned by WorldState.
+    private readonly Dictionary<string, VisionSource> _visionSourcesById = new();
+    public IReadOnlyDictionary<string, VisionSource> VisionSources => _visionSourcesById;
+
+    public event Action<VisionSource>? VisionSourceAdded;
+    public event Action<VisionSource>? VisionSourceRemoved;
 
     private readonly Dictionary<string, Site> _sitesById = new();
     private readonly Dictionary<string, Character> _charactersById = new();
@@ -127,5 +136,26 @@ public sealed class WorldState
         }
 
         return null;
+    }
+
+    public void RegisterVisionSource(VisionSource source)
+    {
+        _visionSourcesById[source.Id] = source;
+        VisionSourceAdded?.Invoke(source);
+    }
+
+    public void RemoveVisionSource(string id)
+    {
+        if (_visionSourcesById.TryGetValue(id, out var source))
+        {
+            _visionSourcesById.Remove(id);
+            source.Deactivate();
+            VisionSourceRemoved?.Invoke(source);
+        }
+    }
+
+    public bool TryGetVisionSource(string id, out VisionSource? source)
+    {
+        return _visionSourcesById.TryGetValue(id, out source);
     }
 }

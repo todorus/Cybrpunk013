@@ -14,11 +14,11 @@ public sealed class VisionSystem : ISimulationSystem
     private WorldState _world = null!;
     private SimulationEventBus _eventBus = null!;
 
-    private readonly Dictionary<string, VisionSource> _movementVisionByMovementId = new();
-    private readonly Dictionary<string, VisionSource> _operationVisionByOperationId = new();
+    // Local movement->visionSourceId index so we can clean up on arrival.
+    private readonly Dictionary<string, string> _visionSourceIdByMovementId = new();
 
     // Prevent spam from emitting "moving" observations every frame.
-    private readonly Dictionary<(string sourceId, string targetCharacterId, string operationId), double> _lastObservationTimes = new();
+    private readonly Dictionary<(string sourceId, string targetCharacterId), double> _lastObservationTimes = new();
     private const double MovingObservationCooldownSeconds = 5.0;
 
     public VisionSystem(float operatorVisionRange)
@@ -43,56 +43,65 @@ public sealed class VisionSystem : ISimulationSystem
     {
     }
 
+    // ── Movement-based vision source ─────────────────────────────────────────
+
     private void OnMovementStarted(MovementStartedEvent evt)
     {
         var character = evt.Movement.Character;
         if (character == null || !character.IsOperator)
             return;
 
+        var sourceId = $"movement:{evt.Movement.Id}";
         var source = new VisionSource(
-            id: $"movement:{evt.Movement.Id}",
+            id: sourceId,
             owner: character,
             type: VisionSourceType.MovingOperator,
-            range: _operatorVisionRange)
-        {
-            WorldPosition = evt.Movement.CurrentWorldPosition
-        };
+            range: _operatorVisionRange,
+            isMapVisible: true);
 
-        _movementVisionByMovementId[evt.Movement.Id] = source;
+        source.SetWorldPosition(evt.Movement.CurrentWorldPosition);
+
+        _visionSourceIdByMovementId[evt.Movement.Id] = sourceId;
         evt.Movement.PositionChanged += OnMovementPositionChanged;
+
+        _world.RegisterVisionSource(source);
     }
 
     private void OnMovementArrived(MovementArrivedEvent evt)
     {
-        if (_movementVisionByMovementId.Remove(evt.Movement.Id))
-        {
-            evt.Movement.PositionChanged -= OnMovementPositionChanged;
-        }
+        if (!_visionSourceIdByMovementId.TryGetValue(evt.Movement.Id, out var sourceId))
+            return;
+
+        _visionSourceIdByMovementId.Remove(evt.Movement.Id);
+        evt.Movement.PositionChanged -= OnMovementPositionChanged;
+        _world.RemoveVisionSource(sourceId);
     }
 
     private void OnMovementPositionChanged(Movement movement)
     {
-        if (!_movementVisionByMovementId.TryGetValue(movement.Id, out var source))
+        if (!_visionSourceIdByMovementId.TryGetValue(movement.Id, out var sourceId))
             return;
 
-        source.WorldPosition = movement.CurrentWorldPosition;
+        if (!_world.TryGetVisionSource(sourceId, out var source) || source == null)
+            return;
 
+        source.SetWorldPosition(movement.CurrentWorldPosition);
+
+        // Detect nearby moving NPCs.
         foreach (var candidate in _world.Characters)
         {
-            if (candidate == movement.Character)
-                continue;
-
-            if (candidate.IsOperator)
-                continue;
-
-            if (candidate.CurrentMovement == null)
+            if (candidate == movement.Character || candidate.IsOperator || candidate.CurrentMovement == null)
                 continue;
 
             if (source.WorldPosition.DistanceTo(candidate.CurrentMovement.CurrentWorldPosition) > source.Range)
                 continue;
 
-            if (!PassesCooldown(source.Id, candidate.Id, null, MovingObservationCooldownSeconds))
+            var key = (source.Id, candidate.Id);
+            if (_lastObservationTimes.TryGetValue(key, out var lastTime) &&
+                _world.Time - lastTime < MovingObservationCooldownSeconds)
                 continue;
+
+            _lastObservationTimes[key] = _world.Time;
 
             PublishObservation(
                 site: null,
@@ -102,12 +111,15 @@ public sealed class VisionSystem : ISimulationSystem
         }
     }
 
+    // ── Site enter / exit detection ──────────────────────────────────────────
+
     private void OnCharacterEnteredSite(CharacterEnteredSiteEvent evt)
     {
-        foreach (var source in EnumerateGraphVisionSources())
+        if (evt.Character.IsOperator)
+            return;
+
+        foreach (var source in _world.VisionSources.Values)
         {
-            if (evt.Character.IsOperator)
-                continue;
             if (source.WorldPosition.DistanceTo(evt.Site.GlobalPosition) > source.Range)
                 continue;
 
@@ -121,10 +133,11 @@ public sealed class VisionSystem : ISimulationSystem
 
     private void OnCharacterExitedSite(CharacterExitedSiteEvent evt)
     {
-        foreach (var source in EnumerateGraphVisionSources())
+        if (evt.Character.IsOperator)
+            return;
+
+        foreach (var source in _world.VisionSources.Values)
         {
-            if (evt.Character.IsOperator)
-                continue;
             if (source.WorldPosition.DistanceTo(evt.Site.GlobalPosition) > source.Range)
                 continue;
 
@@ -136,14 +149,12 @@ public sealed class VisionSystem : ISimulationSystem
         }
     }
 
+    // ── Stakeout operation vision source ─────────────────────────────────────
+
     private void OnOperationStarted(OperationStartedEvent evt)
     {
         var operation = evt.Operation;
-
-        if (operation.VisionType != OperationVisionType.Stakeout)
-            return;
-
-        if (operation.SiteContext == null)
+        if (operation.VisionType != OperationVisionType.Stakeout || operation.SiteContext == null)
             return;
 
         Character? owner = operation.Participants.Count > 0 ? operation.Participants[0] : null;
@@ -154,42 +165,21 @@ public sealed class VisionSystem : ISimulationSystem
             id: $"operation:{operation.Id}",
             owner: owner,
             type: VisionSourceType.StakeoutPost,
-            range: _operatorVisionRange)
-        {
-            SiteContext = operation.SiteContext,
-            WorldPosition = operation.SiteContext.GlobalPosition
-        };
+            range: _operatorVisionRange,
+            isMapVisible: true);
 
-        _operationVisionByOperationId[operation.Id] = source;
+        source.SetWorldPosition(operation.SiteContext.GlobalPosition);
+        source.SetSiteContext(operation.SiteContext);
+
+        _world.RegisterVisionSource(source);
     }
 
     private void OnOperationCompleted(OperationCompletedEvent evt)
     {
-        _operationVisionByOperationId.Remove(evt.Operation.Id);
+        _world.RemoveVisionSource($"operation:{evt.Operation.Id}");
     }
 
-    private IEnumerable<VisionSource> EnumerateGraphVisionSources()
-    {
-        foreach (var source in _movementVisionByMovementId.Values)
-            yield return source;
-
-        foreach (var source in _operationVisionByOperationId.Values)
-            yield return source;
-    }
-
-    private bool PassesCooldown(string sourceId, string targetCharacterId, string operationId, double cooldownSeconds)
-    {
-        var key = (sourceId, targetCharacterId, operationId);
-
-        if (_lastObservationTimes.TryGetValue(key, out var lastTime))
-        {
-            if (_world.Time - lastTime < cooldownSeconds)
-                return false;
-        }
-
-        _lastObservationTimes[key] = _world.Time;
-        return true;
-    }
+    // ── Helpers ──────────────────────────────────────────────────────────────
 
     private void PublishObservation(
         Site? site,

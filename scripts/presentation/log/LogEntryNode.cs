@@ -13,7 +13,7 @@ public partial class LogEntryNode : Control
     public delegate void CharacterLabelEventHandler(string label);
     
     [Signal]
-    public delegate void OperationLabelEventHandler(string label);
+    public delegate void ObservationLabelEventHandler(string label);
 
     public WorldState WorldState;
 
@@ -23,10 +23,21 @@ public partial class LogEntryNode : Control
         {
             var site = value?.SiteId != null ? WorldState.GetSite(value.SiteId) : null;
             var character = value?.CharacterId != null ? WorldState.GetCharacter(value.CharacterId) : null;
-            var type = value?.ObservationType.ToString();
-            EmitSignalSiteLabel(site?.Label);
-            EmitSignalCharacterLabel(character?.DisplayName);
-            EmitSignalOperationLabel(type);
+            EmitSignalSiteLabel(site?.Label ?? "?");
+            EmitSignalCharacterLabel(character?.DisplayName ?? "?");
+            EmitSignalObservationLabel(DescribeObservation(value));
         }
+    }
+
+    private static string DescribeObservation(Observation? obs)
+    {
+        if (obs == null) return "";
+        return obs.ObservationType switch
+        {
+            ObservationType.EnteredSite   => "entered site",
+            ObservationType.ExitedSite    => "exited site",
+            ObservationType.SpottedMoving => "spotted moving",
+            _                             => obs.ObservationType.ToString()
+        };
     }
 }

@@ -34,5 +34,3 @@ billboard = 1
 script = ExtResource("2_2lj2e")
 
 [connection signal="CharacterNameChanged" from="." to="Label3D" method="set_text" flags=3]
-[connection signal="ShowRangeVisual" from="." to="Vision" method="set_visible" flags=3]
-[connection signal="VisionRangeChanged" from="." to="Vision" method="SetRange" flags=3]

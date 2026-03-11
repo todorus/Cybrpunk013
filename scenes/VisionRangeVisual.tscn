@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://p3lyy1lduomr"]
+
+[ext_resource type="Script" uid="uid://cp0bqyfvt5j3h" path="res://scripts/presentation/vision/VisionSourceVisual.cs" id="1_y4nia"]
+[ext_resource type="Script" uid="uid://tv5joni3f3f1" path="res://scripts/presentation/movement/RangeVisual.cs" id="2_hw14y"]
+
+[node name="VisionSourceVisual" type="Node3D" unique_id=2031250765]
+script = ExtResource("1_y4nia")
+
+[node name="RangeVisual" type="MeshInstance3D" parent="." unique_id=1452012048]
+script = ExtResource("2_hw14y")
+
+[connection signal="RangeChanged" from="." to="RangeVisual" method="SetRange" flags=3]
