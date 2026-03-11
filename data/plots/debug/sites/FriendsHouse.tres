@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="SiteResource" format=3 uid="uid://loons0u6n63u"]
 
-[ext_resource type="Resource" uid="uid://fno2stmo0eto" path="res://data/options/HangOut.tres" id="1_icn11"]
+[ext_resource type="Resource" uid="uid://fno2stmo0eto" path="res://data/options/Stake out.tres" id="1_icn11"]
 [ext_resource type="Script" uid="uid://bwm1lii5mww5x" path="res://scripts/authoring/SiteResource.cs" id="1_jo1fh"]
 
 [resource]
