@@ -9,12 +9,14 @@ public class Option
     public string Id { get; }
     public string Label { get; }
     public double Duration { get; }
+    public OperationVisionType VisionType { get; }
 
-    public Option(string id, string label, double duration)
+    public Option(string id, string label, double duration, OperationVisionType visionType = OperationVisionType.None)
     {
         Id = id;
         Label = label;
         Duration = duration;
+        VisionType = visionType;
     }
     
     public Operation ToOperation(Movement movement, Site site)
@@ -23,12 +25,12 @@ public class Option
         (
             id: Guid.NewGuid().ToString(),
             label: Label,
-            duration: Duration
+            duration: Duration,
+            visionType: VisionType
         )
         {
             SiteContext = site,
             MovementContext = movement
         };
     }
-    
 }

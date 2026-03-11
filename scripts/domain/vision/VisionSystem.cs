@@ -10,7 +10,6 @@ namespace SurveillanceStategodot.scripts.domain.vision;
 public sealed class VisionSystem : ISimulationSystem
 {
     private readonly float _operatorVisionRange;
-    private const string StakeoutOperationLabel = "Stakeout";
 
     private WorldState _world = null!;
     private SimulationEventBus _eventBus = null!;
@@ -141,7 +140,7 @@ public sealed class VisionSystem : ISimulationSystem
     {
         var operation = evt.Operation;
 
-        if (!string.Equals(operation.Label, StakeoutOperationLabel, StringComparison.OrdinalIgnoreCase))
+        if (operation.VisionType != OperationVisionType.Stakeout)
             return;
 
         if (operation.SiteContext == null)

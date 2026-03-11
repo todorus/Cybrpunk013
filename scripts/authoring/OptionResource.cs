@@ -1,6 +1,7 @@
 using System;
 using Godot;
 using SurveillanceStategodot.scripts.domain.assignment;
+using SurveillanceStategodot.scripts.domain.operation;
 
 namespace SurveillanceStategodot.scripts.authoring;
 
@@ -13,6 +14,8 @@ public partial class OptionResource : Resource
     private string _label;
     [Export]
     private double _duration;
+    [Export]
+    private OperationVisionType _visionType = OperationVisionType.None;
     
     public Option ToOption()
     {
@@ -20,7 +23,8 @@ public partial class OptionResource : Resource
         (
             id: _id,
             label: _label,
-            duration: _duration
+            duration: _duration,
+            visionType: _visionType
         );
     }
 }

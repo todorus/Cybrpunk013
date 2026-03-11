@@ -15,15 +15,17 @@ public sealed class Operation
 
     public double StartTime { get; private set; }
     public double Duration { get; }
+    public OperationVisionType VisionType { get; }
     public HashSet<OperationObservationTag> ObservationTags { get; } = new();
 
     public double EndTime => StartTime + Duration;
 
-    public Operation(string id, string label, double duration)
+    public Operation(string id, string label, double duration, OperationVisionType visionType = OperationVisionType.None)
     {
         Id = id;
         Label = label;
         Duration = duration;
+        VisionType = visionType;
     }
     
     public void Start(double worldTime)
