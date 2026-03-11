@@ -51,7 +51,7 @@ albedo_color = Color(0.18, 0.28933322, 1, 1)
 [sub_resource type="Resource" id="Resource_my70f"]
 script = ExtResource("19_8y5tq")
 Id = "Node"
-Position = Vector3(2.3069453, 0, 2.5864043)
+Position = Vector3(2.3546877, 0, 2.5864043)
 Outgoing = Array[int]([1, 6, 8])
 
 [sub_resource type="Resource" id="Resource_86b61"]
@@ -108,9 +108,10 @@ Nodes = Array[ExtResource("19_8y5tq")]([SubResource("Resource_my70f"), SubResour
 
 [node name="Root" type="Node3D" unique_id=1113144064]
 
-[node name="Bootstrap" type="Node" parent="." unique_id=1907404859]
+[node name="Bootstrap" type="Node" parent="." unique_id=1907404859 node_paths=PackedStringArray("_dispatchNav")]
 script = ExtResource("1_8y5tq")
 _plotDefinitions = [ExtResource("2_k0m58")]
+_dispatchNav = NodePath("../Graph")
 
 [node name="Simulation" type="Node" parent="." unique_id=488995100 node_paths=PackedStringArray("_dispatchNav")]
 script = ExtResource("1_hyhbb")

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Godot;
 using SurveillanceStategodot.scripts.domain.assignment;
 using SurveillanceStategodot.scripts.domain.communication;
+using SurveillanceStategodot.scripts.navigation.query;
 
 namespace SurveillanceStategodot.scripts.domain.operation;
 
@@ -19,6 +20,21 @@ public sealed class Site
     public SiteVisibility Visibility { get; set; } = SiteVisibility.Hidden;
     public string? BlockId { get; set; }
     public Vector3 GlobalPosition { get; set; }
+
+    /// <summary>
+    /// The closest point on the nav-graph to this site's world position.
+    /// Precomputed once during bootstrapping.
+    /// Used for pathfinding start/end anchors and as the world position for fixed VisionSources.
+    /// Null until the nav graph has been stamped (see ScenarioBootstrapper).
+    /// </summary>
+    public DispatchNavEdgeAnchor? NavAnchor { get; set; }
+
+    /// <summary>
+    /// The world position agents navigate toward when heading to this site.
+    /// Falls back to GlobalPosition when NavAnchor has not been stamped yet.
+    /// </summary>
+    public Vector3 EntryPosition => NavAnchor.HasValue ? NavAnchor.Value.Position : GlobalPosition;
+
     public Option[] AvailableOptions { get; set; } = [];
 
     public IReadOnlyList<Character> Occupants => _occupants;

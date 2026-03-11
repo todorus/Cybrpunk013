@@ -133,9 +133,18 @@ public sealed class AssignmentSystem : ISimulationSystem
             return;
         }
 
-        var startAnchor = DispatchNavQueries.GetClosestPointOnGraph(
-            _dispatchNav.Graph,
-            operationSite.GlobalPosition);
+        // Use the precomputed nav anchor when available; fall back to a live query.
+        DispatchNavEdgeAnchor startAnchor;
+        if (operationSite.NavAnchor.HasValue)
+        {
+            startAnchor = operationSite.NavAnchor.Value;
+        }
+        else
+        {
+            startAnchor = DispatchNavQueries.GetClosestPointOnGraph(
+                _dispatchNav.Graph,
+                operationSite.GlobalPosition);
+        }
 
         var returnPath = DispatchNavPathfinder.FindPath(
             _dispatchNav.Graph,

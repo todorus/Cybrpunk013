@@ -120,7 +120,7 @@ public sealed class VisionSystem : ISimulationSystem
 
         foreach (var source in _world.VisionSources.Values)
         {
-            if (source.WorldPosition.DistanceTo(evt.Site.GlobalPosition) > source.Range)
+            if (source.WorldPosition.DistanceTo(evt.Site.EntryPosition) > source.Range)
                 continue;
 
             PublishObservation(
@@ -138,7 +138,7 @@ public sealed class VisionSystem : ISimulationSystem
 
         foreach (var source in _world.VisionSources.Values)
         {
-            if (source.WorldPosition.DistanceTo(evt.Site.GlobalPosition) > source.Range)
+            if (source.WorldPosition.DistanceTo(evt.Site.EntryPosition) > source.Range)
                 continue;
 
             PublishObservation(
@@ -168,7 +168,7 @@ public sealed class VisionSystem : ISimulationSystem
             range: _operatorVisionRange,
             isMapVisible: true);
 
-        source.SetWorldPosition(operation.SiteContext.GlobalPosition);
+        source.SetWorldPosition(operation.SiteContext.EntryPosition);
         source.SetSiteContext(operation.SiteContext);
 
         _world.RegisterVisionSource(source);

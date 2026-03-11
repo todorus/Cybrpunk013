@@ -59,18 +59,20 @@ public sealed class ScheduleSystem : ISimulationSystem
         Vector3 startPosition;
         if (character.CurrentSite != null)
         {
-            startPosition = character.CurrentSite.GlobalPosition;
+            startPosition = character.CurrentSite.EntryPosition;
         }
-        else if (DispatchNavSpawnQueries.TryGetSpawnPoint(_dispatchNav.Graph, site.GlobalPosition, out var spawn))
+        else if (DispatchNavSpawnQueries.TryGetSpawnPoint(_dispatchNav.Graph, site.EntryPosition, out var spawn))
         {
             startPosition = spawn.Position;
         }
         else
         {
-            startPosition = site.GlobalPosition;
+            startPosition = site.EntryPosition;
         }
 
-        var path = DispatchNavPathfinder.FindPath(_dispatchNav.Graph, startPosition, site.GlobalPosition);
+        var path = site.NavAnchor.HasValue
+            ? DispatchNavPathfinder.FindPath(_dispatchNav.Graph, startPosition, site.NavAnchor.Value)
+            : DispatchNavPathfinder.FindPath(_dispatchNav.Graph, startPosition, site.GlobalPosition);
 
         if (!path.IsValid)
         {

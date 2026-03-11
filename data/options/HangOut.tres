@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_6o7re")
-_label = "Hang Out"
+_label = "Stakeout"
 _duration = 7.0
+_visionType = 1
 metadata/_custom_type_script = "uid://qqovj6p5nanr"
