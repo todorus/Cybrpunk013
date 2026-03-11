@@ -17,9 +17,10 @@ public sealed class VisionSystem : ISimulationSystem
     // Local movement->visionSourceId index so we can clean up on arrival.
     private readonly Dictionary<string, string> _visionSourceIdByMovementId = new();
 
-    // Prevent spam from emitting "moving" observations every frame.
-    private readonly Dictionary<(string sourceId, string targetCharacterId), double> _lastObservationTimes = new();
-    private const double MovingObservationCooldownSeconds = 5.0;
+    // Tracks which (sourceId, characterId) pairs are currently inside range.
+    // An observation fires once on entry; nothing fires again until the character
+    // leaves and re-enters the range.
+    private readonly HashSet<(string sourceId, string characterId)> _inRange = new();
 
     public VisionSystem(float operatorVisionRange)
     {
@@ -41,6 +42,10 @@ public sealed class VisionSystem : ISimulationSystem
 
     public void Tick(double delta)
     {
+        foreach (var source in _world.VisionSources.Values)
+        {
+            ScanMovingNpcsForSource(source);
+        }
     }
 
     // ── Movement-based vision source ─────────────────────────────────────────
@@ -74,6 +79,10 @@ public sealed class VisionSystem : ISimulationSystem
 
         _visionSourceIdByMovementId.Remove(evt.Movement.Id);
         evt.Movement.PositionChanged -= OnMovementPositionChanged;
+
+        // Clear any in-range state for this source so re-entry fires fresh next time.
+        _inRange.RemoveWhere(pair => pair.sourceId == sourceId);
+
         _world.RemoveVisionSource(sourceId);
     }
 
@@ -87,27 +96,47 @@ public sealed class VisionSystem : ISimulationSystem
 
         source.SetWorldPosition(movement.CurrentWorldPosition);
 
-        // Detect nearby moving NPCs.
+        ScanMovingNpcsForSource(source);
+    }
+
+    // ── Shared range scan ────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Checks every moving NPC against the given source.
+    /// Fires SpottedMoving once on range entry; clears state on range exit.
+    /// </summary>
+    private void ScanMovingNpcsForSource(VisionSource source)
+    {
         foreach (var candidate in _world.Characters)
         {
-            if (candidate == movement.Character || candidate.IsOperator || candidate.CurrentMovement == null)
+            if (candidate.IsOperator || candidate.CurrentMovement == null)
                 continue;
 
-            if (source.WorldPosition.DistanceTo(candidate.CurrentMovement.CurrentWorldPosition) > source.Range)
+            // Operator-owned sources never self-observe.
+            if (candidate == source.Owner)
                 continue;
 
             var key = (source.Id, candidate.Id);
-            if (_lastObservationTimes.TryGetValue(key, out var lastTime) &&
-                _world.Time - lastTime < MovingObservationCooldownSeconds)
-                continue;
+            bool nowInRange = source.WorldPosition.DistanceTo(
+                candidate.CurrentMovement.CurrentWorldPosition) <= source.Range;
 
-            _lastObservationTimes[key] = _world.Time;
-
-            PublishObservation(
-                site: null,
-                character: candidate,
-                operation: null,
-                observationType: ObservationType.SpottedMoving);
+            if (nowInRange)
+            {
+                if (_inRange.Add(key))
+                {
+                    // Freshly entered range — fire observation.
+                    PublishObservation(
+                        site: null,
+                        character: candidate,
+                        operation: null,
+                        observationType: ObservationType.SpottedMoving);
+                }
+            }
+            else
+            {
+                // Left range — clear so re-entry fires again later.
+                _inRange.Remove(key);
+            }
         }
     }
 
@@ -176,7 +205,9 @@ public sealed class VisionSystem : ISimulationSystem
 
     private void OnOperationCompleted(OperationCompletedEvent evt)
     {
-        _world.RemoveVisionSource($"operation:{evt.Operation.Id}");
+        var sourceId = $"operation:{evt.Operation.Id}";
+        _inRange.RemoveWhere(pair => pair.sourceId == sourceId);
+        _world.RemoveVisionSource(sourceId);
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
