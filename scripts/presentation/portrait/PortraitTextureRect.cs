@@ -16,7 +16,14 @@ namespace SurveillanceStategodot.scripts.presentation.portrait;
 /// </summary>
 public partial class PortraitTextureRect : TextureRect
 {
-    [Export] private PortraitCache _cache = null!;
+    [Export] 
+    private PortraitCache _cache = null!;
+
+    public PortraitCache Cache
+    {
+        get => _cache;
+        set => _cache = value;
+    }
 
     [ExportGroup("Optional Cache Keys")]
     /// <summary>
@@ -60,13 +67,13 @@ public partial class PortraitTextureRect : TextureRect
         _characterResource = characterResource;
         Texture = null; // Clear while loading.
 
-        if (_cache == null)
+        if (Cache == null)
         {
             GD.PushWarning("[PortraitTextureRect] PortraitCache reference is not set.");
             return;
         }
 
-        var texture = await _cache.GetOrRenderAsync(
+        var texture = await Cache.GetOrRenderAsync(
             characterResource.CharacterId,
             characterResource.AvatarScene,
             AppearanceKey,

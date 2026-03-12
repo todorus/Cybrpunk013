@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://dncljerw8fgod"]
 
 [ext_resource type="Script" uid="uid://kj40i54ivot3" path="res://scripts/presentation/sites/SiteStatusWidget.cs" id="1_rqakp"]
+[ext_resource type="Script" uid="uid://f5klrl3pbidw" path="res://scripts/presentation/sites/occupants/OccupantsList.cs" id="2_c5d17"]
+[ext_resource type="PackedScene" uid="uid://cn1tkc54me43j" path="res://scenes/OccupantWidget.tscn" id="3_ajrx8"]
 
 [node name="SiteWidget" type="VBoxContainer" unique_id=769993910]
 offset_right = 91.0
@@ -20,6 +22,14 @@ layout_mode = 2
 layout_mode = 2
 text = "Occupants:"
 
+[node name="List" type="HBoxContainer" parent="Occupants" unique_id=1650283162]
+layout_mode = 2
+script = ExtResource("2_c5d17")
+_occupantScene = ExtResource("3_ajrx8")
+
+[node name="OccupantWidget" parent="Occupants/List" unique_id=693058755 instance=ExtResource("3_ajrx8")]
+layout_mode = 2
+
 [node name="Operations" type="VBoxContainer" parent="." unique_id=942540541]
 layout_mode = 2
 
@@ -28,5 +38,7 @@ layout_mode = 2
 text = "Operations:"
 
 [connection signal="LabelChanged" from="." to="Label" method="set_text" flags=3]
-[connection signal="OccupantsListChanged" from="." to="Occupants/Header" method="set_text" flags=3]
+[connection signal="OccupantsListChanged" from="." to="Occupants/List" method="Refresh" flags=3]
 [connection signal="OperationsListChanged" from="." to="Operations/Header" method="set_text" flags=3]
+[connection signal="PortraitCacheChanged" from="." to="Occupants/List" method="SetPortraitCache"]
+[connection signal="ResourceRegistryChanged" from="." to="Occupants/List" method="SetResourceRegistry"]

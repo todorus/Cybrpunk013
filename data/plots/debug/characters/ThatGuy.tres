@@ -1,10 +1,12 @@
 [gd_resource type="Resource" script_class="CharacterResource" format=3 uid="uid://di3y6mgsgkv7d"]
 
+[ext_resource type="PackedScene" uid="uid://co16niyf7fmh1" path="res://Synty/PolygonShops/Prefabs/Characters/Characters/SM_Chr_Shopper_Female_01.tscn" id="1_jn7cp"]
 [ext_resource type="Script" uid="uid://c0yjrfoocvmxf" path="res://scripts/authoring/CharacterResource.cs" id="1_jq7el"]
 [ext_resource type="Resource" uid="uid://cbqxkjux6wtuw" path="res://data/plots/debug/characters/ThatGuySchedule.tres" id="1_mx4so"]
 
 [resource]
 script = ExtResource("1_jq7el")
-_displayName = "That Guy"
+_displayName = "That Gal"
 Schedule = ExtResource("1_mx4so")
+AvatarScene = ExtResource("1_jn7cp")
 metadata/_custom_type_script = "uid://c0yjrfoocvmxf"

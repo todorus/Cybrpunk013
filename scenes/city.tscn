@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://io3vdu8k6nb0" path="res://scripts/control/mouse/MouseSignals.cs" id="1_2jj31"]
 [ext_resource type="Script" uid="uid://bxrpl5mnnnfrm" path="res://scripts/control/camera/PanCamera.cs" id="1_8uhr2"]
 [ext_resource type="Script" uid="uid://dylp83d75t25y" path="res://scripts/authoring/ScenarioBootstrapper.cs" id="1_8y5tq"]
+[ext_resource type="Script" uid="uid://bpp57soowy0xa" path="res://scripts/presentation/ResourceRegistry.cs" id="1_hks51"]
 [ext_resource type="Script" uid="uid://c2hordplrvtjs" path="res://scripts/interaction/SimulationController.cs" id="1_hyhbb"]
 [ext_resource type="PackedScene" uid="uid://c0tkec1d21liq" path="res://scenes/block.tscn" id="1_oacpt"]
 [ext_resource type="Script" uid="uid://dd5p2h61x7m2b" path="res://scripts/interaction/CityscapeClickHandler.cs" id="2_4lp1f"]
@@ -12,6 +13,7 @@
 [ext_resource type="Script" uid="uid://dftotlkcpdb05" path="res://scripts/navigation/authoring/DispatchNav.cs" id="2_rqxma"]
 [ext_resource type="Script" uid="uid://b770gq30gc66e" path="res://scripts/presentation/movement/MovementVisualSpawner.cs" id="3_dqb0a"]
 [ext_resource type="Script" uid="uid://dcbooviv3dt56" path="res://scripts/navigation/authoring/NavNode.cs" id="3_movw8"]
+[ext_resource type="Resource" uid="uid://708ftxecrg2n" path="res://data/operators/Crank.tres" id="3_of5r1"]
 [ext_resource type="Script" uid="uid://doia2rsd1vhtj" path="res://scripts/navigation/control/DispatchNavCursor.cs" id="4_3br4m"]
 [ext_resource type="PackedScene" uid="uid://bddt707su5jqy" path="res://scenes/movementVisual.tscn" id="4_hyhbb"]
 [ext_resource type="Script" uid="uid://bmrxenuvdlkao" path="res://scripts/presentation/movement/PathPreviewVisual.cs" id="5_f7b0s"]
@@ -20,6 +22,8 @@
 [ext_resource type="PackedScene" uid="uid://bdpqjbpepjerm" path="res://scenes/building.tscn" id="13_f7b0s"]
 [ext_resource type="Resource" uid="uid://cb7hj8aw6mvvs" path="res://data/plots/debug/sites/OwesYouMoney.tres" id="14_dqb0a"]
 [ext_resource type="Resource" uid="uid://b7tckol5hd2qo" path="res://data/plots/debug/sites/Supermarket.tres" id="16_ibljb"]
+[ext_resource type="Script" uid="uid://bl7w3ed4ndm1a" path="res://scripts/navigation/graph/DispatchNavNodeData.cs" id="20_w6q1s"]
+[ext_resource type="Script" uid="uid://2dv840td66r" path="res://scripts/navigation/graph/DispatchNavGraph.cs" id="21_v6uog"]
 [ext_resource type="Script" uid="uid://d1itmpfuekc75" path="res://scripts/presentation/sites/SiteOverlayLayer.cs" id="22_7tlau"]
 [ext_resource type="PackedScene" uid="uid://dncljerw8fgod" path="res://scenes/SiteWidget.tscn" id="23_ikoiv"]
 [ext_resource type="Script" uid="uid://baxltdwqp42da" path="res://scripts/presentation/log/LogNode.cs" id="23_kg0fi"]
@@ -29,7 +33,6 @@
 [ext_resource type="Script" uid="uid://b2tqcfh88j8t3" path="res://scripts/presentation/vision/VisionPresentationRoot.cs" id="27_my70f"]
 [ext_resource type="PackedScene" uid="uid://p3lyy1lduomr" path="res://scenes/VisionRangeVisual.tscn" id="28_86b61"]
 [ext_resource type="Script" uid="uid://c8pmug7mmp40" path="res://scripts/presentation/portrait/PortraitTextureRect.cs" id="28_gi457"]
-[ext_resource type="Resource" uid="uid://blqnsbjfh8ac4" path="res://data/plots/debug/characters/Johnny.tres" id="28_w6q1s"]
 [ext_resource type="PackedScene" uid="uid://ctn33gojlydd0" path="res://scenes/portrait_cache.tscn" id="29_86b61"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_2jj31"]
@@ -51,12 +54,75 @@ albedo_color = Color(0.18, 0.28933322, 1, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_oacpt"]
 
+[sub_resource type="Resource" id="Resource_j1g6j"]
+script = ExtResource("20_w6q1s")
+Id = "Node"
+Position = Vector3(2.3840423, 0, 2.5864043)
+Outgoing = Array[int]([1, 6, 8])
+
+[sub_resource type="Resource" id="Resource_6k51b"]
+script = ExtResource("20_w6q1s")
+Id = "Node2"
+Position = Vector3(2.0959167, 0, 9.670583)
+Outgoing = Array[int]([0, 2])
+
+[sub_resource type="Resource" id="Resource_biwss"]
+script = ExtResource("20_w6q1s")
+Id = "Node9"
+Position = Vector3(-3.746861, 0, 9.488001)
+Outgoing = Array[int]([1, 3])
+
+[sub_resource type="Resource" id="Resource_xkikc"]
+script = ExtResource("20_w6q1s")
+Id = "Node3"
+Position = Vector3(-10.202908, 0, 8.668036)
+Outgoing = Array[int]([2, 4])
+
+[sub_resource type="Resource" id="Resource_qf2lb"]
+script = ExtResource("20_w6q1s")
+Id = "Node4"
+Position = Vector3(-9.06818, -9.536743e-07, 1.6362879)
+Outgoing = Array[int]([3, 5])
+
+[sub_resource type="Resource" id="Resource_6pahv"]
+script = ExtResource("20_w6q1s")
+Id = "Node7"
+Position = Vector3(-5.7891464, -9.536743e-07, 1.9411521)
+Outgoing = Array[int]([4, 6, 7])
+
+[sub_resource type="Resource" id="Resource_snoms"]
+script = ExtResource("20_w6q1s")
+Id = "Node8"
+Position = Vector3(-1.8786058, -9.536743e-07, 2.5961754)
+Outgoing = Array[int]([0, 5])
+
+[sub_resource type="Resource" id="Resource_r7ypu"]
+script = ExtResource("20_w6q1s")
+Id = "Node5"
+Position = Vector3(-4.798525, 0, -5.225782)
+Outgoing = Array[int]([5, 8])
+
+[sub_resource type="Resource" id="Resource_awvkl"]
+script = ExtResource("20_w6q1s")
+Id = "Node6"
+Position = Vector3(2.9466138, 0, -3.963666)
+Outgoing = Array[int]([0, 7])
+
+[sub_resource type="Resource" id="Resource_fukq0"]
+script = ExtResource("21_v6uog")
+Nodes = Array[ExtResource("20_w6q1s")]([SubResource("Resource_j1g6j"), SubResource("Resource_6k51b"), SubResource("Resource_biwss"), SubResource("Resource_xkikc"), SubResource("Resource_qf2lb"), SubResource("Resource_6pahv"), SubResource("Resource_snoms"), SubResource("Resource_r7ypu"), SubResource("Resource_awvkl")])
+
 [node name="Root" type="Node3D" unique_id=1113144064]
 
-[node name="Bootstrap" type="Node" parent="." unique_id=1907404859 node_paths=PackedStringArray("_dispatchNav")]
+[node name="ResourceRegistry" type="Node" parent="." unique_id=466381001]
+script = ExtResource("1_hks51")
+
+[node name="Bootstrap" type="Node" parent="." unique_id=1907404859 node_paths=PackedStringArray("_dispatchNav", "_resourceRegistry")]
 script = ExtResource("1_8y5tq")
+_operatorDefinitions = [ExtResource("3_of5r1")]
 _plotDefinitions = [ExtResource("2_k0m58")]
 _dispatchNav = NodePath("../Graph")
+_resourceRegistry = NodePath("../ResourceRegistry")
 
 [node name="Simulation" type="Node" parent="." unique_id=488995100 node_paths=PackedStringArray("_dispatchNav")]
 script = ExtResource("1_hyhbb")
@@ -85,6 +151,7 @@ _dispatchNav = NodePath("../../Graph")
 _spawnWorldPosition = NodePath("../../City/HQ")
 _operatorBaseWorldPosition = NodePath("../../City/HQ")
 _simulationController = NodePath("../../Simulation")
+_operatorTemplate = ExtResource("3_of5r1")
 
 [node name="CityScapeHoverHandler" type="Node" parent="Interaction" unique_id=1773414404 node_paths=PackedStringArray("_dispatchNav", "_spawnWorldPosition")]
 script = ExtResource("7_dqb0a")
@@ -145,6 +212,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.11477204, 9.536743e-07, 4.6
 
 [node name="Building4" parent="City/Block5" unique_id=1938395040 instance=ExtResource("13_f7b0s")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8417299, 1.9073486e-06, -0.72394943)
+SiteResource = ExtResource("14_dqb0a")
 
 [node name="Building5" parent="City/Block5" unique_id=564561828 instance=ExtResource("13_f7b0s")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.88138795, 9.536743e-07, -0.75569224)
@@ -154,7 +222,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.93657875, 3.8146973e-06, 0
 
 [node name="Building7" parent="City/Block5" unique_id=458905193 instance=ExtResource("13_f7b0s")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9725523, 4.7683716e-06, 0.72877204)
-siteResource = ExtResource("14_dqb0a")
 
 [node name="Foundation" type="MeshInstance3D" parent="City/Block5" unique_id=1454595816]
 transform = Transform3D(3.7323349, 0, 0, 0, 0.16773956, 0, 0, 0, 3.2005415, 0, 0, 0)
@@ -186,10 +253,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.88138795, 9.536743e-07, -0.
 
 [node name="Building6" parent="City/Block9" unique_id=1942641663 instance=ExtResource("13_f7b0s")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.93657875, 3.8146973e-06, 0.7322478)
+SiteResource = ExtResource("11_hlin5")
 
 [node name="Building7" parent="City/Block9" unique_id=1614660195 instance=ExtResource("13_f7b0s")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9725523, 4.7683716e-06, 0.72877204)
-siteResource = ExtResource("11_hlin5")
 
 [node name="Foundation" type="MeshInstance3D" parent="City/Block9" unique_id=953068637]
 transform = Transform3D(3.7323349, 0, 0, 0, 0.16773956, 0, 0, 0, 3.2005415, 0, 0, 0)
@@ -212,7 +279,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.93657875, 3.8146973e-06, 0
 
 [node name="Building7" parent="City/Block4" unique_id=959295781 instance=ExtResource("13_f7b0s")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9725523, 4.7683716e-06, 0.72877204)
-siteResource = ExtResource("16_ibljb")
+SiteResource = ExtResource("16_ibljb")
 
 [node name="Foundation" type="MeshInstance3D" parent="City/Block4" unique_id=1439065564]
 transform = Transform3D(3.7323349, 0, 0, 0, 0.16773956, 0, 0, 0, 3.2005415, 0, 0, 0)
@@ -220,17 +287,18 @@ mesh = SubResource("BoxMesh_oacpt")
 
 [node name="Graph" type="Node3D" parent="." unique_id=1366666781]
 script = ExtResource("2_rqxma")
+Graph = SubResource("Resource_fukq0")
 NodeColor = Color(0.32000005, 0.19999999, 1, 1)
 NodeRadius = 0.2
 EdgeThickness = 1.0
 
 [node name="Node" type="Node3D" parent="Graph" unique_id=379756053 node_paths=PackedStringArray("ConnectedNodes")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2688503, 0, 2.5864043)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3840423, 0, 2.5864043)
 script = ExtResource("3_movw8")
 ConnectedNodes = [NodePath("../Node2"), NodePath("../Node6")]
 
 [node name="Node2" type="Node3D" parent="Graph" unique_id=2107590133 node_paths=PackedStringArray("ConnectedNodes")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.072, 0, 9.405)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0959167, 0, 9.670583)
 script = ExtResource("3_movw8")
 ConnectedNodes = [NodePath("../Node9")]
 
@@ -272,7 +340,7 @@ transform = Transform3D(0.12940952, 0.9659258, -0.2241439, -0.48296288, 0.258819
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1775578006]
 
-[node name="UiOverlay" type="Control" parent="CanvasLayer" unique_id=1382234530 node_paths=PackedStringArray("_camera")]
+[node name="UiOverlay" type="Control" parent="CanvasLayer" unique_id=1382234530 node_paths=PackedStringArray("_resourceRegistry", "_portraitCache", "_camera")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -280,6 +348,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("22_7tlau")
+_resourceRegistry = NodePath("../../ResourceRegistry")
+_portraitCache = NodePath("../../PortraitCache")
 _widgetScene = ExtResource("23_ikoiv")
 _camera = NodePath("../../Camera3D")
 
@@ -313,7 +383,7 @@ offset_bottom = 236.0
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("27_gi457")
-OperatorResource = ExtResource("28_w6q1s")
+OperatorResource = ExtResource("3_of5r1")
 
 [node name="Portrait" type="TextureRect" parent="CanvasLayer/Ui/VBoxContainer/OperatorDisplay" unique_id=90866355 node_paths=PackedStringArray("_cache")]
 layout_mode = 1

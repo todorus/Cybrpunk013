@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="CharacterResource" format=3 uid="uid://blqnsbjfh8ac4"]
 
-[ext_resource type="PackedScene" uid="uid://scsll7ta1xy2" path="res://Synty/PolygonShops/Prefabs/Characters/Characters/SM_Chr_Hunter_Male_01.tscn" id="1_8gfn8"]
+[ext_resource type="PackedScene" uid="uid://bx0mfsob54t7e" path="res://Synty/PolygonShops/Prefabs/Characters/Characters/SM_Chr_Musician_Male_01.tscn" id="1_8gfn8"]
 [ext_resource type="Script" uid="uid://c0yjrfoocvmxf" path="res://scripts/authoring/CharacterResource.cs" id="1_ae8cf"]
 [ext_resource type="Resource" uid="uid://c2dtx86phfvce" path="res://data/plots/debug/characters/JohnnySchedule.tres" id="1_d3ek6"]
 

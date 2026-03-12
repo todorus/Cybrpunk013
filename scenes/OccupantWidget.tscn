@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://cn1tkc54me43j"]
+
+[ext_resource type="Texture2D" uid="uid://boqjxpft1sgs0" path="res://icon.svg" id="1_6r2gp"]
+[ext_resource type="Script" uid="uid://c8pmug7mmp40" path="res://scripts/presentation/portrait/PortraitTextureRect.cs" id="1_kbcbr"]
+
+[node name="OccupantWidget" type="TextureRect" unique_id=693058755]
+custom_minimum_size = Vector2(100, 100)
+texture = ExtResource("1_6r2gp")
+expand_mode = 3
+stretch_mode = 4
+script = ExtResource("1_kbcbr")

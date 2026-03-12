@@ -1,11 +1,18 @@
 using System.Collections.Generic;
 using Godot;
+using SurveillanceStategodot.scripts.presentation.portrait;
 using SurveillanceStategodot.scripts.util;
 
 namespace SurveillanceStategodot.scripts.presentation.sites;
 
 public partial class SiteOverlayLayer : Control
 {
+    [Export]
+    private ResourceRegistry _resourceRegistry;
+    
+    [Export]
+    private PortraitCache _portraitCache;
+    
     private sealed class Binding
     {
         public SiteNode Site { get; }
@@ -102,6 +109,8 @@ public partial class SiteOverlayLayer : Control
         }
 
         var widget = _widgetScene.Instantiate<SiteStatusWidget>();
+        widget.ResourceRegistry = _resourceRegistry;
+        widget.PortraitCache = _portraitCache;
         return widget;
     }
 

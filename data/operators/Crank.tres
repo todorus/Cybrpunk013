@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="CharacterResource" format=3 uid="uid://708ftxecrg2n"]
+
+[ext_resource type="Script" uid="uid://c0yjrfoocvmxf" path="res://scripts/authoring/CharacterResource.cs" id="1_888lu"]
+[ext_resource type="PackedScene" uid="uid://dq3jr0iabnp0s" path="res://Synty/PolygonShops/Prefabs/Characters/Characters/SM_Chr_Gym_Female_01.tscn" id="1_qwjxj"]
+
+[resource]
+script = ExtResource("1_888lu")
+_displayName = "Crank"
+AvatarScene = ExtResource("1_qwjxj")
+metadata/_custom_type_script = "uid://c0yjrfoocvmxf"

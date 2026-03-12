@@ -1,9 +1,8 @@
 using Godot;
-using SurveillanceStategodot.scripts.domain;
-using SurveillanceStategodot.scripts.domain.plot;
 using SurveillanceStategodot.scripts.interaction;
 using SurveillanceStategodot.scripts.navigation.authoring;
 using SurveillanceStategodot.scripts.navigation.query;
+using SurveillanceStategodot.scripts.presentation;
 using SurveillanceStategodot.scripts.presentation.sites;
 using SurveillanceStategodot.scripts.util;
 
@@ -12,13 +11,25 @@ namespace SurveillanceStategodot.scripts.authoring;
 public partial class ScenarioBootstrapper : Node
 {
     [Export]
+    private CharacterResource[] _operatorDefinitions = [];
+    
+    [Export]
     private PlotResource[] _plotDefinitions = [];
 
     [Export]
     private DispatchNav _dispatchNav = null!;
 
+    /// <summary>
+    /// Optional. When assigned, ScenarioBootstrapper will register all
+    /// CharacterResources and SiteResources it knows about into this registry
+    /// so presentation nodes can look them up by domain ID.
+    /// </summary>
+    [Export]
+    private ResourceRegistry _resourceRegistry = null!;
+
     public void Init(SimulationController simulationController)
     {
+        PopulateResourceRegistry();
         InitializeSites(simulationController);
         StampSiteNavAnchors(simulationController);
         InitializePlots(simulationController);
@@ -64,4 +75,34 @@ public partial class ScenarioBootstrapper : Node
             world.RegisterPlot(plot);
         }
     }
+
+    /// <summary>
+    /// Registers all authored resources the bootstrapper knows about into the
+    /// ResourceRegistry so presentation nodes can look them up by domain ID.
+    /// No-op when _resourceRegistry is not assigned.
+    /// </summary>
+    private void PopulateResourceRegistry()
+    {
+        if (_resourceRegistry == null) return;
+
+        foreach (var plotDefinition in _plotDefinitions)
+        {
+            foreach (var characterResource in plotDefinition.Characters)
+            {
+                _resourceRegistry.RegisterCharacter(characterResource);
+            }
+        }
+
+        foreach (var siteNode in GetTree().Root.FindAllChildrenOfType<SiteNode>())
+        {
+            if (siteNode.SiteResource != null)
+                _resourceRegistry.RegisterSite(siteNode.SiteResource);
+        }
+
+        foreach (var characterResource in _operatorDefinitions)
+        {
+            _resourceRegistry.RegisterCharacter(characterResource);
+        }
+    }
 }
+

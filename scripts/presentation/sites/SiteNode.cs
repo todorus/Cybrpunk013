@@ -13,7 +13,7 @@ public partial class SiteNode : Node3D
     public delegate void MaterialChangedEventHandler(Material newMaterial);
     
     [Export]
-    private SiteResource siteResource;
+    public SiteResource SiteResource { get; private set; }
     
     [Export]
     private Material activeSiteMaterial;
@@ -55,9 +55,9 @@ public partial class SiteNode : Node3D
     public override void _Ready()
     {
         base._Ready();
-        if (siteResource == null) return;
+        if (SiteResource == null) return;
         
-        Site = siteResource.ToSite(GlobalPosition);
+        Site = SiteResource.ToSite(GlobalPosition);
 
         if (IsActive)
             _overlayLayer?.ShowSite(this);
@@ -79,5 +79,5 @@ public partial class SiteNode : Node3D
         SimulationController.World.RegisterSite(Site);
     }
 
-    public bool IsActive => siteResource != null;
+    public bool IsActive => SiteResource != null;
 }
