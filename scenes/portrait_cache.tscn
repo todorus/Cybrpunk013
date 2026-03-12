@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://ctn33gojlydd0"]
+
+[ext_resource type="Script" uid="uid://ccnrqbcbhq3c0" path="res://scripts/presentation/portrait/PortraitCache.cs" id="1_xojnf"]
+[ext_resource type="PackedScene" uid="uid://bn157hxs31nif" path="res://scenes/AutomatedPortrait.tscn" id="2_7r21d"]
+
+[node name="PortraitCache" type="Node3D" unique_id=311555733 node_paths=PackedStringArray("_studio")]
+script = ExtResource("1_xojnf")
+_studio = NodePath("AutomatedPortrait")
+
+[node name="AutomatedPortrait" parent="." unique_id=855939848 instance=ExtResource("2_7r21d")]

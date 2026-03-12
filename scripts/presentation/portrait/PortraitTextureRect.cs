@@ -18,6 +18,7 @@ public partial class PortraitTextureRect : TextureRect
 {
     [Export] private PortraitCache _cache = null!;
 
+    [ExportGroup("Optional Cache Keys")]
     /// <summary>
     /// Optional appearance key. If the character's visible appearance can vary,
     /// set this before calling SetCharacter so the cache key is unique per look.
@@ -34,6 +35,21 @@ public partial class PortraitTextureRect : TextureRect
 
     // ── Public API ───────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Connect OperatorDisplay.OperatorChanged to this method in the editor.
+    /// Godot passes custom Resource subclasses as plain Resource across signal
+    /// boundaries, so this method accepts Resource and casts it safely.
+    /// async void methods cannot be connected via the editor signal panel —
+    /// this non-async wrapper exists for that reason.
+    /// </summary>
+    public void SetCharacterFromSignal(Resource resource)
+    {
+        if (resource is CharacterResource characterResource)
+            SetCharacter(characterResource);
+        else
+            GD.PushWarning($"[PortraitTextureRect] SetCharacterFromSignal received unexpected type: {resource?.GetType()}");
+    }
+    
     /// <summary>
     /// Requests the portrait for <paramref name="characterResource"/> and applies
     /// it as this control's texture once available.

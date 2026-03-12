@@ -1,10 +1,24 @@
 [gd_scene format=3 uid="uid://bn157hxs31nif"]
 
+[ext_resource type="Script" uid="uid://dsi4c7r6bgn3u" path="res://scripts/presentation/portrait/PortraitStudio.cs" id="1_rgicg"]
 [ext_resource type="PackedScene" uid="uid://b7ad05s875diw" path="res://scenes/portrait_studio.tscn" id="1_su7q4"]
 
-[node name="AutomatedPortrait" type="Node3D" unique_id=855939848]
+[node name="AutomatedPortrait" type="Node" unique_id=718689681 node_paths=PackedStringArray("_viewport", "_subjectAnchor")]
+script = ExtResource("1_rgicg")
+_viewport = NodePath("SubViewport")
+_subjectAnchor = NodePath("SubViewport/PortraitStudio/SubjectAnchor")
 
 [node name="SubViewport" type="SubViewport" parent="." unique_id=1932430727]
+own_world_3d = true
 transparent_bg = true
+render_target_update_mode = 0
 
 [node name="PortraitStudio" parent="SubViewport" unique_id=472335904 instance=ExtResource("1_su7q4")]
+
+[node name="SM_Chr_Worker_Female_01" parent="SubViewport/PortraitStudio/SubjectAnchor" parent_id_path=PackedInt32Array(472335904, 298760882) index="4" unique_id=1329372226]
+visible = false
+
+[node name="Camera" parent="SubViewport/PortraitStudio" index="4" unique_id=658523731]
+current = true
+
+[editable path="SubViewport/PortraitStudio"]
