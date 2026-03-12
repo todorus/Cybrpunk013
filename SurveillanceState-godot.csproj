@@ -7,6 +7,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="docs\plan-scheduleAndInterrupt.prompt.md" />
+    <Content Include="docs\portrait-system-designer-guide.md" />
     <Content Include="scripts\util\FpsCounter.cs.uid" />
     <Content Include="scripts\util\MeshExt.cs.uid" />
     <Content Include="scripts\util\NodeExt.cs.uid" />
