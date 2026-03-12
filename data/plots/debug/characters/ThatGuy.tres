@@ -6,7 +6,7 @@
 
 [resource]
 script = ExtResource("1_jq7el")
-_displayName = "That Gal"
+_displayName = "Claudia"
 Schedule = ExtResource("1_mx4so")
 AvatarScene = ExtResource("1_jn7cp")
 metadata/_custom_type_script = "uid://c0yjrfoocvmxf"

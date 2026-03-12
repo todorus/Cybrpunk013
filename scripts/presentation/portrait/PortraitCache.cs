@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
+using SurveillanceStategodot.scripts.authoring;
 
 namespace SurveillanceStategodot.scripts.presentation.portrait;
 
@@ -25,6 +26,9 @@ public partial class PortraitCache : Node
 
     // ── Public API ───────────────────────────────────────────────────────────
 
+    public async Task<ImageTexture?> GetOrRenderAsync(CharacterResource characterResource) =>
+        await GetOrRenderAsync(characterResource.CharacterId, characterResource.AvatarScene);
+    
     /// <summary>
     /// Returns a cached portrait texture if available, otherwise renders one
     /// through the studio, caches it, and returns it.

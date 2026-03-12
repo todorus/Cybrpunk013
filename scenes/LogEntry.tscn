@@ -1,24 +1,91 @@
 [gd_scene format=3 uid="uid://nbdp410wp7q8"]
 
 [ext_resource type="Script" uid="uid://3mjmxshjmmcm" path="res://scripts/presentation/log/LogEntryNode.cs" id="1_8keu2"]
+[ext_resource type="Texture2D" uid="uid://boqjxpft1sgs0" path="res://icon.svg" id="2_ukatm"]
+[ext_resource type="Texture2D" uid="uid://b55fsb7tr26j4" path="res://icons/Exit.svg" id="3_5lfs0"]
+[ext_resource type="Texture2D" uid="uid://eqtfpdhv3nu6" path="res://icons/Enter.svg" id="3_h2w6c"]
+[ext_resource type="Texture2D" uid="uid://clnp3sfyht52o" path="res://icons/Moving.svg" id="4_4hr6e"]
+
+[sub_resource type="Animation" id="Animation_4hr6e"]
+resource_name = "FadeIn"
+length = 0.33333334
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.06666667, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_2diug"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_t0erp"]
+_data = {
+&"FadeIn": SubResource("Animation_4hr6e"),
+&"RESET": SubResource("Animation_2diug")
+}
 
 [node name="LogEntry" type="HBoxContainer" unique_id=1265574510]
+custom_minimum_size = Vector2(0, 100)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = -938.0
+offset_bottom = -548.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 10
 script = ExtResource("1_8keu2")
+_observationTypeIcons = Dictionary[int, Texture2D]({
+0: ExtResource("3_h2w6c"),
+1: ExtResource("3_5lfs0"),
+2: ExtResource("4_4hr6e")
+})
 
-[node name="Character" type="Label" parent="." unique_id=554729154]
+[node name="Avatar" type="TextureRect" parent="." unique_id=242279937]
 layout_mode = 2
+texture = ExtResource("2_ukatm")
+expand_mode = 3
+stretch_mode = 4
 
-[node name="Action" type="Label" parent="." unique_id=1493459047]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=2008150262]
 layout_mode = 2
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="Action" type="TextureRect" parent="MarginContainer" unique_id=812289224]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+texture = ExtResource("3_h2w6c")
+expand_mode = 3
+stretch_mode = 4
 
 [node name="Site" type="Label" parent="." unique_id=1686595891]
 layout_mode = 2
+theme_override_font_sizes/font_size = 30
 
-[connection signal="CharacterLabel" from="." to="Character" method="set_text" flags=3]
-[connection signal="OperationLabel" from="." to="Action" method="set_text" flags=3]
+[node name="Node" type="AnimationPlayer" parent="." unique_id=1750722101]
+libraries/ = SubResource("AnimationLibrary_t0erp")
+autoplay = &"FadeIn"
+
+[connection signal="ActionIcon" from="." to="MarginContainer/Action" method="set_texture" flags=3]
+[connection signal="Avatar" from="." to="Avatar" method="set_texture" flags=3]
 [connection signal="SiteLabel" from="." to="Site" method="set_text" flags=3]

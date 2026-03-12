@@ -13,32 +13,18 @@ script = ExtResource("1_rqakp")
 
 [node name="Label" type="Label" parent="." unique_id=1224850200]
 layout_mode = 2
+theme_override_font_sizes/font_size = 30
 text = "Name"
 
-[node name="Occupants" type="VBoxContainer" parent="." unique_id=1543051981]
-layout_mode = 2
-
-[node name="Header" type="Label" parent="Occupants" unique_id=1009257376]
-layout_mode = 2
-text = "Occupants:"
-
-[node name="List" type="HBoxContainer" parent="Occupants" unique_id=1650283162]
+[node name="List" type="HBoxContainer" parent="." unique_id=1650283162]
 layout_mode = 2
 script = ExtResource("2_c5d17")
 _occupantScene = ExtResource("3_ajrx8")
 
-[node name="OccupantWidget" parent="Occupants/List" unique_id=693058755 instance=ExtResource("3_ajrx8")]
+[node name="OccupantWidget" parent="List" unique_id=693058755 instance=ExtResource("3_ajrx8")]
 layout_mode = 2
-
-[node name="Operations" type="VBoxContainer" parent="." unique_id=942540541]
-layout_mode = 2
-
-[node name="Header" type="Label" parent="Operations" unique_id=1733904641]
-layout_mode = 2
-text = "Operations:"
 
 [connection signal="LabelChanged" from="." to="Label" method="set_text" flags=3]
-[connection signal="OccupantsListChanged" from="." to="Occupants/List" method="Refresh" flags=3]
-[connection signal="OperationsListChanged" from="." to="Operations/Header" method="set_text" flags=3]
-[connection signal="PortraitCacheChanged" from="." to="Occupants/List" method="SetPortraitCache"]
-[connection signal="ResourceRegistryChanged" from="." to="Occupants/List" method="SetResourceRegistry"]
+[connection signal="OccupantsListChanged" from="." to="List" method="Refresh" flags=3]
+[connection signal="PortraitCacheChanged" from="." to="List" method="SetPortraitCache"]
+[connection signal="ResourceRegistryChanged" from="." to="List" method="SetResourceRegistry"]

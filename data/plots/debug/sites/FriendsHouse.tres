@@ -5,6 +5,6 @@
 
 [resource]
 script = ExtResource("1_jo1fh")
-_label = "Friends House"
+_label = "Johnny's House"
 _options = [ExtResource("1_icn11")]
 metadata/_custom_type_script = "uid://bwm1lii5mww5x"

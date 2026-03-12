@@ -1,6 +1,7 @@
 using Godot;
 using SurveillanceStategodot.scripts.domain.observation;
 using SurveillanceStategodot.scripts.interaction;
+using SurveillanceStategodot.scripts.presentation.portrait;
 
 namespace SurveillanceStategodot.scripts.presentation.log;
 
@@ -8,6 +9,12 @@ public partial class LogNode : Container
 {
     [Export]
     private SimulationController _simulationController;
+    
+    [Export]
+    private PortraitCache _portraitCache;
+    
+    [Export]
+    private ResourceRegistry _resourceRegistry;
     
     [Export]
     private PackedScene _LogEntryScene;
@@ -19,9 +26,17 @@ public partial class LogNode : Container
 
     private void OnObservationEvent(ObservationCreatedEvent obj)
     {
+        if (obj.Observation.ObservationType == ObservationType.SpottedMoving) return;
+        
         var logEntryNode = _LogEntryScene.Instantiate<LogEntryNode>();
         logEntryNode.WorldState = _simulationController.World;
+        logEntryNode.PortraitCache = _portraitCache;
+        logEntryNode.ResourceRegistry = _resourceRegistry;
         logEntryNode.Observation = obj.Observation;
         AddChild(logEntryNode);
+        if (GetChildCount() > 1)
+        {
+            MoveChild(logEntryNode, 0);
+        }
     }
 }

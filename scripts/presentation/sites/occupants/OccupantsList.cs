@@ -20,7 +20,13 @@ public partial class OccupantsList : Container
     {
         _resourceRegistry = resourceRegistry;
     }
-    
+
+    public override void _Ready()
+    {
+        base._Ready();
+        Refresh(null);
+    }
+
     public void Refresh(SiteNode siteNode)
     {
         this.ClearChildren();
