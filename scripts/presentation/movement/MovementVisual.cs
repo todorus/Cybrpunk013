@@ -97,14 +97,11 @@ public partial class MovementVisual : Node3D
 
         if (_movement.CurrentForward.LengthSquared() > 0.0001f)
             LookAt(_movement.CurrentWorldPosition + _movement.CurrentForward, Vector3.Up, true);
-
-        DrawRemainingPath(_movement);
     }
 
     private void DrawRemainingPath(Movement movement)
     {
-        if (_pathMesh == null)
-            return;
+        if (_pathMesh == null || movement?.Character?.IsOperator != true) return;
 
         _pathMesh.ClearSurfaces();
 

@@ -30,7 +30,7 @@ public partial class OccupantsList : Container
     public void Refresh(SiteNode siteNode)
     {
         this.ClearChildren();
-        if (siteNode.Site == null) return;
+        if (siteNode?.Site == null) return;
         foreach (var occupant in siteNode.Site.Occupants)
         {
             if(!_resourceRegistry.TryGetCharacter(occupant.Id, out var occupantResource)) continue;
