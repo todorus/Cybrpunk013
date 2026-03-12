@@ -26,6 +26,12 @@ public partial class VisionSourceVisual : Node3D
         }
     }
 
+    public override void _Ready()
+    {
+        base._Ready();
+        SyncFromSource(_source);
+    }
+
     public void SetVisionSource(VisionSource source)
     {
         UnsubscribeFromSource();
@@ -65,6 +71,7 @@ public partial class VisionSourceVisual : Node3D
 
     private void SyncFromSource(VisionSource source)
     {
+        if (!IsInsideTree()) return;
         GlobalPosition = source.WorldPosition;
         Range = source.Range;
     }

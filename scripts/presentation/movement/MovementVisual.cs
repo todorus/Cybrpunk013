@@ -74,6 +74,7 @@ public partial class MovementVisual : Node3D
 
     private void OnMovementPositionChanged(Movement movement)
     {
+        if (!IsInsideTree()) return;
         GlobalPosition = movement.CurrentWorldPosition;
 
         if (movement.CurrentForward.LengthSquared() > 0.0001f)
@@ -90,8 +91,8 @@ public partial class MovementVisual : Node3D
 
     private void SyncImmediate()
     {
-        if (_movement == null)
-            return;
+        if (_movement == null) return;
+        if (!IsInsideTree()) return;
 
         GlobalPosition = _movement.CurrentWorldPosition;
 
