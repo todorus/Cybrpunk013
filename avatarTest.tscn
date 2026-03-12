@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://qhld7tb53ck3"]
+
+[ext_resource type="PackedScene" uid="uid://dq3jr0iabnp0s" path="res://Synty/PolygonShops/Prefabs/Characters/Characters/SM_Chr_Gym_Female_01.tscn" id="1_3vt27"]
+[ext_resource type="PackedScene" uid="uid://c8ivor5vlsp3f" path="res://Synty/PolygonShops/Prefabs/Characters/Characters/SM_Chr_Gym_Male_01.tscn" id="2_ywmma"]
+[ext_resource type="PackedScene" uid="uid://cxxq2pm8qla2i" path="res://Synty/PolygonShops/Prefabs/Characters/Characters/SM_Chr_Clerk_Male_01.tscn" id="3_80g36"]
+[ext_resource type="PackedScene" uid="uid://0s1l1jvu6n3l" path="res://Synty/PolygonShops/Prefabs/Characters/Characters/SM_Chr_Clerk_Female_01.tscn" id="4_whblw"]
+[ext_resource type="PackedScene" uid="uid://bpicbga34c6xn" path="res://Synty/PolygonShops/Prefabs/Characters/Characters/SM_Chr_Attendant_Male_01.tscn" id="5_n71ae"]
+[ext_resource type="PackedScene" uid="uid://co16niyf7fmh1" path="res://Synty/PolygonShops/Prefabs/Characters/Characters/SM_Chr_Shopper_Female_01.tscn" id="6_t88ix"]
+[ext_resource type="PackedScene" uid="uid://bl36nkjg67lf5" path="res://Synty/PolygonShops/Prefabs/Characters/Characters/SM_Chr_Shopper_Male_01.tscn" id="7_rd78p"]
+[ext_resource type="PackedScene" uid="uid://dnn2disyoorud" path="res://Synty/PolygonShops/Prefabs/Characters/Characters/SM_Chr_Worker_Female_01.tscn" id="8_r16hf"]
+[ext_resource type="PackedScene" uid="uid://msxmf31l5x1j" path="res://Synty/PolygonShops/Prefabs/Characters/Characters/SM_Chr_Worker_Male_01.tscn" id="9_plafn"]
+
+[node name="Node3D" type="Node3D" unique_id=544373911]
+
+[node name="SM_Chr_Gym_Female_01" parent="." unique_id=1374738882 instance=ExtResource("1_3vt27")]
+
+[node name="SM_Chr_Gym_Male_01" parent="." unique_id=860097683 instance=ExtResource("2_ywmma")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
+
+[node name="SM_Chr_Clerk_Male_01" parent="." unique_id=848884311 instance=ExtResource("3_80g36")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+
+[node name="SM_Chr_Clerk_Female_01" parent="." unique_id=13580824 instance=ExtResource("4_whblw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -1)
+
+[node name="SM_Chr_Attendant_Male_01" parent="." unique_id=1597108657 instance=ExtResource("5_n71ae")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.09496248, 0, -0.98663855)
+
+[node name="SM_Chr_Shopper_Female_01" parent="." unique_id=104884705 instance=ExtResource("6_t88ix")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4730153, 0, -1.4327388)
+
+[node name="SM_Chr_Shopper_Male_01" parent="." unique_id=583220617 instance=ExtResource("7_rd78p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5511923, 0, 0.020812035)
+
+[node name="SM_Chr_Worker_Female_01" parent="." unique_id=1069621042 instance=ExtResource("8_r16hf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4043894, 1.1920929e-07, -1.0655179)
+
+[node name="SM_Chr_Worker_Male_01" parent="." unique_id=1324042192 instance=ExtResource("9_plafn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0136917, 0, -0.19669938)
+metadata/_edit_lock_ = true

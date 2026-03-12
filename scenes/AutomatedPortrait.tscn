@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://bn157hxs31nif"]
+
+[ext_resource type="PackedScene" uid="uid://b7ad05s875diw" path="res://scenes/portrait_studio.tscn" id="1_su7q4"]
+
+[node name="AutomatedPortrait" type="Node3D" unique_id=855939848]
+
+[node name="SubViewport" type="SubViewport" parent="." unique_id=1932430727]
+transparent_bg = true
+
+[node name="PortraitStudio" parent="SubViewport" unique_id=472335904 instance=ExtResource("1_su7q4")]

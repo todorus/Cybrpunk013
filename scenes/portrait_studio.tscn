@@ -1,0 +1,54 @@
+[gd_scene format=3 uid="uid://b7ad05s875diw"]
+
+[ext_resource type="PackedScene" uid="uid://scsll7ta1xy2" path="res://Synty/PolygonShops/Prefabs/Characters/Characters/SM_Chr_Hunter_Male_01.tscn" id="1_uigce"]
+[ext_resource type="PackedScene" uid="uid://dq3jr0iabnp0s" path="res://Synty/PolygonShops/Prefabs/Characters/Characters/SM_Chr_Gym_Female_01.tscn" id="2_uwloy"]
+[ext_resource type="PackedScene" uid="uid://co16niyf7fmh1" path="res://Synty/PolygonShops/Prefabs/Characters/Characters/SM_Chr_Shopper_Female_01.tscn" id="3_7bh4k"]
+[ext_resource type="PackedScene" uid="uid://msxmf31l5x1j" path="res://Synty/PolygonShops/Prefabs/Characters/Characters/SM_Chr_Worker_Male_01.tscn" id="4_q4mse"]
+[ext_resource type="PackedScene" uid="uid://dnn2disyoorud" path="res://Synty/PolygonShops/Prefabs/Characters/Characters/SM_Chr_Worker_Female_01.tscn" id="5_0w101"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_uigce"]
+
+[node name="PortraitStudio" type="Node3D" unique_id=472335904]
+
+[node name="SubjectAnchor" type="Node3D" parent="." unique_id=298760882]
+
+[node name="SM_Chr_Hunter_Male_01" parent="SubjectAnchor" unique_id=1786660269 instance=ExtResource("1_uigce")]
+visible = false
+
+[node name="SM_Chr_Gym_Female_01" parent="SubjectAnchor" unique_id=1788086145 instance=ExtResource("2_uwloy")]
+visible = false
+
+[node name="SM_Chr_Shopper_Female_01" parent="SubjectAnchor" unique_id=1500319475 instance=ExtResource("3_7bh4k")]
+visible = false
+
+[node name="SM_Chr_Worker_Male_01" parent="SubjectAnchor" unique_id=1146939257 instance=ExtResource("4_q4mse")]
+visible = false
+
+[node name="SM_Chr_Worker_Female_01" parent="SubjectAnchor" unique_id=1329372226 instance=ExtResource("5_0w101")]
+
+[node name="Front" type="SpotLight3D" parent="." unique_id=93259588]
+transform = Transform3D(0.71553427, 0, -0.69857764, 0, 1, 0, 0.69857764, 0, 0.71553427, -1.0486326, 1.8264242, 1.215385)
+light_color = Color(0.18369031, 0.39004746, 0.41520172, 1)
+light_energy = 3.421
+spot_range = 4.243
+
+[node name="TopBack" type="SpotLight3D" parent="." unique_id=798879313]
+transform = Transform3D(-0.9491472, 0.23423436, 0.21036687, 0.26593935, 0.23885421, 0.93393004, 0.16851148, 0.9423817, -0.28899994, 1.0126264, 4.3037157, -1.3357476)
+light_color = Color(0.040200002, 0.67, 0.061193332, 1)
+light_energy = 8.842
+
+[node name="TopBack2" type="SpotLight3D" parent="." unique_id=89076974]
+transform = Transform3D(-0.6762729, 0.2796982, -0.6814867, -0.54753745, 0.4280307, 0.7190221, 0.49280638, 0.8593945, -0.13632032, -2.018124, 4.066689, -0.95922387)
+light_color = Color(0.3984628, 0.03270826, 0.39115816, 1)
+light_energy = 14.947
+spot_range = 5.7481184
+spot_angle = 34.650803
+
+[node name="Camera" type="Camera3D" parent="." unique_id=658523731]
+transform = Transform3D(0.8710682, -3.2449818e-09, -0.4911622, 0.03972392, 0.99672407, 0.07044972, 0.4895532, -0.08087739, 0.86821455, -0.3738898, 1.6960993, 0.6668656)
+fov = 33.9
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=407989884]
+transform = Transform3D(4.4132214, 0, -0.47004163, 0, 5, 0, 2.3502083, 0, 0.88264424, 1.463845, 1.623184, -1.8224981)
+visible = false
+mesh = SubResource("QuadMesh_uigce")
