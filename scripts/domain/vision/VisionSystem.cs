@@ -178,7 +178,7 @@ public sealed class VisionSystem : ISimulationSystem
         }
     }
 
-    // ── Stakeout operation vision source ─────────────────────────────────────
+    // ── Stakeout / watch-site operation vision source ─────────────────────────
 
     private void OnOperationStarted(OperationStartedEvent evt)
     {
@@ -190,10 +190,19 @@ public sealed class VisionSystem : ISimulationSystem
         if (owner == null || !owner.IsOperator)
             return;
 
+        // Decide source type: a tail-assignment watch uses WatchSite; a normal stakeout uses StakeoutPost.
+        // We distinguish by checking if the assignment for this operation is a TailCharacter kind.
+        var sourceType = VisionSourceType.StakeoutPost;
+        if (_world.TryGetAssignmentByOperationId(operation.Id, out var assignment) &&
+            assignment.Kind == SurveillanceStategodot.scripts.domain.assignment.AssignmentKind.TailCharacter)
+        {
+            sourceType = VisionSourceType.WatchSite;
+        }
+
         var source = new VisionSource(
             id: $"operation:{operation.Id}",
             owner: owner,
-            type: VisionSourceType.StakeoutPost,
+            type: sourceType,
             range: _operatorVisionRange,
             isMapVisible: true);
 

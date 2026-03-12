@@ -25,9 +25,12 @@ public sealed class WorldState
 
     private readonly Dictionary<string, Site> _sitesById = new();
     private readonly Dictionary<string, Character> _charactersById = new();
-    
+
     private readonly Dictionary<string, Assignment> _assignmentsById = new();
+    // NOTE: operation id index is kept updated via UpdateOperationIndex / RemoveOperationIndex.
     private readonly Dictionary<string, Assignment> _assignmentsByOperationId = new();
+    // Index: target character id -> tail assignment (one tail per character at a time).
+    private readonly Dictionary<string, Assignment> _assignmentsByTargetCharacterId = new();
 
     public void AdvanceTime(double delta)
     {
@@ -47,7 +50,7 @@ public sealed class WorldState
     {
         return _sitesById[id];
     }
-    
+
     public Character GetCharacter(string id)
     {
         return _charactersById[id];
@@ -75,16 +78,33 @@ public sealed class WorldState
         }
 
         _assignmentsById[assignment.Id] = assignment;
-        _assignmentsByOperationId[assignment.Operation.Id] = assignment;
+
+        if (assignment.CurrentOperation != null)
+            _assignmentsByOperationId[assignment.CurrentOperation.Id] = assignment;
+
+        if (assignment.TargetCharacter != null)
+            _assignmentsByTargetCharacterId[assignment.TargetCharacter.Id] = assignment;
     }
-    
+
+    /// <summary>
+    /// Call whenever assignment.CurrentOperation changes so the lookup stays consistent.
+    /// </summary>
+    public void UpdateAssignmentOperationIndex(Assignment assignment, string? oldOperationId)
+    {
+        if (oldOperationId != null)
+            _assignmentsByOperationId.Remove(oldOperationId);
+
+        if (assignment.CurrentOperation != null)
+            _assignmentsByOperationId[assignment.CurrentOperation.Id] = assignment;
+    }
+
     public void RegisterPlot(Plot plot)
     {
         if (!Plots.Contains(plot))
         {
             Plots.Add(plot);
         }
-        
+
         foreach (var character in plot.Characters)
         {
             RegisterCharacter(character);
@@ -112,6 +132,22 @@ public sealed class WorldState
     }
 
     /// <summary>
+    /// Returns the active TailCharacter assignment targeting the given character, if any.
+    /// </summary>
+    public bool TryGetTailAssignmentForTarget(string targetCharacterId, out Assignment? assignment)
+    {
+        if (_assignmentsByTargetCharacterId.TryGetValue(targetCharacterId, out var found) &&
+            found.Phase is not (AssignmentPhase.Completed or AssignmentPhase.Cancelled or AssignmentPhase.Failed))
+        {
+            assignment = found;
+            return true;
+        }
+
+        assignment = null;
+        return false;
+    }
+
+    /// <summary>
     /// Returns true when a character has an assignment that is not yet completed or cancelled.
     /// </summary>
     public bool HasActiveAssignmentForCharacter(string characterId)
@@ -129,7 +165,7 @@ public sealed class WorldState
             if (assignment.Character?.Id != characterId)
                 continue;
 
-            if (assignment.Phase is AssignmentPhase.Completed or AssignmentPhase.Cancelled)
+            if (assignment.Phase is AssignmentPhase.Completed or AssignmentPhase.Cancelled or AssignmentPhase.Failed)
                 continue;
 
             return assignment;
@@ -159,3 +195,4 @@ public sealed class WorldState
         return _visionSourcesById.TryGetValue(id, out source);
     }
 }
+

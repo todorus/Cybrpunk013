@@ -45,7 +45,7 @@ public partial class SimulationController : Node
         _systems.Add(new InterruptSystem());
         _systems.Add(new AssignmentSystem(_dispatchNav));
         
-        _systems.Add(new MovementSystem());
+        _systems.Add(new MovementSystem(_dispatchNav));
         _systems.Add(new OperationSystem());
         
         _systems.Add(new VisionSystem(_operatorVisionRange));
