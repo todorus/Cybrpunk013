@@ -149,6 +149,12 @@ public sealed class VisionSystem : ISimulationSystem
 
         foreach (var source in _world.VisionSources.Values)
         {
+            var key = (source.Id, evt.Character.Id);
+
+            // Only log if the character was already tracked as in-range while moving.
+            if (!_inRange.Contains(key))
+                continue;
+
             if (source.WorldPosition.DistanceTo(evt.Site.EntryPosition) > source.Range)
                 continue;
 
@@ -167,14 +173,26 @@ public sealed class VisionSystem : ISimulationSystem
 
         foreach (var source in _world.VisionSources.Values)
         {
-            if (source.WorldPosition.DistanceTo(evt.Site.EntryPosition) > source.Range)
-                continue;
+            var key = (source.Id, evt.Character.Id);
 
+            if (source.WorldPosition.DistanceTo(evt.Site.EntryPosition) > source.Range)
+            {
+                // Exit happened outside vision — clear stale in-range state so
+                // re-entry into range later fires SpottedMoving fresh.
+                _inRange.Remove(key);
+                continue;
+            }
+
+            // Exit is within vision range — log it. Keep the key in _inRange so
+            // ScanMovingNpcsForSource does not immediately re-fire SpottedMoving
+            // for the movement that starts right after the exit.
             PublishObservation(
                 site: evt.Site,
                 character: evt.Character,
                 operation: evt.CurrentOperation,
                 observationType: ObservationType.ExitedSite);
+
+            _inRange.Add(key);
         }
     }
 

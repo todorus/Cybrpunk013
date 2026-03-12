@@ -26,8 +26,6 @@ public partial class LogNode : Container
 
     private void OnObservationEvent(ObservationCreatedEvent obj)
     {
-        if (obj.Observation.ObservationType == ObservationType.SpottedMoving) return;
-        
         var logEntryNode = _LogEntryScene.Instantiate<LogEntryNode>();
         logEntryNode.WorldState = _simulationController.World;
         logEntryNode.PortraitCache = _portraitCache;
