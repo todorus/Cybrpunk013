@@ -57,7 +57,7 @@ albedo_color = Color(0.18, 0.28933322, 1, 1)
 [sub_resource type="Resource" id="Resource_v6uog"]
 script = ExtResource("20_w6q1s")
 Id = "Node"
-Position = Vector3(2.3840423, 0, 2.5864043)
+Position = Vector3(2.3826723, 0, 2.5864043)
 Outgoing = Array[int]([1, 6, 8])
 
 [sub_resource type="Resource" id="Resource_of5r1"]
@@ -362,17 +362,33 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Log" type="VBoxContainer" parent="CanvasLayer/Ui" unique_id=575234302 node_paths=PackedStringArray("_simulationController", "_portraitCache", "_resourceRegistry")]
+[node name="LogContainer" type="VBoxContainer" parent="CanvasLayer/Ui" unique_id=2047011784]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_right = 211.0
+offset_top = -500.0
+offset_right = 500.0
 grow_vertical = 0
+
+[node name="LogLabel" type="Label" parent="CanvasLayer/Ui/LogContainer" unique_id=1714680815]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Log"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer/Ui/LogContainer" unique_id=682827326]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 3
+
+[node name="Log" type="VBoxContainer" parent="CanvasLayer/Ui/LogContainer/ScrollContainer" unique_id=575234302 node_paths=PackedStringArray("_simulationController", "_portraitCache", "_resourceRegistry")]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+size_flags_horizontal = 3
 script = ExtResource("23_kg0fi")
-_simulationController = NodePath("../../../Simulation")
-_portraitCache = NodePath("../../../PortraitCache")
-_resourceRegistry = NodePath("../../../ResourceRegistry")
+_simulationController = NodePath("../../../../../Simulation")
+_portraitCache = NodePath("../../../../../PortraitCache")
+_resourceRegistry = NodePath("../../../../../ResourceRegistry")
 _LogEntryScene = ExtResource("24_0orsp")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Ui" unique_id=1710859787]

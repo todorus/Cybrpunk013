@@ -44,11 +44,11 @@ _data = {
 }
 
 [node name="LogEntry" type="HBoxContainer" unique_id=1265574510]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(600, 100)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -938.0
+offset_right = -552.0
 offset_bottom = -548.0
 grow_horizontal = 2
 grow_vertical = 2

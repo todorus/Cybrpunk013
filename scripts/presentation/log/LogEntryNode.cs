@@ -47,8 +47,8 @@ public partial class LogEntryNode : Control
             }
 
 
-            EmitSignalSiteLabel(site?.Label ?? "?");
-            EmitSignalCharacterLabel(character?.DisplayName ?? "?");
+            EmitSignalSiteLabel(site?.Label ?? "");
+            EmitSignalCharacterLabel(character?.DisplayName ?? "");
             EmitSignalObservationLabel(DescribeObservation(value));
         }
     }
