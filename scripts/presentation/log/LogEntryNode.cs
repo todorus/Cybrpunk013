@@ -104,8 +104,6 @@ public partial class LogEntryNode : Control
         if (obs == null) return "";
         return obs.ObservationType switch
         {
-            ObservationType.EnteredSite   => "entered site",
-            ObservationType.ExitedSite    => "exited site",
             ObservationType.SpottedMoving => "spotted moving",
             _                             => obs.ObservationType.ToString()
         };

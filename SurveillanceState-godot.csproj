@@ -6,6 +6,7 @@
     <RootNamespace>SurveillanceStategodot</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="docs\plan-characterLocationAndUnifiedVision.prompt.md" />
     <Content Include="docs\plan-scheduleAndInterrupt.prompt.md" />
     <Content Include="docs\portrait-system-designer-guide.md" />
     <Content Include="docs\refactor-character-map-visual.md" />

@@ -93,8 +93,8 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_8keu2")
 _observationTypeIcons = Dictionary[int, Texture2D]({
-2: ExtResource("4_4hr6e"),
-3: ExtResource("3_4hr6e")
+0: ExtResource("4_4hr6e"),
+1: ExtResource("3_4hr6e")
 })
 _complianceTypeColors = Dictionary[int, Color]({
 1: Color(0.8961297, 0.7067938, 3.85046e-07, 1),

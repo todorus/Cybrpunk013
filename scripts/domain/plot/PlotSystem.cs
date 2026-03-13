@@ -36,10 +36,11 @@ public sealed class PlotSystem : ISimulationSystem
             {
                 var initialSite = _world.GetSite(firstScheduleEntry.SiteId);
                 character.CurrentSite = initialSite;
+                character.LocationType = CharacterLocationType.Site;
                 initialSite.AddOccupant(character);
             }
         }
-        
+
         plot.Initialized = true;
     }
 }

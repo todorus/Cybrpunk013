@@ -14,7 +14,13 @@ public sealed class Character
     public string Id { get; }
     public string DisplayName { get; set; }
     public bool IsOperator { get; set; }
-    
+
+    /// <summary>
+    /// Authoritative location kind for this character.
+    /// Set by the system that owns each transition; never mutated directly by observers.
+    /// </summary>
+    public CharacterLocationType LocationType { get; set; } = CharacterLocationType.Base;
+
     public SuspicionLevel SuspicionLevel { get; set; } = SuspicionLevel.None;
 
     /// <summary>

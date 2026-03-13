@@ -56,20 +56,24 @@ public partial class CityscapeClickHandler : Node
 
         var character = _operatorTemplate.ToCharacter();
         character.IsOperator = true;
+        character.LocationType = CharacterLocationType.Base;
         character.Position.Set(path.StartPosition);
 
         _simulationController.World.RegisterCharacter(character);
 
-        // Determine if the chosen option is a stakeout. Stakeout movements stop at
-        // the entry position without entering the site, so destination must be null.
         var option = site.AvailableOptions.Length > 0 ? site.AvailableOptions[0] : null;
         var isStakeout = option?.VisionType == OperationVisionType.Stakeout;
 
+        // Operators never enter sites — destination is always null.
+        // For VisitSite the operation carries the SiteContext so OperationSystem
+        // can register the character as an occupant after arrival.
+        // For StakeoutSite the movement stops at the entry point and
+        // AssignmentSystem handles the hold without touching site state.
         var movement = new Movement(
             id: Guid.NewGuid().ToString(),
             character: character,
             origin: null,
-            destination: isStakeout ? null : site,
+            destination: null,
             path: path);
 
         var operation = option != null
@@ -127,6 +131,7 @@ public partial class CityscapeClickHandler : Node
 
         var operatorCharacter = _operatorTemplate.ToCharacter();
         operatorCharacter.IsOperator = true;
+        operatorCharacter.LocationType = CharacterLocationType.Base;
         operatorCharacter.Position.Set(spawnAnchor.Position);
 
         _simulationController.World.RegisterCharacter(operatorCharacter);

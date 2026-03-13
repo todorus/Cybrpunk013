@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Godot;
 using SurveillanceStategodot.scripts.domain.assignment;
-using SurveillanceStategodot.scripts.domain.operation;
 using SurveillanceStategodot.scripts.domain.system;
 using SurveillanceStategodot.scripts.navigation.authoring;
 using SurveillanceStategodot.scripts.navigation.query;
@@ -69,10 +68,12 @@ public sealed class MovementSystem : ISimulationSystem
                     // Update authoritative position to the site entry point.
                     movement.Character.Position.Set(movement.Destination.EntryPosition);
 
-                    _eventBus.Publish(new CharacterEnteredSiteEvent(
+                    var prevOnArrival = movement.Character.LocationType;
+                    movement.Character.LocationType = CharacterLocationType.Site;
+                    _eventBus.Publish(new CharacterLocationChangedEvent(
                         movement.Character,
-                        movement.Destination,
-                        CurrentOperation: null,
+                        prevOnArrival,
+                        CharacterLocationType.Site,
                         _world.Time));
                 }
             }
@@ -215,15 +216,17 @@ public sealed class MovementSystem : ISimulationSystem
             if (previousSite != null)
             {
                 previousSite.RemoveOccupant(character);
-
-                _eventBus.Publish(new CharacterExitedSiteEvent(
-                    character,
-                    previousSite,
-                    CurrentOperation: null,
-                    _world.Time));
             }
 
             character.CurrentSite = null;
+
+            var prevOnStart = character.LocationType;
+            character.LocationType = CharacterLocationType.NavGraph;
+            _eventBus.Publish(new CharacterLocationChangedEvent(
+                character,
+                prevOnStart,
+                CharacterLocationType.NavGraph,
+                _world.Time));
         }
     }
 
