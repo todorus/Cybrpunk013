@@ -43,6 +43,44 @@ _data = {
 &"RESET": SubResource("Animation_2diug")
 }
 
+[sub_resource type="Animation" id="Animation_t0erp"]
+resource_name = "BackgroundPulse"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Background:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.033333335, 0.76666665),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_jxvlj"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Background:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1edgf"]
+_data = {
+&"BackgroundPulse": SubResource("Animation_t0erp"),
+&"RESET": SubResource("Animation_jxvlj")
+}
+
 [node name="Data" type="Control" unique_id=364320516]
 custom_minimum_size = Vector2(600, 100)
 layout_mode = 3
@@ -62,10 +100,6 @@ _complianceTypeColors = Dictionary[int, Color]({
 1: Color(0.8961297, 0.7067938, 3.85046e-07, 1),
 2: Color(0.9, 0, 0, 1)
 })
-
-[node name="Node" type="AnimationPlayer" parent="." unique_id=1750722101]
-libraries/ = SubResource("AnimationLibrary_t0erp")
-autoplay = &"FadeIn"
 
 [node name="Background" type="ColorRect" parent="." unique_id=476731543]
 layout_mode = 1
@@ -104,6 +138,14 @@ stretch_mode = 4
 [node name="Site" type="Label" parent="HBoxContainer" unique_id=1686595891]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
+
+[node name="EntryAnimation" type="AnimationPlayer" parent="." unique_id=1750722101]
+libraries/ = SubResource("AnimationLibrary_t0erp")
+autoplay = &"FadeIn"
+
+[node name="BackgroundPulseAnimation" type="AnimationPlayer" parent="." unique_id=609743028]
+libraries/ = SubResource("AnimationLibrary_1edgf")
+autoplay = &"BackgroundPulse"
 
 [connection signal="ActionIcon" from="." to="HBoxContainer/MarginContainer/Action" method="set_texture" flags=3]
 [connection signal="Avatar" from="." to="HBoxContainer/Avatar" method="set_texture" flags=3]
