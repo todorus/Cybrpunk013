@@ -1,3 +1,5 @@
+using System;
+using SurveillanceStategodot.scripts.domain.movement;
 using SurveillanceStategodot.scripts.domain.operation;
 
 namespace SurveillanceStategodot.scripts.domain.schedule;
@@ -25,6 +27,20 @@ public sealed class ScheduleEntry
         OperationLabel = operationLabel;
         Duration = duration;
         ComplianceType = complianceType;
+    }
+    
+    public Operation ToOperation(Site site, Movement movement)
+    {
+        return new Operation(
+            id: Guid.NewGuid().ToString(),
+            label: OperationLabel,
+            duration: Duration,
+            visionType: OperationVisionType.None,
+            complianceType: ComplianceType)
+        {
+            SiteContext = site,
+            MovementContext = movement
+        };
     }
 }
 

@@ -87,14 +87,7 @@ public sealed class ScheduleSystem : ISimulationSystem
             destination: site,
             path: path);
 
-        var operation = new Operation(
-            id: Guid.NewGuid().ToString(),
-            label: entry.OperationLabel,
-            duration: entry.Duration)
-        {
-            SiteContext = site,
-            MovementContext = movement
-        };
+        var operation = entry.ToOperation(site, movement);
 
         var assignment = new Assignment(
             id: Guid.NewGuid().ToString(),
