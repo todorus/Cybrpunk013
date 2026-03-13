@@ -2,20 +2,45 @@
 
 [ext_resource type="Script" uid="uid://ckrnkamxro2v1" path="res://scripts/presentation/operators/OperatorDisplay.cs" id="1_f3i85"]
 [ext_resource type="Texture2D" uid="uid://boqjxpft1sgs0" path="res://icon.svg" id="3_cn4ld"]
+[ext_resource type="FontFile" uid="uid://b5rrtedvc4vau" path="res://fonts/Inter_28pt-Black.ttf" id="3_k32ke"]
 
-[node name="OperatorDisplay" type="Control" unique_id=2132581372]
+[node name="OperatorDisplay" type="HBoxContainer" unique_id=1288601534]
 custom_minimum_size = Vector2(200, 200)
-layout_mode = 3
-anchors_preset = 0
+offset_right = 200.0
+offset_bottom = 200.0
 size_flags_vertical = 3
+theme_override_constants/separation = 10
 script = ExtResource("1_f3i85")
 
 [node name="Portrait" type="TextureRect" parent="." unique_id=493571029]
-layout_mode = 1
-offset_right = 199.0
-offset_bottom = 199.0
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
 texture = ExtResource("3_cn4ld")
 expand_mode = 5
 stretch_mode = 4
 
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=36032395]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Name" type="Label" parent="VBoxContainer" unique_id=1157357189]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_fonts/font = ExtResource("3_k32ke")
+theme_override_font_sizes/font_size = 60
+text = "Dozer"
+uppercase = true
+
+[node name="Assignment" type="Label" parent="VBoxContainer" unique_id=1271367622]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_fonts/font = ExtResource("3_k32ke")
+theme_override_font_sizes/font_size = 30
+text = "Dozer"
+uppercase = true
+
+[connection signal="AssignmentLabelChanged" from="." to="VBoxContainer/Assignment" method="set_text" flags=3]
 [connection signal="AvatarChanged" from="." to="Portrait" method="set_texture" flags=3]
+[connection signal="NameChanged" from="." to="VBoxContainer/Name" method="set_text" flags=3]
