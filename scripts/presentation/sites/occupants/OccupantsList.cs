@@ -83,6 +83,6 @@ public partial class OccupantsList : Container
     {
         if (resource is not CharacterResource characterResource) return;
 
-        // EmitSignalOccupantClicked(characterResource);
+        EmitSignalOccupantClicked(characterResource);
     }
 }

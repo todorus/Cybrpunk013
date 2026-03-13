@@ -20,12 +20,12 @@ public partial class ResourceClickable : Control
         MouseDefaultCursorShape = CursorShape.PointingHand;
     }
     
-    public override void _Input(InputEvent @event)
+    public override void _GuiInput(InputEvent @event)
     {
-        base._Input(@event);
-        if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed && mouseEvent.ButtonIndex == MouseButton.Left)
+        if (@event is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Left })
         {
             EmitSignalClicked(Resource);
+            AcceptEvent();
         }
     }
     
