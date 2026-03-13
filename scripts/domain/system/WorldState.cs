@@ -13,6 +13,7 @@ public sealed class WorldState
 
     public List<Site> Sites { get; } = new();
     public List<Character> Characters { get; } = new();
+    public List<Character> Operators { get; } = new();
     public List<Assignment> Assignments { get; } = new();
     public List<Plot> Plots { get; } = new();
 
@@ -69,6 +70,18 @@ public sealed class WorldState
 
         _charactersById.Add(character.Id, character);
         Characters.Add(character);
+    }
+
+    public void RegisterOperator(Character character)
+    {
+        character.IsOperator = true;
+
+        if (_charactersById.ContainsKey(character.Id))
+            return;
+
+        _charactersById.Add(character.Id, character);
+        Characters.Add(character);
+        Operators.Add(character);
     }
 
     public void RegisterAssignment(Assignment assignment)

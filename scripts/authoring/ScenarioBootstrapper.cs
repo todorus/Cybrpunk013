@@ -32,6 +32,7 @@ public partial class ScenarioBootstrapper : Node
         PopulateResourceRegistry();
         InitializeSites(simulationController);
         StampSiteNavAnchors(simulationController);
+        InitializeOperators(simulationController);
         InitializePlots(simulationController);
     }
 
@@ -63,6 +64,16 @@ public partial class ScenarioBootstrapper : Node
             {
                 GD.PushWarning($"[ScenarioBootstrapper] Could not compute NavAnchor for site '{site.Id}' ({site.Label}).");
             }
+        }
+    }
+
+    private void InitializeOperators(SimulationController simulationController)
+    {
+        var world = simulationController.World;
+        foreach (var operatorDefinition in _operatorDefinitions)
+        {
+            var character = operatorDefinition.ToCharacter();
+            world.RegisterOperator(character);
         }
     }
 

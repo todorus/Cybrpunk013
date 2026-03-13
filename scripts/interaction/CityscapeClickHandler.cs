@@ -17,10 +17,6 @@ public partial class CityscapeClickHandler : Node
     [Export] private Node3D _spawnWorldPosition = null!;
     [Export] private Node3D _operatorBaseWorldPosition = null!;
     [Export] private SimulationController _simulationController = null!;
-    
-    [Export] private CharacterResource _operatorTemplate = null!;
-    
-    private static int _operatorCount = 0;
 
     public void HandleClick(GodotObject obj, Vector3 position, bool isDown)
     {
@@ -51,15 +47,17 @@ public partial class CityscapeClickHandler : Node
 
     private void DispatchToSite(Vector3 spawnPosition, Site site)
     {
+        if (!TryGetAvailableOperator(out var character))
+        {
+            GD.PushWarning("[CityscapeClickHandler] No available operator to dispatch to site.");
+            return;
+        }
+
         var endPoint = DispatchNavQueries.GetClosestPointOnGraph(_dispatchNav.Graph, site.GlobalPosition);
         var path = DispatchNavPathfinder.FindPath(_dispatchNav.Graph, spawnPosition, endPoint);
 
-        var character = _operatorTemplate.ToCharacter();
-        character.IsOperator = true;
         character.LocationType = CharacterLocationType.Base;
         character.Position.Set(path.StartPosition);
-
-        _simulationController.World.RegisterCharacter(character);
 
         var option = site.AvailableOptions.Length > 0 ? site.AvailableOptions[0] : null;
         var isStakeout = option?.VisionType == OperationVisionType.Stakeout;
@@ -104,7 +102,7 @@ public partial class CityscapeClickHandler : Node
         _simulationController.EventBus.Publish(
             new AssignmentCreatedEvent(assignment, _simulationController.World.Time));
     }
-    
+
     private void DispatchToTail(CharacterResource characterResource)
     {
         // Resolve the runtime target character.
@@ -119,6 +117,13 @@ public partial class CityscapeClickHandler : Node
             return;
         }
 
+        // Pick an available operator from the pre-registered roster.
+        if (!TryGetAvailableOperator(out var operatorCharacter))
+        {
+            GD.PushWarning("[CityscapeClickHandler] No available operator to dispatch for tail.");
+            return;
+        }
+
         // Spawn the operator at the configured spawn point.
         if (!DispatchNavSpawnQueries.TryGetSpawnPoint(
                 _dispatchNav.Graph,
@@ -129,12 +134,8 @@ public partial class CityscapeClickHandler : Node
             return;
         }
 
-        var operatorCharacter = _operatorTemplate.ToCharacter();
-        operatorCharacter.IsOperator = true;
         operatorCharacter.LocationType = CharacterLocationType.Base;
         operatorCharacter.Position.Set(spawnAnchor.Position);
-
-        _simulationController.World.RegisterCharacter(operatorCharacter);
 
         var assignment = new Assignment(
             id: Guid.NewGuid().ToString(),
@@ -148,5 +149,24 @@ public partial class CityscapeClickHandler : Node
 
         _simulationController.EventBus.Publish(
             new AssignmentCreatedEvent(assignment, _simulationController.World.Time));
+    }
+
+    /// <summary>
+    /// Returns the first operator in <see cref="WorldState.Operators"/> that has
+    /// no active (non-completed, non-cancelled) assignment.
+    /// </summary>
+    private bool TryGetAvailableOperator(out Character? character)
+    {
+        foreach (var op in _simulationController.World.Operators)
+        {
+            if (!_simulationController.World.HasActiveAssignmentForCharacter(op.Id))
+            {
+                character = op;
+                return true;
+            }
+        }
+
+        character = null;
+        return false;
     }
 }

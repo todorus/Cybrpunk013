@@ -57,7 +57,7 @@ albedo_color = Color(0.18, 0.28933322, 1, 1)
 [sub_resource type="Resource" id="Resource_v6uog"]
 script = ExtResource("20_w6q1s")
 Id = "Node"
-Position = Vector3(2.2643414, 0, 2.5864043)
+Position = Vector3(2.2061028, 0, 2.5864043)
 Outgoing = Array[int]([1, 6, 8])
 
 [sub_resource type="Resource" id="Resource_of5r1"]
@@ -119,7 +119,7 @@ script = ExtResource("1_hks51")
 
 [node name="Bootstrap" type="Node" parent="." unique_id=1907404859 node_paths=PackedStringArray("_dispatchNav", "_resourceRegistry")]
 script = ExtResource("1_8y5tq")
-_operatorDefinitions = [ExtResource("3_of5r1")]
+_operatorDefinitions = [ExtResource("3_of5r1"), ExtResource("33_j1g6j")]
 _plotDefinitions = [ExtResource("2_k0m58")]
 _dispatchNav = NodePath("../Graph")
 _resourceRegistry = NodePath("../ResourceRegistry")
@@ -151,7 +151,6 @@ _dispatchNav = NodePath("../../Graph")
 _spawnWorldPosition = NodePath("../../City/HQ")
 _operatorBaseWorldPosition = NodePath("../../City/HQ")
 _simulationController = NodePath("../../Simulation")
-_operatorTemplate = ExtResource("3_of5r1")
 
 [node name="CityScapeHoverHandler" type="Node" parent="Interaction" unique_id=1773414404 node_paths=PackedStringArray("_dispatchNav", "_spawnWorldPosition")]
 script = ExtResource("7_dqb0a")
