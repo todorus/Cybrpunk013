@@ -48,7 +48,7 @@ public partial class SimulationController : Node
         _systems.Add(new MovementSystem(_dispatchNav));
         _systems.Add(new OperationSystem());
         
-        _systems.Add(new VisionSystem(_operatorVisionRange));
+        _systems.Add(new VisionSystem());
         _systems.Add(new ObservationLogSystem());
 
         foreach (var system in _systems)

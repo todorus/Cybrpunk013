@@ -17,6 +17,18 @@ public sealed class Character
     
     public SuspicionLevel SuspicionLevel { get; set; } = SuspicionLevel.None;
 
+    /// <summary>
+    /// World-units per second. Defaults to MovementSystem.DefaultSpeed.
+    /// Designers can override this per character via CharacterResource.
+    /// </summary>
+    public float MovementSpeed { get; set; } = MovementSystem.DefaultSpeed;
+
+    /// <summary>
+    /// Vision radius in world-units. Defaults to VisionSystem.DefaultVisionRange.
+    /// Designers can override this per character via CharacterResource.
+    /// </summary>
+    public float VisionRange { get; set; }
+
     public Schedule? Schedule { get; set; }
     public Site? CurrentSite { get; set; }
     public Movement? CurrentMovement { get; set; }

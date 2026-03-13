@@ -6,5 +6,6 @@
 [resource]
 script = ExtResource("1_888lu")
 _displayName = "Crank"
+_movementSpeed = 4.3
 AvatarScene = ExtResource("1_qwjxj")
 metadata/_custom_type_script = "uid://c0yjrfoocvmxf"

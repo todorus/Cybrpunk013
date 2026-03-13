@@ -1,6 +1,8 @@
 using System;
 using Godot;
 using SurveillanceStategodot.scripts.domain;
+using SurveillanceStategodot.scripts.domain.movement;
+using SurveillanceStategodot.scripts.domain.vision;
 
 namespace SurveillanceStategodot.scripts.authoring;
 
@@ -20,6 +22,18 @@ public partial class CharacterResource : Resource
     private ScheduleResource Schedule = null;
 
     /// <summary>
+    /// World-units per second. Leave at 0 to use the simulation default.
+    /// </summary>
+    [Export]
+    private float _movementSpeed = 3f;
+
+    /// <summary>
+    /// Vision radius in world-units. Leave at 0 to use the simulation default.
+    /// </summary>
+    [Export]
+    private float _visionRange = 3f;
+
+    /// <summary>
     /// Optional 3D scene used by PortraitStudio to render a portrait snapshot.
     /// The scene root should be positioned so it sits correctly at the origin of the SubjectAnchor.
     /// </summary>
@@ -32,7 +46,9 @@ public partial class CharacterResource : Resource
             id: _id,
             displayName: _displayName)
         {
-            Schedule = Schedule?.ToSchedule()
+            Schedule = Schedule?.ToSchedule(),
+            MovementSpeed = _movementSpeed,
+            VisionRange = _visionRange
         };
 
         return character;

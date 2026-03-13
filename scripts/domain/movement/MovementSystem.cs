@@ -17,7 +17,7 @@ public sealed class MovementSystem : ISimulationSystem
 
     private readonly List<Movement> _activeMovements = new();
 
-    private const float Speed = 3f;
+    public const float DefaultSpeed = 3f;
 
     // Pursuit repathing interval in world-time seconds.
     private const double RepathInterval = 1.0;
@@ -49,7 +49,8 @@ public sealed class MovementSystem : ISimulationSystem
                 TryRepathPursuit(movement);
             }
 
-            AdvanceMovement(movement, Speed * (float)delta);
+            var speed = movement.Character?.MovementSpeed ?? DefaultSpeed;
+            AdvanceMovement(movement, speed * (float)delta);
 
             if (!movement.HasArrived)
                 continue;

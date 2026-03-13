@@ -9,8 +9,6 @@ namespace SurveillanceStategodot.scripts.domain.vision;
 
 public sealed class VisionSystem : ISimulationSystem
 {
-    private readonly float _operatorVisionRange;
-
     private WorldState _world = null!;
     private SimulationEventBus _eventBus = null!;
 
@@ -22,9 +20,8 @@ public sealed class VisionSystem : ISimulationSystem
     // leaves and re-enters the range.
     private readonly HashSet<(string sourceId, string characterId)> _inRange = new();
 
-    public VisionSystem(float operatorVisionRange)
+    public VisionSystem()
     {
-        _operatorVisionRange = operatorVisionRange;
     }
 
     public void Initialize(WorldState world, SimulationEventBus eventBus)
@@ -61,7 +58,7 @@ public sealed class VisionSystem : ISimulationSystem
             id: sourceId,
             owner: character,
             type: VisionSourceType.MovingOperator,
-            range: _operatorVisionRange,
+            range: character.VisionRange,
             isMapVisible: true);
 
         source.SetWorldPosition(character.Position.WorldPosition);
@@ -214,7 +211,6 @@ public sealed class VisionSystem : ISimulationSystem
         if (owner == null || !owner.IsOperator)
             return;
 
-        // Decide source type: a tail-assignment hold uses WatchSite; a normal stakeout uses StakeoutPost.
         var sourceType = VisionSourceType.StakeoutPost;
         if (_world.TryGetAssignmentByOperationId(operation.Id, out var assignment) &&
             assignment.Kind == SurveillanceStategodot.scripts.domain.assignment.AssignmentKind.TailCharacter)
@@ -226,7 +222,7 @@ public sealed class VisionSystem : ISimulationSystem
             id: $"operation:{operation.Id}",
             owner: owner,
             type: sourceType,
-            range: _operatorVisionRange,
+            range: owner.VisionRange,
             isMapVisible: true);
 
         // Position at the operator's current nav-graph position, not a site entry point.
