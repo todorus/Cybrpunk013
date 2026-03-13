@@ -85,8 +85,7 @@ public sealed class ScheduleSystem : ISimulationSystem
             character: character,
             origin: character.CurrentSite,
             destination: site,
-            path: path,
-            initialPosition: path.StartPosition);
+            path: path);
 
         var operation = new Operation(
             id: Guid.NewGuid().ToString(),

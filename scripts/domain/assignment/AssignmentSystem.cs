@@ -226,12 +226,10 @@ public sealed class AssignmentSystem : ISimulationSystem
     {
         assignment.Phase = AssignmentPhase.PursuingTarget;
 
-        // Determine operator's current world position.
+        // Determine operator's current world position from the authoritative position component.
         Vector3 operatorPos;
-        if (assignment.Character?.CurrentMovement != null)
-            operatorPos = assignment.Character.CurrentMovement.CurrentWorldPosition;
-        else if (assignment.Character?.CurrentSite != null)
-            operatorPos = assignment.Character.CurrentSite.EntryPosition;
+        if (assignment.Character != null)
+            operatorPos = assignment.Character.Position.WorldPosition;
         else
         {
             FailAssignment(assignment, worldTime);
@@ -240,15 +238,10 @@ public sealed class AssignmentSystem : ISimulationSystem
 
         // Determine target's current world position.
         Vector3 targetPos;
-        if (target.CurrentMovement != null)
-            targetPos = target.CurrentMovement.CurrentWorldPosition;
-        else if (target.CurrentSite != null)
+        if (target.CurrentSite != null)
             targetPos = target.CurrentSite.EntryPosition;
         else
-        {
-            assignment.Phase = AssignmentPhase.LostTarget;
-            return;
-        }
+            targetPos = target.Position.WorldPosition;
 
         var path = DispatchNavPathfinder.FindPath(
             _dispatchNav.Graph,
@@ -267,8 +260,7 @@ public sealed class AssignmentSystem : ISimulationSystem
             character: assignment.Character,
             origin: assignment.Character?.CurrentSite,
             targetCharacter: target,
-            initialPath: path,
-            initialPosition: path.StartPosition);
+            initialPath: path);
 
         assignment.CurrentMovement = pursuitMovement;
         _eventBus.Publish(new MovementStartedEvent(pursuitMovement, worldTime));
@@ -385,8 +377,7 @@ public sealed class AssignmentSystem : ISimulationSystem
             character: assignment.Character,
             origin: operationSite,
             destination: null,
-            path: returnPath,
-            initialPosition: returnPath.StartPosition);
+            path: returnPath);
 
         assignment.CurrentMovement = returnMovement;
         assignment.Phase = AssignmentPhase.ReturnMovement;

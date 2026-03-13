@@ -1,4 +1,5 @@
 using Godot;
+using SurveillanceStategodot.scripts.domain;
 using SurveillanceStategodot.scripts.domain.movement;
 
 namespace SurveillanceStategodot.scripts.presentation.movement;
@@ -37,50 +38,51 @@ public partial class MovementVisual : Node3D
         if (_movement == movement)
             return;
 
-        UnsubscribeFromMovement();
+        Unsubscribe();
 
         _movement = movement;
-        SubscribeToMovement();
-        
+        Subscribe();
+
         EmitSignalCharacterNameChanged(movement?.Character?.DisplayName);
 
         SyncImmediate();
     }
-    
 
     public override void _ExitTree()
     {
-        UnsubscribeFromMovement();
+        Unsubscribe();
         base._ExitTree();
     }
 
-    private void SubscribeToMovement()
+    private void Subscribe()
     {
-        if (_movement == null)
+        if (_movement?.Character == null)
             return;
 
-        _movement.PositionChanged += OnMovementPositionChanged;
+        _movement.Character.Position.Changed += OnPositionChanged;
         _movement.Arrived += OnMovementArrived;
     }
 
-    private void UnsubscribeFromMovement()
+    private void Unsubscribe()
     {
-        if (_movement == null)
+        if (_movement?.Character == null)
             return;
 
-        _movement.PositionChanged -= OnMovementPositionChanged;
+        _movement.Character.Position.Changed -= OnPositionChanged;
         _movement.Arrived -= OnMovementArrived;
     }
 
-    private void OnMovementPositionChanged(Movement movement)
+    private void OnPositionChanged(CharacterPosition position)
     {
         if (!IsInsideTree()) return;
-        GlobalPosition = movement.CurrentWorldPosition;
 
-        if (movement.CurrentForward.LengthSquared() > 0.0001f)
-            LookAt(movement.CurrentWorldPosition + movement.CurrentForward, Vector3.Up, true);
+        GlobalPosition = position.WorldPosition;
 
-        DrawRemainingPath(movement);
+        if (position.Forward.LengthSquared() > 0.0001f)
+            LookAt(position.WorldPosition + position.Forward, Vector3.Up, true);
+
+        if (_movement != null)
+            DrawRemainingPath(_movement, position);
     }
 
     private void OnMovementArrived(Movement movement)
@@ -91,18 +93,19 @@ public partial class MovementVisual : Node3D
 
     private void SyncImmediate()
     {
-        if (_movement == null) return;
+        if (_movement?.Character == null) return;
         if (!IsInsideTree()) return;
 
-        GlobalPosition = _movement.CurrentWorldPosition;
+        var position = _movement.Character.Position;
+        GlobalPosition = position.WorldPosition;
 
-        if (_movement.CurrentForward.LengthSquared() > 0.0001f)
-            LookAt(_movement.CurrentWorldPosition + _movement.CurrentForward, Vector3.Up, true);
+        if (position.Forward.LengthSquared() > 0.0001f)
+            LookAt(position.WorldPosition + position.Forward, Vector3.Up, true);
     }
 
-    private void DrawRemainingPath(Movement movement)
+    private void DrawRemainingPath(Movement movement, CharacterPosition position)
     {
-        if (_pathMesh == null || movement?.Character?.IsOperator != true) return;
+        if (_pathMesh == null || movement.Character?.IsOperator != true) return;
 
         _pathMesh.ClearSurfaces();
 
@@ -112,8 +115,8 @@ public partial class MovementVisual : Node3D
 
         _pathMesh.SurfaceBegin(Mesh.PrimitiveType.LineStrip);
 
-        // Start from the current world position, then follow remaining waypoints
-        _pathMesh.SurfaceAddVertex(movement.CurrentWorldPosition + Vector3.Up * _verticalOffset);
+        // Start from the character's authoritative position.
+        _pathMesh.SurfaceAddVertex(position.WorldPosition + Vector3.Up * _verticalOffset);
 
         for (int i = movement.SegmentIndex + 1; i < path.WorldPoints.Count; i++)
         {

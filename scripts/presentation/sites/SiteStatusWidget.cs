@@ -1,5 +1,6 @@
 using System.Linq;
 using Godot;
+using SurveillanceStategodot.scripts.authoring;
 using SurveillanceStategodot.scripts.domain;
 using SurveillanceStategodot.scripts.domain.operation;
 using SurveillanceStategodot.scripts.presentation.portrait;
@@ -20,6 +21,9 @@ public partial class SiteStatusWidget : Control
     public delegate void ResourceRegistryChangedEventHandler(ResourceRegistry registry);
     [Signal]
     public delegate void PortraitCacheChangedEventHandler(PortraitCache cache);
+    
+    [Signal]
+    public delegate void OccupantClickedEventHandler(CharacterResource characterResource);
 
     public SiteNode? SiteNode { get; private set; }
     
@@ -94,4 +98,6 @@ public partial class SiteStatusWidget : Control
     {
         EmitSignalOccupantsListChanged(SiteNode);
     }
+    
+    private void OnOccupantClicked(CharacterResource character) => EmitSignalOccupantClicked(character);
 }

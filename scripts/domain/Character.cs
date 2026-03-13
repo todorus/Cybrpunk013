@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Godot;
 using SurveillanceStategodot.scripts.domain.assignment;
 using SurveillanceStategodot.scripts.domain.communication;
 using SurveillanceStategodot.scripts.domain.interrupt;
@@ -19,6 +20,12 @@ public sealed class Character
     public Schedule? Schedule { get; set; }
     public Site? CurrentSite { get; set; }
     public Movement? CurrentMovement { get; set; }
+
+    /// <summary>
+    /// Authoritative world-space position of the character.
+    /// Updated by MovementSystem on each tick and set explicitly when spawning.
+    /// </summary>
+    public CharacterPosition Position { get; } = new(Vector3.Zero);
 
     /// <summary>The currently active interrupt, if any.</summary>
     public CharacterInterrupt? ActiveInterrupt { get; set; }

@@ -49,7 +49,7 @@ public sealed class MovementSystem : ISimulationSystem
                 TryRepathPursuit(movement);
             }
 
-            movement.Advance(Speed * (float)delta);
+            AdvanceMovement(movement, Speed * (float)delta);
 
             if (!movement.HasArrived)
                 continue;
@@ -66,6 +66,9 @@ public sealed class MovementSystem : ISimulationSystem
                 {
                     movement.Destination.AddOccupant(movement.Character);
 
+                    // Update authoritative position to the site entry point.
+                    movement.Character.Position.Set(movement.Destination.EntryPosition);
+
                     _eventBus.Publish(new CharacterEnteredSiteEvent(
                         movement.Character,
                         movement.Destination,
@@ -75,6 +78,35 @@ public sealed class MovementSystem : ISimulationSystem
             }
 
             _eventBus.Publish(new MovementArrivedEvent(movement, _world.Time));
+        }
+    }
+
+    /// <summary>
+    /// Advances a movement by reading the character's authoritative position,
+    /// stepping along the path, and writing the result back to Character.Position.
+    /// SegmentIndex on the movement is kept up to date here.
+    /// </summary>
+    private static void AdvanceMovement(Movement movement, float travelDistance)
+    {
+        if (movement.HasArrived || !movement.Path.IsValid || movement.Path.WorldPoints.Count < 2)
+            return;
+
+        var character = movement.Character;
+        var currentPos = character?.Position.WorldPosition ?? movement.Path.StartPosition;
+
+        var result = movement.Path.Advance(movement.SegmentIndex, currentPos, travelDistance);
+
+        movement.SegmentIndex = result.SegmentIndex;
+
+        if (character != null && currentPos != result.Position)
+        {
+            character.Position.Update(result.Position, result.Direction);
+        }
+
+        // Only StaticPath movements self-arrive.
+        if (movement.Mode == MovementMode.StaticPath && result.ReachedDestination)
+        {
+            movement.MarkArrived();
         }
     }
 
@@ -95,18 +127,16 @@ public sealed class MovementSystem : ISimulationSystem
         if (target == null)
             return;
 
-        // Determine target world position: prefer live movement position, then site entry.
+        // Determine target world position from the authoritative position component.
         Vector3 targetPos;
-        if (target.CurrentMovement != null)
-            targetPos = target.CurrentMovement.CurrentWorldPosition;
-        else if (target.CurrentSite != null)
+        if (target.CurrentSite != null)
             targetPos = target.CurrentSite.EntryPosition;
         else
-            return; // Target position unknown; keep current path.
+            targetPos = target.Position.WorldPosition;
 
         var newPath = DispatchNavPathfinder.FindPath(
             _dispatchNav.Graph,
-            movement.CurrentWorldPosition,
+            movement.Character?.Position.WorldPosition ?? movement.Path.StartPosition,
             targetPos);
 
         if (newPath.IsValid)
@@ -128,6 +158,9 @@ public sealed class MovementSystem : ISimulationSystem
             var previousSite = character.CurrentSite;
 
             character.CurrentMovement = evt.Movement;
+
+            // Seed the authoritative position from the path's start position.
+            character.Position.Set(evt.Movement.Path.StartPosition);
 
             if (previousSite != null)
             {
@@ -159,4 +192,3 @@ public sealed class MovementSystem : ISimulationSystem
         }
     }
 }
-

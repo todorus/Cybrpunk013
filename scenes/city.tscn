@@ -340,7 +340,7 @@ transform = Transform3D(0.12940952, 0.9659258, -0.2241439, -0.48296288, 0.258819
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1775578006]
 
-[node name="UiOverlay" type="Control" parent="CanvasLayer" unique_id=1382234530 node_paths=PackedStringArray("_resourceRegistry", "_portraitCache", "_camera")]
+[node name="SiteOverlay" type="Control" parent="CanvasLayer" unique_id=1382234530 node_paths=PackedStringArray("_resourceRegistry", "_portraitCache", "_camera")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -427,4 +427,5 @@ _visionSourceVisualScene = ExtResource("28_86b61")
 [connection signal="Move" from="Mouse" to="Cursor" method="OnMove" flags=3]
 [connection signal="Move" from="Mouse" to="NavCursor" method="OnMove" flags=3]
 [connection signal="Pan" from="Mouse" to="Camera3D" method="HandlePan" flags=3]
+[connection signal="CharacterClicked" from="CanvasLayer/SiteOverlay" to="Interaction/CityScapeClickHandler" method="HandleClick" flags=3]
 [connection signal="OperatorChanged" from="CanvasLayer/Ui/VBoxContainer/OperatorDisplay" to="CanvasLayer/Ui/VBoxContainer/OperatorDisplay/Portrait" method="SetCharacterFromSignal" flags=3]

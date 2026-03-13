@@ -26,7 +26,11 @@ public partial class CityscapeClickHandler : Node
     {
         if (!isDown)
             return;
+        HandleClick(obj);
+    }
 
+    public void HandleClick(GodotObject obj)
+    {
         if (obj is SiteNode siteNode &&
             siteNode.IsActive &&
             DispatchNavSpawnQueries.TryGetSpawnPoint(
@@ -38,6 +42,11 @@ public partial class CityscapeClickHandler : Node
             GD.Print($"Clicked on site: {site.Label}");
             DispatchToSite(spawnAnchor.Position, site);
         }
+
+        if (obj is CharacterResource characterResource)
+        {
+            DispatchToTail(characterResource);
+        }
     }
 
     private void DispatchToSite(Vector3 spawnPosition, Site site)
@@ -47,14 +56,16 @@ public partial class CityscapeClickHandler : Node
 
         var character = _operatorTemplate.ToCharacter();
         character.IsOperator = true;
+        character.Position.Set(path.StartPosition);
+
+        _simulationController.World.RegisterCharacter(character);
         
         var movement = new Movement(
             id: Guid.NewGuid().ToString(),
             character: character,
             origin: null,
             destination: site,
-            path: path,
-            initialPosition: path.StartPosition);
+            path: path);
 
         var operation = EnsureOperation(site, movement);
 
@@ -90,5 +101,49 @@ public partial class CityscapeClickHandler : Node
         
         var option = site.AvailableOptions[0];
         return option.ToOperation(movement, site);
+    }
+    
+    private void DispatchToTail(CharacterResource characterResource)
+    {
+        // Resolve the runtime target character.
+        Character targetCharacter;
+        try
+        {
+            targetCharacter = _simulationController.World.GetCharacter(characterResource.CharacterId);
+        }
+        catch
+        {
+            GD.PushWarning($"[CityscapeClickHandler] Cannot tail '{characterResource.CharacterId}': not found in WorldState.");
+            return;
+        }
+
+        // Spawn the operator at the configured spawn point.
+        if (!DispatchNavSpawnQueries.TryGetSpawnPoint(
+                _dispatchNav.Graph,
+                _spawnWorldPosition.GlobalPosition,
+                out var spawnAnchor))
+        {
+            GD.PushWarning("[CityscapeClickHandler] No spawn point found for tail operator.");
+            return;
+        }
+
+        var operatorCharacter = _operatorTemplate.ToCharacter();
+        operatorCharacter.IsOperator = true;
+        operatorCharacter.Position.Set(spawnAnchor.Position);
+
+        _simulationController.World.RegisterCharacter(operatorCharacter);
+
+        var assignment = new Assignment(
+            id: Guid.NewGuid().ToString(),
+            character: operatorCharacter,
+            targetCharacter: targetCharacter)
+        {
+            CompletionBehavior = AssignmentCompletionBehavior.ReturnToBase,
+            BaseWorldPosition = _operatorBaseWorldPosition.GlobalPosition,
+            Source = AssignmentSource.PlayerOrder
+        };
+
+        _simulationController.EventBus.Publish(
+            new AssignmentCreatedEvent(assignment, _simulationController.World.Time));
     }
 }

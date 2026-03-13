@@ -64,10 +64,10 @@ public sealed class VisionSystem : ISimulationSystem
             range: _operatorVisionRange,
             isMapVisible: true);
 
-        source.SetWorldPosition(evt.Movement.CurrentWorldPosition);
+        source.SetWorldPosition(character.Position.WorldPosition);
 
         _visionSourceIdByMovementId[evt.Movement.Id] = sourceId;
-        evt.Movement.PositionChanged += OnMovementPositionChanged;
+        character.Position.Changed += OnCharacterPositionChanged;
 
         _world.RegisterVisionSource(source);
     }
@@ -78,7 +78,9 @@ public sealed class VisionSystem : ISimulationSystem
             return;
 
         _visionSourceIdByMovementId.Remove(evt.Movement.Id);
-        evt.Movement.PositionChanged -= OnMovementPositionChanged;
+
+        if (evt.Movement.Character != null)
+            evt.Movement.Character.Position.Changed -= OnCharacterPositionChanged;
 
         // Clear any in-range state for this source so re-entry fires fresh next time.
         _inRange.RemoveWhere(pair => pair.sourceId == sourceId);
@@ -86,17 +88,21 @@ public sealed class VisionSystem : ISimulationSystem
         _world.RemoveVisionSource(sourceId);
     }
 
-    private void OnMovementPositionChanged(Movement movement)
+    private void OnCharacterPositionChanged(CharacterPosition position)
     {
-        if (!_visionSourceIdByMovementId.TryGetValue(movement.Id, out var sourceId))
+        // Find the movement whose character owns this position.
+        foreach (var (movementId, sourceId) in _visionSourceIdByMovementId)
+        {
+            if (!_world.TryGetVisionSource(sourceId, out var source) || source == null)
+                continue;
+
+            if (source.Owner?.Position != position)
+                continue;
+
+            source.SetWorldPosition(position.WorldPosition);
+            ScanMovingNpcsForSource(source);
             return;
-
-        if (!_world.TryGetVisionSource(sourceId, out var source) || source == null)
-            return;
-
-        source.SetWorldPosition(movement.CurrentWorldPosition);
-
-        ScanMovingNpcsForSource(source);
+        }
     }
 
     // ── Shared range scan ────────────────────────────────────────────────────
@@ -118,7 +124,7 @@ public sealed class VisionSystem : ISimulationSystem
 
             var key = (source.Id, candidate.Id);
             bool nowInRange = source.WorldPosition.DistanceTo(
-                candidate.CurrentMovement.CurrentWorldPosition) <= source.Range;
+                candidate.Position.WorldPosition) <= source.Range;
 
             if (nowInRange)
             {

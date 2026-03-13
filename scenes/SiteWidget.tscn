@@ -28,3 +28,5 @@ layout_mode = 2
 [connection signal="OccupantsListChanged" from="." to="List" method="Refresh" flags=3]
 [connection signal="PortraitCacheChanged" from="." to="List" method="SetPortraitCache"]
 [connection signal="ResourceRegistryChanged" from="." to="List" method="SetResourceRegistry"]
+[connection signal="OccupantClicked" from="List" to="." method="OnOccupantClicked" flags=3]
+[connection signal="Clicked" from="List/OccupantWidget" to="." method="OnOccupantClicked" flags=3]
