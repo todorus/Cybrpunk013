@@ -58,7 +58,8 @@ public sealed class MovementSystem : ISimulationSystem
 
             if (movement.Character != null)
             {
-                movement.Character.CurrentMovement = null;
+                if (movement.Character.CurrentMovement == movement)
+                    movement.Character.CurrentMovement = null;
                 movement.Character.CurrentSite = movement.Destination;
 
                 if (movement.Destination != null)
