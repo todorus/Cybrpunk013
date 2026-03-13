@@ -30,6 +30,7 @@ public sealed class AssignmentSystem : ISimulationSystem
         _eventBus.Subscribe<MovementArrivedEvent>(OnMovementArrived);
         _eventBus.Subscribe<OperationCompletedEvent>(OnOperationCompleted);
         _eventBus.Subscribe<CharacterLocationChangedEvent>(OnCharacterLocationChanged);
+        _eventBus.Subscribe<AssignmentCancelRequestedEvent>(OnAssignmentCancelRequested);
     }
 
     public void Tick(double delta)
@@ -420,6 +421,24 @@ public sealed class AssignmentSystem : ISimulationSystem
         assignment.Phase = AssignmentPhase.Failed;
         GD.PushWarning($"[AssignmentSystem] Assignment {assignment.Id} failed.");
         _eventBus.Publish(new AssignmentCompletedEvent(assignment, worldTime));
+    }
+
+    // ── Player-requested recall ───────────────────────────────────────────────
+
+    private void OnAssignmentCancelRequested(AssignmentCancelRequestedEvent evt)
+    {
+        var assignment = evt.Assignment;
+
+        // Ignore if already in a terminal or return phase.
+        if (assignment.Phase is AssignmentPhase.Completed
+            or AssignmentPhase.Cancelled
+            or AssignmentPhase.Failed
+            or AssignmentPhase.ReturnMovement)
+            return;
+
+        StopCurrentOperation(assignment, evt.Time);
+        StopCurrentMovement(assignment, evt.Time);
+        StartReturnMovement(assignment, evt.Time);
     }
 }
 

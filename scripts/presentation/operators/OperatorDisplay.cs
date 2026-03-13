@@ -15,6 +15,16 @@ public partial class OperatorDisplay : Control
     [Signal]
     public delegate void AssignmentLabelChangedEventHandler(string label);
 
+    [Signal]
+    public delegate void RecallPressedEventHandler(string characterId);
+    
+    [Signal]
+    public delegate void HasAssignmentChangedEventHandler(bool hasAssignment);
+    [Signal]
+    public delegate void HasNoAssignmentChangedEventHandler(bool hasNoAssignment);
+
+    private string _characterId;
+
     public Texture2D Avatar
     {
         set => EmitSignalAvatarChanged(value);
@@ -22,13 +32,24 @@ public partial class OperatorDisplay : Control
 
     public Character Character
     {
-        set => EmitSignalNameChanged(value?.DisplayName);
+        set
+        {
+            _characterId = value?.Id;
+            EmitSignalNameChanged(value?.DisplayName);
+        }
+    }
+
+    public void Recall()
+    {
+        EmitSignalRecallPressed(_characterId);
     }
 
     public void SetAssignment(Assignment? assignment)
     {
         var label = assignment != null ? FormatLabel(assignment) : "Idle";
         EmitSignalAssignmentLabelChanged(label);
+        EmitSignalHasAssignmentChanged(assignment != null);
+        EmitSignalHasNoAssignmentChanged(assignment == null);
     }
 
     private static string FormatLabel(Assignment assignment) => assignment.Kind switch

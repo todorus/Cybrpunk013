@@ -70,6 +70,15 @@ public partial class OperatorList : Container
             display.SetAssignment(null);
     }
 
+    private void OnRecallPressed(string characterId)
+    {
+        var assignment = _simulationController.World.GetActiveAssignmentForCharacter(characterId);
+        if (assignment == null) return;
+
+        _simulationController.EventBus.Publish(
+            new AssignmentCancelRequestedEvent(assignment, _simulationController.World.Time));
+    }
+
     private void Refresh(List<Character> operators)
     {
         _cts.Cancel();
@@ -96,6 +105,7 @@ public partial class OperatorList : Container
             operatorDisplay.Avatar = avatar;
             operatorDisplay.Character = operatorCharacter;
             operatorDisplay.SetAssignment(null);
+            operatorDisplay.RecallPressed += OnRecallPressed;
 
             _displaysByCharacterId[operatorCharacter.Id] = operatorDisplay;
             AddChild(operatorDisplay);

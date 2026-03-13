@@ -41,6 +41,14 @@ theme_override_font_sizes/font_size = 30
 text = "Dozer"
 uppercase = true
 
+[node name="Button" type="Button" parent="VBoxContainer" unique_id=1697981130]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Recall"
+
 [connection signal="AssignmentLabelChanged" from="." to="VBoxContainer/Assignment" method="set_text" flags=3]
 [connection signal="AvatarChanged" from="." to="Portrait" method="set_texture" flags=3]
+[connection signal="HasNoAssignmentChanged" from="." to="VBoxContainer/Button" method="set_disabled" flags=3]
 [connection signal="NameChanged" from="." to="VBoxContainer/Name" method="set_text" flags=3]
+[connection signal="pressed" from="VBoxContainer/Button" to="." method="Recall" flags=3]
