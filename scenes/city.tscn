@@ -8,10 +8,10 @@
 [ext_resource type="PackedScene" uid="uid://c0tkec1d21liq" path="res://scenes/block.tscn" id="1_oacpt"]
 [ext_resource type="Script" uid="uid://dd5p2h61x7m2b" path="res://scripts/interaction/CityscapeClickHandler.cs" id="2_4lp1f"]
 [ext_resource type="Script" uid="uid://cx38cosoi2eq8" path="res://scripts/control/mouse/Cursor.cs" id="2_drx7m"]
-[ext_resource type="Script" uid="uid://bhho8byefctvm" path="res://scripts/presentation/movement/MovementPresenter.cs" id="2_f7b0s"]
+[ext_resource type="Script" uid="uid://bhho8byefctvm" path="res://scripts/presentation/movement/CharacterPresenter.cs" id="2_f7b0s"]
 [ext_resource type="Resource" uid="uid://ds4ihbac04hn2" path="res://data/plots/debug/DebugPlot.tres" id="2_k0m58"]
 [ext_resource type="Script" uid="uid://dftotlkcpdb05" path="res://scripts/navigation/authoring/DispatchNav.cs" id="2_rqxma"]
-[ext_resource type="Script" uid="uid://b770gq30gc66e" path="res://scripts/presentation/movement/MovementVisualSpawner.cs" id="3_dqb0a"]
+[ext_resource type="Script" uid="uid://b770gq30gc66e" path="res://scripts/presentation/movement/CharacterMapVisualSpawner.cs" id="3_dqb0a"]
 [ext_resource type="Script" uid="uid://dcbooviv3dt56" path="res://scripts/navigation/authoring/NavNode.cs" id="3_movw8"]
 [ext_resource type="Resource" uid="uid://708ftxecrg2n" path="res://data/operators/Crank.tres" id="3_of5r1"]
 [ext_resource type="Script" uid="uid://doia2rsd1vhtj" path="res://scripts/navigation/control/DispatchNavCursor.cs" id="4_3br4m"]
@@ -129,19 +129,19 @@ _resourceRegistry = NodePath("../ResourceRegistry")
 script = ExtResource("1_hyhbb")
 _dispatchNav = NodePath("../Graph")
 
-[node name="MovementPresentation" type="Node" parent="." unique_id=116599897]
+[node name="CharacterPresentation" type="Node" parent="." unique_id=116599897]
 
-[node name="MovementPresenter" type="Node" parent="MovementPresentation" unique_id=1146760436 node_paths=PackedStringArray("_spawner", "_simulationController")]
+[node name="CharacterPresenter" type="Node" parent="CharacterPresentation" unique_id=1146760436 node_paths=PackedStringArray("_spawner", "_simulationController")]
 script = ExtResource("2_f7b0s")
-_spawner = NodePath("../MovementSpawner")
+_spawner = NodePath("../CharacterMapVisualSpawner")
 _simulationController = NodePath("../../Simulation")
 
-[node name="MovementSpawner" type="Node" parent="MovementPresentation" unique_id=731437664 node_paths=PackedStringArray("_visualRoot")]
+[node name="CharacterMapVisualSpawner" type="Node" parent="CharacterPresentation" unique_id=731437664 node_paths=PackedStringArray("_visualRoot")]
 script = ExtResource("3_dqb0a")
-_movementVisualScene = ExtResource("4_hyhbb")
+_characterMapVisualScene = ExtResource("4_hyhbb")
 _visualRoot = NodePath("../..")
 
-[node name="MovementPreview" type="MeshInstance3D" parent="MovementPresentation" unique_id=2130221013]
+[node name="MovementPreview" type="MeshInstance3D" parent="CharacterPresentation" unique_id=2130221013]
 script = ExtResource("5_f7b0s")
 
 [node name="Interaction" type="Node" parent="." unique_id=844133514]
@@ -295,7 +295,7 @@ NodeRadius = 0.2
 EdgeThickness = 1.0
 
 [node name="Node" type="Node3D" parent="Graph" unique_id=379756053 node_paths=PackedStringArray("ConnectedNodes")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.375805, 0, 2.5864043)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2643414, 0, 2.5864043)
 script = ExtResource("3_movw8")
 ConnectedNodes = [NodePath("../Node2"), NodePath("../Node6")]
 
@@ -421,9 +421,9 @@ _visionSourceVisualScene = ExtResource("28_86b61")
 
 [node name="PortraitCache" parent="." unique_id=311555733 instance=ExtResource("29_86b61")]
 
-[connection signal="OperaterVisionRangeChanged" from="Simulation" to="MovementPresentation/MovementSpawner" method="SetOperatorVisionRange" flags=3]
+[connection signal="OperaterVisionRangeChanged" from="Simulation" to="CharacterPresentation/CharacterMapVisualSpawner" method="SetOperatorVisionRange" flags=3]
 [connection signal="SimulationInitialized" from="Simulation" to="Bootstrap" method="Init" flags=3]
-[connection signal="PathPreviewChanged" from="Interaction/CityScapeHoverHandler" to="MovementPresentation/MovementPreview" method="OnPathPreviewChanged" flags=3]
+[connection signal="PathPreviewChanged" from="Interaction/CityScapeHoverHandler" to="CharacterPresentation/MovementPreview" method="OnPathPreviewChanged" flags=3]
 [connection signal="LeftMouse" from="Mouse" to="Interaction/CityScapeClickHandler" method="HandleClick" flags=3]
 [connection signal="Move" from="Mouse" to="Interaction/CityScapeHoverHandler" method="HandleMove" flags=3]
 [connection signal="Move" from="Mouse" to="Cursor" method="OnMove" flags=3]

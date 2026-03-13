@@ -4,7 +4,13 @@ using SurveillanceStategodot.scripts.domain.movement;
 
 namespace SurveillanceStategodot.scripts.presentation.movement;
 
-public partial class MovementVisual : Node3D
+/// <summary>
+/// Map-level visual for a character (operator or NPC). Tracks CharacterPosition,
+/// so it survives across movements and remains visible when the character is
+/// stationary (e.g. holding position, staking out, or idle between schedule entries).
+/// Draws the remaining path when a movement is active; clears it otherwise.
+/// </summary>
+public partial class CharacterMapVisual : Node3D
 {
     [Signal]
     public delegate void CharacterNameChangedEventHandler(string newName);
@@ -12,9 +18,11 @@ public partial class MovementVisual : Node3D
     [Export] private float _verticalOffset = 0.05f;
     [Export] public Color LineColor = new Color(0.2f, 1f, 0.2f);
 
-    private Movement? _movement;
+    private Character? _character;
     private ImmediateMesh _pathMesh = null!;
     private MeshInstance3D _pathMeshInstance = null!;
+
+    public Character? TrackedCharacter => _character;
 
     public override void _Ready()
     {
@@ -28,22 +36,21 @@ public partial class MovementVisual : Node3D
         _pathMeshInstance = new MeshInstance3D();
         _pathMeshInstance.Mesh = _pathMesh;
         _pathMeshInstance.MaterialOverride = material;
-        // Use global (non-local) space so the mesh instance position doesn't affect the line
         _pathMeshInstance.TopLevel = true;
         AddChild(_pathMeshInstance);
     }
 
-    public void SetMovement(Movement movement)
+    public void SetCharacter(Character character)
     {
-        if (_movement == movement)
+        if (_character == character)
             return;
 
         Unsubscribe();
 
-        _movement = movement;
+        _character = character;
         Subscribe();
 
-        EmitSignalCharacterNameChanged(movement?.Character?.DisplayName);
+        EmitSignalCharacterNameChanged(character?.DisplayName);
 
         SyncImmediate();
     }
@@ -56,20 +63,14 @@ public partial class MovementVisual : Node3D
 
     private void Subscribe()
     {
-        if (_movement?.Character == null)
-            return;
-
-        _movement.Character.Position.Changed += OnPositionChanged;
-        _movement.Arrived += OnMovementArrived;
+        if (_character == null) return;
+        _character.Position.Changed += OnPositionChanged;
     }
 
     private void Unsubscribe()
     {
-        if (_movement?.Character == null)
-            return;
-
-        _movement.Character.Position.Changed -= OnPositionChanged;
-        _movement.Arrived -= OnMovementArrived;
+        if (_character == null) return;
+        _character.Position.Changed -= OnPositionChanged;
     }
 
     private void OnPositionChanged(CharacterPosition position)
@@ -81,42 +82,39 @@ public partial class MovementVisual : Node3D
         if (position.Forward.LengthSquared() > 0.0001f)
             LookAt(position.WorldPosition + position.Forward, Vector3.Up, true);
 
-        if (_movement != null)
-            DrawRemainingPath(_movement, position);
-    }
-
-    private void OnMovementArrived(Movement movement)
-    {
-        ClearPath();
-        QueueFree();
+        DrawRemainingPath();
     }
 
     private void SyncImmediate()
     {
-        if (_movement?.Character == null) return;
-        if (!IsInsideTree()) return;
+        if (_character == null || !IsInsideTree()) return;
 
-        var position = _movement.Character.Position;
+        var position = _character.Position;
         GlobalPosition = position.WorldPosition;
 
         if (position.Forward.LengthSquared() > 0.0001f)
             LookAt(position.WorldPosition + position.Forward, Vector3.Up, true);
+
+        DrawRemainingPath();
     }
 
-    private void DrawRemainingPath(Movement movement, CharacterPosition position)
+    private void DrawRemainingPath()
     {
-        if (_pathMesh == null || movement.Character?.IsOperator != true) return;
+        if (_pathMesh == null || _character == null) return;
 
         _pathMesh.ClearSurfaces();
 
+        // Only draw path for operators.
+        if (!_character.IsOperator) return;
+
+        var movement = _character.CurrentMovement;
+        if (movement == null) return;
+
         var path = movement.Path;
-        if (path == null || !path.IsValid || path.WorldPoints.Count < 2)
-            return;
+        if (path == null || !path.IsValid || path.WorldPoints.Count < 2) return;
 
         _pathMesh.SurfaceBegin(Mesh.PrimitiveType.LineStrip);
-
-        // Start from the character's authoritative position.
-        _pathMesh.SurfaceAddVertex(position.WorldPosition + Vector3.Up * _verticalOffset);
+        _pathMesh.SurfaceAddVertex(_character.Position.WorldPosition + Vector3.Up * _verticalOffset);
 
         for (int i = movement.SegmentIndex + 1; i < path.WorldPoints.Count; i++)
         {
@@ -124,10 +122,5 @@ public partial class MovementVisual : Node3D
         }
 
         _pathMesh.SurfaceEnd();
-    }
-
-    private void ClearPath()
-    {
-        _pathMesh?.ClearSurfaces();
     }
 }

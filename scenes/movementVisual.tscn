@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bddt707su5jqy"]
 
-[ext_resource type="Script" uid="uid://dc88n5xrsjwhv" path="res://scripts/presentation/movement/MovementVisual.cs" id="1_8oifj"]
+[ext_resource type="Script" uid="uid://dc88n5xrsjwhv" path="res://scripts/presentation/movement/CharacterMapVisual.cs" id="1_8oifj"]
 [ext_resource type="Script" uid="uid://tv5joni3f3f1" path="res://scripts/presentation/movement/RangeVisual.cs" id="2_2lj2e"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_bih7l"]
