@@ -11,6 +11,8 @@ public sealed class WorldState
 {
     public double Time { get; private set; }
 
+    public event Action<List<Character>> OnOperatorsChanged;
+
     public List<Site> Sites { get; } = new();
     public List<Character> Characters { get; } = new();
     public List<Character> Operators { get; } = new();
@@ -82,6 +84,8 @@ public sealed class WorldState
         _charactersById.Add(character.Id, character);
         Characters.Add(character);
         Operators.Add(character);
+        
+        OnOperatorsChanged?.Invoke(Operators);
     }
 
     public void RegisterAssignment(Assignment assignment)
