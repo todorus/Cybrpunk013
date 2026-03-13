@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SiteResource" format=3 uid="uid://ffkf36m1qxtg"]
+
+[ext_resource type="Resource" uid="uid://fno2stmo0eto" path="res://data/options/Stake out.tres" id="1_4bu31"]
+[ext_resource type="Script" uid="uid://bwm1lii5mww5x" path="res://scripts/authoring/SiteResource.cs" id="1_ppukc"]
+
+[resource]
+script = ExtResource("1_ppukc")
+_label = "Warehouse"
+_options = [ExtResource("1_4bu31")]
+metadata/_custom_type_script = "uid://bwm1lii5mww5x"

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://3mjmxshjmmcm" path="res://scripts/presentation/log/LogEntryNode.cs" id="1_8keu2"]
 [ext_resource type="Texture2D" uid="uid://boqjxpft1sgs0" path="res://icon.svg" id="2_ukatm"]
-[ext_resource type="Texture2D" uid="uid://b55fsb7tr26j4" path="res://icons/Exit.svg" id="3_5lfs0"]
+[ext_resource type="Texture2D" uid="uid://dskw474tvksxq" path="res://icons/Location.svg" id="3_4hr6e"]
 [ext_resource type="Texture2D" uid="uid://eqtfpdhv3nu6" path="res://icons/Enter.svg" id="3_h2w6c"]
 [ext_resource type="Texture2D" uid="uid://clnp3sfyht52o" path="res://icons/Moving.svg" id="4_4hr6e"]
 
@@ -43,8 +43,9 @@ _data = {
 &"RESET": SubResource("Animation_2diug")
 }
 
-[node name="LogEntry" type="HBoxContainer" unique_id=1265574510]
+[node name="Data" type="Control" unique_id=364320516]
 custom_minimum_size = Vector2(600, 100)
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -52,40 +53,59 @@ offset_right = -552.0
 offset_bottom = -548.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 10
 script = ExtResource("1_8keu2")
 _observationTypeIcons = Dictionary[int, Texture2D]({
-0: ExtResource("3_h2w6c"),
-1: ExtResource("3_5lfs0"),
-2: ExtResource("4_4hr6e")
+2: ExtResource("4_4hr6e"),
+3: ExtResource("3_4hr6e")
+})
+_complianceTypeColors = Dictionary[int, Color]({
+1: Color(0.8961297, 0.7067938, 3.85046e-07, 1),
+2: Color(0.9, 0, 0, 1)
 })
 
-[node name="Avatar" type="TextureRect" parent="." unique_id=242279937]
+[node name="Node" type="AnimationPlayer" parent="." unique_id=1750722101]
+libraries/ = SubResource("AnimationLibrary_t0erp")
+autoplay = &"FadeIn"
+
+[node name="Background" type="ColorRect" parent="." unique_id=476731543]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1600392209]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Avatar" type="TextureRect" parent="HBoxContainer" unique_id=242279937]
 layout_mode = 2
 texture = ExtResource("2_ukatm")
 expand_mode = 3
 stretch_mode = 4
 
-[node name="MarginContainer" type="MarginContainer" parent="." unique_id=2008150262]
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer" unique_id=2008150262]
 layout_mode = 2
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="Action" type="TextureRect" parent="MarginContainer" unique_id=812289224]
+[node name="Action" type="TextureRect" parent="HBoxContainer/MarginContainer" unique_id=812289224]
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 texture = ExtResource("3_h2w6c")
 expand_mode = 3
 stretch_mode = 4
 
-[node name="Site" type="Label" parent="." unique_id=1686595891]
+[node name="Site" type="Label" parent="HBoxContainer" unique_id=1686595891]
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
 
-[node name="Node" type="AnimationPlayer" parent="." unique_id=1750722101]
-libraries/ = SubResource("AnimationLibrary_t0erp")
-autoplay = &"FadeIn"
-
-[connection signal="ActionIcon" from="." to="MarginContainer/Action" method="set_texture" flags=3]
-[connection signal="Avatar" from="." to="Avatar" method="set_texture" flags=3]
-[connection signal="SiteLabel" from="." to="Site" method="set_text" flags=3]
+[connection signal="ActionIcon" from="." to="HBoxContainer/MarginContainer/Action" method="set_texture" flags=3]
+[connection signal="Avatar" from="." to="HBoxContainer/Avatar" method="set_texture" flags=3]
+[connection signal="BackgroundColor" from="." to="Background" method="set_color" flags=3]
+[connection signal="SiteLabel" from="." to="HBoxContainer/Site" method="set_text" flags=3]

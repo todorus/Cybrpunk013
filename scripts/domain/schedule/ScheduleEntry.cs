@@ -1,3 +1,5 @@
+using SurveillanceStategodot.scripts.domain.operation;
+
 namespace SurveillanceStategodot.scripts.domain.schedule;
 
 /// <summary>
@@ -14,12 +16,15 @@ public sealed class ScheduleEntry
 
     /// <summary>How long the NPC dwells / operates at the site (world-time seconds).</summary>
     public double Duration { get; }
+    
+    public ComplianceType ComplianceType { get; }
 
-    public ScheduleEntry(string siteId, string operationLabel, double duration)
+    public ScheduleEntry(string siteId, string operationLabel, double duration, ComplianceType complianceType)
     {
         SiteId = siteId;
         OperationLabel = operationLabel;
         Duration = duration;
+        ComplianceType = complianceType;
     }
 }
 

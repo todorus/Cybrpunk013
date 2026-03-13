@@ -4,6 +4,8 @@ public enum ObservationType
 {
     EnteredSite,
     ExitedSite,
-    SpottedMoving
+    SpottedMoving,
+    /// <summary>Character observed inside a site by a stakeout or watch source.</summary>
+    SpottedAtSite
 }
 

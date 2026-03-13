@@ -27,6 +27,7 @@ public partial class SimulationController : Node
 
     public WorldState World { get; private set; } = null!;
     public SimulationEventBus EventBus { get; private set; } = null!;
+    public ObservationLogSystem ObservationLog { get; private set; } = null!;
 
     private readonly List<ISimulationSystem> _systems = new();
 
@@ -49,7 +50,10 @@ public partial class SimulationController : Node
         _systems.Add(new OperationSystem());
         
         _systems.Add(new VisionSystem());
-        _systems.Add(new ObservationLogSystem());
+
+        var observationLog = new ObservationLogSystem();
+        ObservationLog = observationLog;
+        _systems.Add(observationLog);
 
         foreach (var system in _systems)
         {

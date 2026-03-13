@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ScheduleEntryResource" format=3 uid="uid://ckldvens3gosi"]
+
+[ext_resource type="Script" uid="uid://btw5fpkqcpsdy" path="res://scripts/authoring/ScheduleEntryResource.cs" id="1_k3ujc"]
+[ext_resource type="Resource" uid="uid://ffkf36m1qxtg" path="res://data/plots/debug/sites/Warehouse.tres" id="1_vmqt1"]
+
+[resource]
+script = ExtResource("1_k3ujc")
+_site = ExtResource("1_vmqt1")
+OperationLabel = "Skimming goods"
+ComplianceType = 2
+metadata/_custom_type_script = "uid://btw5fpkqcpsdy"

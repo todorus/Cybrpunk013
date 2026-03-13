@@ -25,6 +25,7 @@ public sealed class WorldState
 
     private readonly Dictionary<string, Site> _sitesById = new();
     private readonly Dictionary<string, Character> _charactersById = new();
+    public IReadOnlyDictionary<string, Site> SitesById => _sitesById;
 
     private readonly Dictionary<string, Assignment> _assignmentsById = new();
     // NOTE: operation id index is kept updated via UpdateOperationIndex / RemoveOperationIndex.

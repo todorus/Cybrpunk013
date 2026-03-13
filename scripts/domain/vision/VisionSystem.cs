@@ -15,10 +15,15 @@ public sealed class VisionSystem : ISimulationSystem
     // Local movement->visionSourceId index so we can clean up on arrival.
     private readonly Dictionary<string, string> _visionSourceIdByMovementId = new();
 
-    // Tracks which (sourceId, characterId) pairs are currently inside range.
-    // An observation fires once on entry; nothing fires again until the character
-    // leaves and re-enters the range.
-    private readonly HashSet<(string sourceId, string characterId)> _inRange = new();
+    // Global set of NPC character IDs currently within any vision source's range while moving.
+    // An observation fires once when a character enters range across all sources.
+    // Cleared when no source can see the character anymore.
+    private readonly HashSet<string> _inRange = new();
+
+    // Global set of (siteId, characterId) combos already reported as SpottedAtSite.
+    // Fires once when first seen at a site; clears when the character leaves the site.
+    private readonly HashSet<(string siteId, string characterId)> _seenAtSite = new();
+
 
     public VisionSystem()
     {
@@ -31,17 +36,18 @@ public sealed class VisionSystem : ISimulationSystem
 
         _eventBus.Subscribe<MovementStartedEvent>(OnMovementStarted);
         _eventBus.Subscribe<MovementArrivedEvent>(OnMovementArrived);
-        _eventBus.Subscribe<CharacterEnteredSiteEvent>(OnCharacterEnteredSite);
-        _eventBus.Subscribe<CharacterExitedSiteEvent>(OnCharacterExitedSite);
         _eventBus.Subscribe<OperationStartedEvent>(OnOperationStarted);
         _eventBus.Subscribe<OperationCompletedEvent>(OnOperationCompleted);
     }
 
     public void Tick(double delta)
     {
+        ScanMovingNpcs();
+
         foreach (var source in _world.VisionSources.Values)
         {
-            ScanMovingNpcsForSource(source);
+            if (source.Type.CanSeeOperations() || source.Type.CanSeeOccupants())
+                ScanSitesForSource(source);
         }
     }
 
@@ -79,16 +85,16 @@ public sealed class VisionSystem : ISimulationSystem
         if (evt.Movement.Character != null)
             evt.Movement.Character.Position.Changed -= OnCharacterPositionChanged;
 
-        // Clear any in-range state for this source so re-entry fires fresh next time.
-        _inRange.RemoveWhere(pair => pair.sourceId == sourceId);
-
         _world.RemoveVisionSource(sourceId);
+
+        // After removing this source, re-evaluate which characters are still in range
+        // so _inRange stays accurate.
+        RebuildInRange();
     }
 
     private void OnCharacterPositionChanged(CharacterPosition position)
     {
-        // Find the movement whose character owns this position.
-        foreach (var (movementId, sourceId) in _visionSourceIdByMovementId)
+        foreach (var (_, sourceId) in _visionSourceIdByMovementId)
         {
             if (!_world.TryGetVisionSource(sourceId, out var source) || source == null)
                 continue;
@@ -97,106 +103,187 @@ public sealed class VisionSystem : ISimulationSystem
                 continue;
 
             source.SetWorldPosition(position.WorldPosition);
-            ScanMovingNpcsForSource(source);
             return;
         }
     }
 
-    // ── Shared range scan ────────────────────────────────────────────────────
+    // ── Moving NPC scan ──────────────────────────────────────────────────────
 
     /// <summary>
-    /// Checks every moving NPC against the given source.
-    /// Fires SpottedMoving once on range entry; clears state on range exit.
+    /// Checks every moving NPC against all sources.
+    /// Fires SpottedMoving once when a character first enters any source's range.
+    /// Clears the character from _inRange only when no source can see them.
     /// </summary>
-    private void ScanMovingNpcsForSource(VisionSource source)
+    private void ScanMovingNpcs()
     {
-        foreach (var candidate in _world.Characters)
+        var nowInRange = new HashSet<string>();
+
+        foreach (var source in _world.VisionSources.Values)
         {
-            if (candidate.IsOperator || candidate.CurrentMovement == null)
-                continue;
-
-            // Operator-owned sources never self-observe.
-            if (candidate == source.Owner)
-                continue;
-
-            var key = (source.Id, candidate.Id);
-            bool nowInRange = source.WorldPosition.DistanceTo(
-                candidate.Position.WorldPosition) <= source.Range;
-
-            if (nowInRange)
+            foreach (var candidate in _world.Characters)
             {
-                if (_inRange.Add(key))
+                if (candidate.IsOperator || candidate.CurrentMovement == null)
+                    continue;
+
+                if (candidate == source.Owner)
+                    continue;
+
+                bool inRange = source.WorldPosition.DistanceTo(
+                    candidate.Position.WorldPosition) <= source.Range;
+
+                if (inRange)
+                    nowInRange.Add(candidate.Id);
+            }
+        }
+
+        // Fire SpottedMoving for newly seen characters.
+        foreach (var characterId in nowInRange)
+        {
+            if (_inRange.Add(characterId))
+            {
+                var character = _world.GetCharacter(characterId);
+                if (character == null) continue;
+
+                // Find the best source that can see this character to attribute the observation.
+                var source = FindBestSourceForCharacter(character);
+                if (source == null) continue;
+
+                PublishObservation(
+                    source: source,
+                    site: null,
+                    character: character,
+                    operation: null,
+                    observationType: ObservationType.SpottedMoving);
+            }
+        }
+
+        // Remove characters that are no longer in any source's range.
+        _inRange.RemoveWhere(id => !nowInRange.Contains(id));
+    }
+
+    /// <summary>
+    /// Returns the first vision source that can see the given character, preferring
+    /// sources owned by an operator. Used to attribute an observation to a source.
+    /// </summary>
+    private VisionSource? FindBestSourceForCharacter(Character character)
+    {
+        foreach (var source in _world.VisionSources.Values)
+        {
+            if (source.WorldPosition.DistanceTo(character.Position.WorldPosition) <= source.Range)
+                return source;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// After a source is removed, rebuild _inRange from scratch so stale entries are cleared.
+    /// </summary>
+    private void RebuildInRange()
+    {
+        _inRange.Clear();
+        foreach (var source in _world.VisionSources.Values)
+        {
+            foreach (var candidate in _world.Characters)
+            {
+                if (candidate.IsOperator || candidate.CurrentMovement == null)
+                    continue;
+
+                if (candidate == source.Owner)
+                    continue;
+
+                bool inRange = source.WorldPosition.DistanceTo(
+                    candidate.Position.WorldPosition) <= source.Range;
+
+                if (inRange)
+                    _inRange.Add(candidate.Id);
+            }
+        }
+    }
+
+    // ── Site scan for stakeout / watch sources ───────────────────────────────
+
+    /// <summary>
+    /// For sources that CanSeeOperations / CanSeeOccupants, fires SpottedAtSite once
+    /// per (site, character) globally when first seen. Clears when the character leaves the site.
+    /// </summary>
+    private void ScanSitesForSource(VisionSource source)
+    {
+        foreach (var site in _world.SitesById.Values)
+        {
+            if (source.WorldPosition.DistanceTo(site.EntryPosition) > source.Range)
+                continue;
+
+            var npcsAtSite = new HashSet<Character>();
+
+            if (source.Type.CanSeeOccupants())
+            {
+                foreach (var occupant in site.Occupants)
+                    if (!occupant.IsOperator) npcsAtSite.Add(occupant);
+            }
+
+            if (source.Type.CanSeeOperations())
+            {
+                foreach (var operation in site.ActiveOperations)
+                    foreach (var participant in operation.Participants)
+                        if (!participant.IsOperator) npcsAtSite.Add(participant);
+            }
+
+            foreach (var npc in npcsAtSite)
+            {
+                var seenKey = (site.Id, npc.Id);
+                if (!_seenAtSite.Add(seenKey))
+                    continue; // Already reported this character at this site.
+
+                Operation? activeOperation = null;
+                if (source.Type.CanSeeOperations())
                 {
-                    // Freshly entered range — fire observation.
-                    PublishObservation(
-                        site: null,
-                        character: candidate,
-                        operation: null,
-                        observationType: ObservationType.SpottedMoving);
+                    foreach (var op in site.ActiveOperations)
+                    {
+                        if (op.Participants.Contains(npc))
+                        {
+                            activeOperation = op;
+                            break;
+                        }
+                    }
+                }
+
+                var compliance = ResolveCompliance(source, activeOperation);
+                PublishObservation(
+                    source: source,
+                    site: site,
+                    character: npc,
+                    operation: activeOperation,
+                    observationType: ObservationType.SpottedAtSite,
+                    complianceOverride: compliance);
+            }
+        }
+
+        // Clear stale entries: only evict if no source covers the site AND the character is gone.
+        _seenAtSite.RemoveWhere(key =>
+        {
+            if (!_world.SitesById.TryGetValue(key.siteId, out var s))
+                return true;
+
+            // Check if any source still covers this site.
+            bool anySiteInRange = false;
+            foreach (var src in _world.VisionSources.Values)
+            {
+                if (src.WorldPosition.DistanceTo(s.EntryPosition) <= src.Range)
+                {
+                    anySiteInRange = true;
+                    break;
                 }
             }
-            else
-            {
-                // Left range — clear so re-entry fires again later.
-                _inRange.Remove(key);
-            }
-        }
-    }
 
-    // ── Site enter / exit detection ──────────────────────────────────────────
+            if (!anySiteInRange)
+                return true;
 
-    private void OnCharacterEnteredSite(CharacterEnteredSiteEvent evt)
-    {
-        if (evt.Character.IsOperator)
-            return;
+            // Site is still in range — keep if character is still an occupant.
+            foreach (var occ in s.Occupants)
+                if (occ.Id == key.characterId) return false;
 
-        foreach (var source in _world.VisionSources.Values)
-        {
-            var key = (source.Id, evt.Character.Id);
-
-            // Only log if the character was already tracked as in-range while moving.
-            if (!_inRange.Contains(key))
-                continue;
-
-            if (source.WorldPosition.DistanceTo(evt.Site.EntryPosition) > source.Range)
-                continue;
-
-            PublishObservation(
-                site: evt.Site,
-                character: evt.Character,
-                operation: evt.CurrentOperation,
-                observationType: ObservationType.EnteredSite);
-        }
-    }
-
-    private void OnCharacterExitedSite(CharacterExitedSiteEvent evt)
-    {
-        if (evt.Character.IsOperator)
-            return;
-
-        foreach (var source in _world.VisionSources.Values)
-        {
-            var key = (source.Id, evt.Character.Id);
-
-            if (source.WorldPosition.DistanceTo(evt.Site.EntryPosition) > source.Range)
-            {
-                // Exit happened outside vision — clear stale in-range state so
-                // re-entry into range later fires SpottedMoving fresh.
-                _inRange.Remove(key);
-                continue;
-            }
-
-            // Exit is within vision range — log it. Keep the key in _inRange so
-            // ScanMovingNpcsForSource does not immediately re-fire SpottedMoving
-            // for the movement that starts right after the exit.
-            PublishObservation(
-                site: evt.Site,
-                character: evt.Character,
-                operation: evt.CurrentOperation,
-                observationType: ObservationType.ExitedSite);
-
-            _inRange.Add(key);
-        }
+            return true;
+        });
     }
 
     // ── Stakeout / watch-site operation vision source ─────────────────────────
@@ -225,7 +312,6 @@ public sealed class VisionSystem : ISimulationSystem
             range: owner.VisionRange,
             isMapVisible: true);
 
-        // Position at the operator's current nav-graph position, not a site entry point.
         source.SetWorldPosition(owner.Position.WorldPosition);
 
         if (operation.SiteContext != null)
@@ -237,18 +323,24 @@ public sealed class VisionSystem : ISimulationSystem
     private void OnOperationCompleted(OperationCompletedEvent evt)
     {
         var sourceId = $"operation:{evt.Operation.Id}";
-        _inRange.RemoveWhere(pair => pair.sourceId == sourceId);
         _world.RemoveVisionSource(sourceId);
+
+        // Rebuild _inRange since a source was removed.
+        RebuildInRange();
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
 
     private void PublishObservation(
+        VisionSource source,
         Site? site,
         Character? character,
         Operation? operation,
-        ObservationType observationType)
+        ObservationType observationType,
+        ComplianceType? complianceOverride = null)
     {
+        var compliance = complianceOverride ?? ResolveCompliance(source, operation);
+
         var observation = new Observation(
             id: Guid.NewGuid().ToString(),
             siteId: site?.Id,
@@ -256,10 +348,25 @@ public sealed class VisionSystem : ISimulationSystem
             operationId: operation?.Id,
             time: _world.Time,
             observationType: observationType,
+            complianceType: compliance,
             siteLabelSnapshot: site?.Label,
             characterLabelSnapshot: character?.DisplayName,
             operationLabelSnapshot: operation?.Label);
 
         _eventBus.Publish(new ObservationCreatedEvent(observation, _world.Time));
     }
+
+    private static ComplianceType ResolveCompliance(VisionSource source, Operation? operation)
+    {
+        if (operation == null)
+            return ComplianceType.Compliant;
+
+        if (source.Type.CanDetectNonCompliance())
+            return operation.ComplianceType;
+
+        return operation.ComplianceType == ComplianceType.NonCompliant
+            ? ComplianceType.Suspicious
+            : operation.ComplianceType;
+    }
 }
+

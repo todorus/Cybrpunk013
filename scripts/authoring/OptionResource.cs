@@ -16,15 +16,16 @@ public partial class OptionResource : Resource
     private double _duration;
     [Export]
     private OperationVisionType _visionType = OperationVisionType.None;
+    [Export]
+    private ComplianceType _complianceType = ComplianceType.Compliant;
     
     public Option ToOption()
     {
-        return new Option
-        (
+        return new Option(
             id: _id,
             label: _label,
             duration: _duration,
-            visionType: _visionType
-        );
+            visionType: _visionType,
+            complianceType: _complianceType);
     }
 }

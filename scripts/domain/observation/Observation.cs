@@ -1,3 +1,5 @@
+using SurveillanceStategodot.scripts.domain.operation;
+
 namespace SurveillanceStategodot.scripts.domain.observation;
 
 public sealed class Observation
@@ -8,6 +10,7 @@ public sealed class Observation
     public string? OperationId { get; }
     public double Time { get; }
     public ObservationType ObservationType { get; }
+    public ComplianceType ComplianceType { get; }
 
     // Optional label snapshots for UI convenience.
     public string? SiteLabelSnapshot { get; }
@@ -21,6 +24,7 @@ public sealed class Observation
         string? operationId,
         double time,
         ObservationType observationType,
+        ComplianceType complianceType = ComplianceType.Compliant,
         string? siteLabelSnapshot = null,
         string? characterLabelSnapshot = null,
         string? operationLabelSnapshot = null)
@@ -31,6 +35,7 @@ public sealed class Observation
         OperationId = operationId;
         Time = time;
         ObservationType = observationType;
+        ComplianceType = complianceType;
         SiteLabelSnapshot = siteLabelSnapshot;
         CharacterLabelSnapshot = characterLabelSnapshot;
         OperationLabelSnapshot = operationLabelSnapshot;

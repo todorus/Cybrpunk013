@@ -1,4 +1,5 @@
 using Godot;
+using SurveillanceStategodot.scripts.domain.operation;
 using SurveillanceStategodot.scripts.domain.schedule;
 
 namespace SurveillanceStategodot.scripts.authoring;
@@ -12,6 +13,9 @@ public partial class ScheduleEntryResource : Resource
 
     [Export] 
     private string OperationLabel { get; set; } = "";
+    
+    [Export]
+    private ComplianceType ComplianceType { get; set; }
 
     /// <summary>Dwell / operation duration in world-time seconds.</summary>
     [Export] public double Duration { get; set; } = 10.0;
@@ -21,7 +25,8 @@ public partial class ScheduleEntryResource : Resource
         return new ScheduleEntry(
             siteId: _site.Id,
             operationLabel: OperationLabel,
-            duration: Duration);
+            duration: Duration,
+            complianceType: ComplianceType);
     }
 }
 

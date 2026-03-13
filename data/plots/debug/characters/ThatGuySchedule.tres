@@ -1,18 +1,11 @@
 [gd_resource type="Resource" script_class="ScheduleResource" format=3 uid="uid://cbqxkjux6wtuw"]
 
 [ext_resource type="Script" uid="uid://c2f64asqiu5x2" path="res://scripts/authoring/ScheduleResource.cs" id="1_o0bil"]
-[ext_resource type="Resource" uid="uid://cb7hj8aw6mvvs" path="res://data/plots/debug/sites/OwesYouMoney.tres" id="1_vqbdd"]
-[ext_resource type="Script" uid="uid://btw5fpkqcpsdy" path="res://scripts/authoring/ScheduleEntryResource.cs" id="2_j0adw"]
+[ext_resource type="Resource" uid="uid://b6a6tgof0xo16" path="res://data/plots/debug/schedule/ThatGuyHome.tres" id="2_vqbdd"]
 [ext_resource type="Resource" uid="uid://dtiqcvuk47nn7" path="res://data/plots/debug/schedule/DoGroceries.tres" id="3_j0adw"]
-
-[sub_resource type="Resource" id="Resource_n4u22"]
-script = ExtResource("2_j0adw")
-_site = ExtResource("1_vqbdd")
-OperationLabel = "Sulk"
-Duration = 8.0
-metadata/_custom_type_script = "uid://btw5fpkqcpsdy"
+[ext_resource type="Resource" uid="uid://ckldvens3gosi" path="res://data/plots/debug/schedule/WarehouseNonCompliant.tres" id="3_n4u22"]
 
 [resource]
 script = ExtResource("1_o0bil")
-Entries = [ExtResource("3_j0adw"), SubResource("Resource_n4u22")]
+Entries = [ExtResource("3_j0adw"), ExtResource("2_vqbdd"), ExtResource("3_n4u22")]
 metadata/_custom_type_script = "uid://c2f64asqiu5x2"

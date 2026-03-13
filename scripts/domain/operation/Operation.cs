@@ -9,6 +9,8 @@ public sealed class Operation
     public string Label { get; }
     public OperationState State { get; set; } = OperationState.Planned;
 
+    public ComplianceType ComplianceType { get; }
+
     public List<Character> Participants { get; } = new();
     public Site? SiteContext { get; set; }
     public Movement? MovementContext { get; set; }
@@ -20,12 +22,13 @@ public sealed class Operation
 
     public double EndTime => StartTime + Duration;
 
-    public Operation(string id, string label, double duration, OperationVisionType visionType = OperationVisionType.None)
+    public Operation(string id, string label, double duration, OperationVisionType visionType = OperationVisionType.None, ComplianceType complianceType = ComplianceType.Compliant)
     {
         Id = id;
         Label = label;
         Duration = duration;
         VisionType = visionType;
+        ComplianceType = complianceType;
     }
     
     public void Start(double worldTime)

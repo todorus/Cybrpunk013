@@ -10,24 +10,25 @@ public class Option
     public string Label { get; }
     public double Duration { get; }
     public OperationVisionType VisionType { get; }
+    public ComplianceType ComplianceType { get; }
 
-    public Option(string id, string label, double duration, OperationVisionType visionType = OperationVisionType.None)
+    public Option(string id, string label, double duration, OperationVisionType visionType = OperationVisionType.None, ComplianceType complianceType = ComplianceType.Compliant)
     {
         Id = id;
         Label = label;
         Duration = duration;
         VisionType = visionType;
+        ComplianceType = complianceType;
     }
-    
+
     public Operation ToOperation(Movement movement, Site site)
     {
-        return new Operation
-        (
+        return new Operation(
             id: Guid.NewGuid().ToString(),
             label: Label,
             duration: Duration,
-            visionType: VisionType
-        )
+            visionType: VisionType,
+            complianceType: ComplianceType)
         {
             SiteContext = site,
             MovementContext = movement
