@@ -207,15 +207,14 @@ public sealed class VisionSystem : ISimulationSystem
     private void OnOperationStarted(OperationStartedEvent evt)
     {
         var operation = evt.Operation;
-        if (operation.VisionType != OperationVisionType.Stakeout || operation.SiteContext == null)
+        if (operation.VisionType != OperationVisionType.Stakeout)
             return;
 
         Character? owner = operation.Participants.Count > 0 ? operation.Participants[0] : null;
         if (owner == null || !owner.IsOperator)
             return;
 
-        // Decide source type: a tail-assignment watch uses WatchSite; a normal stakeout uses StakeoutPost.
-        // We distinguish by checking if the assignment for this operation is a TailCharacter kind.
+        // Decide source type: a tail-assignment hold uses WatchSite; a normal stakeout uses StakeoutPost.
         var sourceType = VisionSourceType.StakeoutPost;
         if (_world.TryGetAssignmentByOperationId(operation.Id, out var assignment) &&
             assignment.Kind == SurveillanceStategodot.scripts.domain.assignment.AssignmentKind.TailCharacter)
@@ -230,8 +229,11 @@ public sealed class VisionSystem : ISimulationSystem
             range: _operatorVisionRange,
             isMapVisible: true);
 
-        source.SetWorldPosition(operation.SiteContext.EntryPosition);
-        source.SetSiteContext(operation.SiteContext);
+        // Position at the operator's current nav-graph position, not a site entry point.
+        source.SetWorldPosition(owner.Position.WorldPosition);
+
+        if (operation.SiteContext != null)
+            source.SetSiteContext(operation.SiteContext);
 
         _world.RegisterVisionSource(source);
     }

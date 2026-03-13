@@ -84,10 +84,9 @@ public sealed class AssignmentSystem : ISimulationSystem
                 _eventBus.Publish(new AssignmentCompletedEvent(assignment, evt.Time));
                 break;
 
-            // Pursuit movements for tail assignments are force-arrived externally;
-            // the phase transition is handled by OnCharacterEnteredSite instead.
+            // Operator arrived at the target's last-known position — hold there.
             case AssignmentPhase.PursuingTarget:
-                // Do nothing here — OnCharacterEnteredSite drives the transition.
+                StartHoldPosition(assignment, evt.Time);
                 break;
         }
     }
@@ -132,14 +131,29 @@ public sealed class AssignmentSystem : ISimulationSystem
         if (!_world.TryGetTailAssignmentForTarget(evt.Character.Id, out var assignment) || assignment == null)
             return;
 
-        if (assignment.Phase == AssignmentPhase.PursuingTarget)
-        {
-            // Stop pursuit movement.
-            StopCurrentMovement(assignment, evt.Time);
+        if (assignment.Phase != AssignmentPhase.PursuingTarget)
+            return;
 
-            // Switch to watching the new site.
-            StartWatchSitePhase(assignment, evt.Site, evt.Time);
+        var mov = assignment.CurrentMovement;
+        if (mov == null || assignment.Character == null)
+            return;
+
+        // Repath from the operator's current position to the target's actual
+        // position (the site entry point) so the operator closes on the right
+        // spot instead of stopping at a stale repath destination.
+        var closePath = DispatchNavPathfinder.FindPath(
+            _dispatchNav.Graph,
+            assignment.Character.Position.WorldPosition,
+            evt.Character.Position.WorldPosition);
+
+        if (closePath.IsValid)
+        {
+            mov.ReplacePath(closePath);
         }
+
+        // Convert to static-path so MovementSystem stops repathing and the
+        // movement self-arrives at the path end, triggering HoldingPosition.
+        mov.ConvertToStaticPath();
     }
 
     // ── Tail: target exits a site ─────────────────────────────────────────────
@@ -153,12 +167,17 @@ public sealed class AssignmentSystem : ISimulationSystem
         if (!_world.TryGetTailAssignmentForTarget(evt.Character.Id, out var assignment) || assignment == null)
             return;
 
-        if (assignment.Phase == AssignmentPhase.WatchingTargetSite)
+        // Target started moving — operator pursues.
+        if (assignment.Phase == AssignmentPhase.HoldingPosition ||
+            assignment.Phase == AssignmentPhase.LostTarget)
         {
-            // Stop current watch operation.
             StopCurrentOperation(assignment, evt.Time);
-
-            // Switch to pursuit.
+            StartPursuitPhase(assignment, evt.Character, evt.Time);
+        }
+        // Operator is still closing in on the site — abort and re-pursue.
+        else if (assignment.Phase == AssignmentPhase.PursuingTarget)
+        {
+            StopCurrentMovement(assignment, evt.Time);
             StartPursuitPhase(assignment, evt.Character, evt.Time);
         }
     }
@@ -174,50 +193,60 @@ public sealed class AssignmentSystem : ISimulationSystem
             return;
         }
 
-        // If target is at a site right now, start watching.
-        if (target.CurrentSite != null)
-        {
-            StartWatchSitePhase(assignment, target.CurrentSite, worldTime);
-        }
-        else if (target.CurrentMovement != null)
-        {
-            // Target is already moving — start pursuit immediately.
-            StartPursuitPhase(assignment, target, worldTime);
-        }
-        else
-        {
-            // Unknown position — fail for now.
-            FailAssignment(assignment, worldTime);
-        }
+        // Always start with pursuit toward the target's current position.
+        // If the target is stationary inside a site, pursuit will path to their
+        // position and the operator will hold there once the path arrives.
+        StartPursuitPhase(assignment, target, worldTime);
     }
 
-    // ── Tail: start watching a site ──────────────────────────────────────────
+    // ── Tail: hold at current nav position ───────────────────────────────────
 
-    private void StartWatchSitePhase(Assignment assignment, Site site, double worldTime)
+    private void StartHoldPosition(Assignment assignment, double worldTime)
     {
-        assignment.Phase = AssignmentPhase.WatchingTargetSite;
+        assignment.Phase = AssignmentPhase.HoldingPosition;
 
         var oldOperationId = assignment.CurrentOperation?.Id;
 
-        var watchOperation = new Operation(
+        // Operation with no SiteContext — the operator watches from their current
+        // nav-graph position, not from a site entry point.
+        var holdOperation = new Operation(
             id: Guid.NewGuid().ToString(),
-            label: $"Watch {site.Label}",
-            duration: double.MaxValue, // Indefinite — cancelled externally.
-            visionType: OperationVisionType.Stakeout)
-        {
-            SiteContext = site
-        };
+            label: "Hold position",
+            duration: double.MaxValue, // Indefinite — cancelled when target moves.
+            visionType: OperationVisionType.Stakeout);
 
         if (assignment.Character != null)
-            watchOperation.Participants.Add(assignment.Character);
+            holdOperation.Participants.Add(assignment.Character);
 
-        assignment.CurrentOperation = watchOperation;
+        assignment.CurrentOperation = holdOperation;
         _world.UpdateAssignmentOperationIndex(assignment, oldOperationId);
 
-        site.AddActiveOperation(watchOperation);
-        watchOperation.Start(worldTime);
+        holdOperation.Start(worldTime);
+        _eventBus.Publish(new OperationStartedEvent(holdOperation, worldTime));
+    }
 
-        _eventBus.Publish(new OperationStartedEvent(watchOperation, worldTime));
+    // ── Tail: hold at last-known position (target lost) ──────────────────────
+
+    private void StartLostTargetHold(Assignment assignment, double worldTime)
+    {
+        assignment.Phase = AssignmentPhase.LostTarget;
+
+        var oldOperationId = assignment.CurrentOperation?.Id;
+
+        var holdOperation = new Operation(
+            id: Guid.NewGuid().ToString(),
+            label: "Wait — target lost",
+            duration: double.MaxValue,
+            visionType: OperationVisionType.Stakeout);
+
+        if (assignment.Character != null)
+            holdOperation.Participants.Add(assignment.Character);
+
+        assignment.CurrentOperation = holdOperation;
+        _world.UpdateAssignmentOperationIndex(assignment, oldOperationId);
+
+        holdOperation.Start(worldTime);
+        _eventBus.Publish(new OperationStartedEvent(holdOperation, worldTime));
     }
 
     // ── Tail: start pursuit movement ─────────────────────────────────────────
@@ -226,22 +255,14 @@ public sealed class AssignmentSystem : ISimulationSystem
     {
         assignment.Phase = AssignmentPhase.PursuingTarget;
 
-        // Determine operator's current world position from the authoritative position component.
-        Vector3 operatorPos;
-        if (assignment.Character != null)
-            operatorPos = assignment.Character.Position.WorldPosition;
-        else
+        if (assignment.Character == null)
         {
             FailAssignment(assignment, worldTime);
             return;
         }
 
-        // Determine target's current world position.
-        Vector3 targetPos;
-        if (target.CurrentSite != null)
-            targetPos = target.CurrentSite.EntryPosition;
-        else
-            targetPos = target.Position.WorldPosition;
+        var operatorPos = assignment.Character.Position.WorldPosition;
+        var targetPos = target.Position.WorldPosition;
 
         var path = DispatchNavPathfinder.FindPath(
             _dispatchNav.Graph,
@@ -250,15 +271,15 @@ public sealed class AssignmentSystem : ISimulationSystem
 
         if (!path.IsValid)
         {
-            GD.PushWarning($"[AssignmentSystem] Tail pursuit path invalid for assignment {assignment.Id}.");
-            assignment.Phase = AssignmentPhase.LostTarget;
+            GD.PushWarning($"[AssignmentSystem] Pursuit path invalid for assignment {assignment.Id}. Holding at last-known position.");
+            StartLostTargetHold(assignment, worldTime);
             return;
         }
 
         var pursuitMovement = new Movement(
             id: Guid.NewGuid().ToString(),
             character: assignment.Character,
-            origin: assignment.Character?.CurrentSite,
+            origin: assignment.Character.CurrentSite,
             targetCharacter: target,
             initialPath: path);
 
@@ -318,12 +339,16 @@ public sealed class AssignmentSystem : ISimulationSystem
 
         if (operation.SiteContext != null)
         {
-            if (assignment.Character != null)
+            // Stakeout: character watches from the entry position outside the site.
+            // They do not become an occupant and the operation is not registered on
+            // the site's ActiveOperations list — it lives only in the assignment.
+            if (assignment.Kind != AssignmentKind.StakeoutSite)
             {
-                operation.SiteContext.AddOccupant(assignment.Character);
-            }
+                if (assignment.Character != null)
+                    operation.SiteContext.AddOccupant(assignment.Character);
 
-            operation.SiteContext.AddActiveOperation(operation);
+                operation.SiteContext.AddActiveOperation(operation);
+            }
         }
 
         operation.Start(worldTime);
@@ -332,41 +357,24 @@ public sealed class AssignmentSystem : ISimulationSystem
 
     private void StartReturnMovement(Assignment assignment, double worldTime)
     {
-        if (assignment.BaseWorldPosition == null)
+        if (assignment.BaseWorldPosition == null || assignment.Character == null)
         {
             assignment.Phase = AssignmentPhase.Completed;
             _eventBus.Publish(new AssignmentCompletedEvent(assignment, worldTime));
             return;
         }
 
-        var operationSite = assignment.CurrentOperation?.SiteContext;
-        if (operationSite == null)
-        {
-            assignment.Phase = AssignmentPhase.Completed;
-            _eventBus.Publish(new AssignmentCompletedEvent(assignment, worldTime));
-            return;
-        }
-
-        DispatchNavEdgeAnchor startAnchor;
-        if (operationSite.NavAnchor.HasValue)
-        {
-            startAnchor = operationSite.NavAnchor.Value;
-        }
-        else
-        {
-            startAnchor = DispatchNavQueries.GetClosestPointOnGraph(
-                _dispatchNav.Graph,
-                operationSite.GlobalPosition);
-        }
-
+        // Use the character's authoritative position as the return start.
+        // This works for both site-based operations (character is at entry) and
+        // position-based ones (stakeout / hold) where there is no SiteContext.
         var returnPath = DispatchNavPathfinder.FindPath(
             _dispatchNav.Graph,
-            startAnchor,
+            assignment.Character.Position.WorldPosition,
             assignment.BaseWorldPosition.Value);
 
         if (!returnPath.IsValid)
         {
-            GD.PushWarning($"Return path for assignment {assignment.Id} is invalid.");
+            GD.PushWarning($"[AssignmentSystem] Return path for assignment {assignment.Id} is invalid.");
             assignment.Phase = AssignmentPhase.Completed;
             _eventBus.Publish(new AssignmentCompletedEvent(assignment, worldTime));
             return;
@@ -375,7 +383,7 @@ public sealed class AssignmentSystem : ISimulationSystem
         var returnMovement = new Movement(
             id: Guid.NewGuid().ToString(),
             character: assignment.Character,
-            origin: operationSite,
+            origin: assignment.Character.CurrentSite,
             destination: null,
             path: returnPath);
 

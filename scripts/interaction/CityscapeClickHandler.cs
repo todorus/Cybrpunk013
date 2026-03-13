@@ -59,21 +59,38 @@ public partial class CityscapeClickHandler : Node
         character.Position.Set(path.StartPosition);
 
         _simulationController.World.RegisterCharacter(character);
-        
+
+        // Determine if the chosen option is a stakeout. Stakeout movements stop at
+        // the entry position without entering the site, so destination must be null.
+        var option = site.AvailableOptions.Length > 0 ? site.AvailableOptions[0] : null;
+        var isStakeout = option?.VisionType == OperationVisionType.Stakeout;
+
         var movement = new Movement(
             id: Guid.NewGuid().ToString(),
             character: character,
             origin: null,
-            destination: site,
+            destination: isStakeout ? null : site,
             path: path);
 
-        var operation = EnsureOperation(site, movement);
+        var operation = option != null
+            ? option.ToOperation(movement, site)
+            : new Operation(
+                id: Guid.NewGuid().ToString(),
+                label: $"Visit {site.Label}",
+                duration: 10.0)
+            {
+                SiteContext = site,
+                MovementContext = movement
+            };
+
+        var kind = isStakeout ? AssignmentKind.StakeoutSite : AssignmentKind.VisitSite;
 
         var assignment = new Assignment(
             id: Guid.NewGuid().ToString(),
             character: character,
             operation: operation,
-            currentMovement: movement)
+            currentMovement: movement,
+            kind: kind)
         {
             CompletionBehavior = AssignmentCompletionBehavior.ReturnToBase,
             BaseWorldPosition = _operatorBaseWorldPosition.GlobalPosition,
@@ -82,25 +99,6 @@ public partial class CityscapeClickHandler : Node
 
         _simulationController.EventBus.Publish(
             new AssignmentCreatedEvent(assignment, _simulationController.World.Time));
-    }
-
-    private static Operation EnsureOperation(Site site, Movement movement)
-    {
-        if (site.AvailableOptions.Length == 0)
-        {
-            var operation = new Operation(
-                id: Guid.NewGuid().ToString(),
-                label: $"Visit {site.Label}",
-                duration: 10.0)
-            {
-                SiteContext = site,
-                MovementContext = movement
-            };
-            return operation;
-        }
-        
-        var option = site.AvailableOptions[0];
-        return option.ToOperation(movement, site);
     }
     
     private void DispatchToTail(CharacterResource characterResource)

@@ -15,7 +15,7 @@ public sealed class Movement
     public Character? Character { get; }
     public Site? Origin { get; }
     public Site? Destination { get; }
-    public MovementMode Mode { get; }
+    public MovementMode Mode { get; private set; }
 
     /// <summary>For Pursuit mode: the character being followed.</summary>
     public Character? TargetCharacter { get; }
@@ -97,4 +97,15 @@ public sealed class Movement
     /// Used by AssignmentSystem to cancel pursuit once the target enters a site.
     /// </summary>
     public void ForceArrive() => MarkArrived();
+
+    /// <summary>
+    /// Converts a Pursuit movement into a StaticPath movement so it finishes
+    /// traveling to its current path end and then self-arrives.
+    /// Used when the target becomes stationary and the operator should close on
+    /// the last-known position rather than repathing indefinitely.
+    /// </summary>
+    public void ConvertToStaticPath()
+    {
+        Mode = MovementMode.StaticPath;
+    }
 }

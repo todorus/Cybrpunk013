@@ -4,6 +4,6 @@ public enum VisionSourceType
 {
     MovingOperator,
     StakeoutPost,
-    /// <summary>Fixed-position sensor created during a TailCharacter WatchingTargetSite phase.</summary>
+    /// <summary>Fixed-position sensor created during a TailCharacter HoldingPosition phase.</summary>
     WatchSite
 }
