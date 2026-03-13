@@ -19,10 +19,6 @@ public sealed class MovementSystem : ISimulationSystem
 
     public const float DefaultSpeed = 3f;
 
-    // Pursuit repathing interval in world-time seconds.
-    private const double RepathInterval = 1.0;
-    private readonly Dictionary<string, double> _nextRepathTime = new();
-
     private enum PursuitZone { Far, Matched, Close }
     private readonly Dictionary<string, PursuitZone> _pursuitZone = new();
 
@@ -46,13 +42,10 @@ public sealed class MovementSystem : ISimulationSystem
         {
             var movement = _activeMovements[i];
 
-            // Pursuit: repath periodically, or immediately if the path end is reached.
+            // Pursuit: update path endpoint to target's current position every frame.
             if (movement.Mode == MovementMode.Pursuit)
             {
-                if (PursuitPathExhausted(movement))
-                    RepathPursuit(movement);
-                else
-                    TryRepathPursuit(movement);
+                UpdatePursuitTarget(movement);
             }
 
             var speed = ResolveSpeed(movement);
@@ -62,7 +55,6 @@ public sealed class MovementSystem : ISimulationSystem
                 continue;
 
             _activeMovements.RemoveAt(i);
-            _nextRepathTime.Remove(movement.Id);
             _pursuitZone.Remove(movement.Id);
 
             if (movement.Character != null)
@@ -178,37 +170,12 @@ public sealed class MovementSystem : ISimulationSystem
     }
 
     /// <summary>
-    /// Returns true when the pursuit movement has walked to the end of its
-    /// current path — meaning the operator has caught up to where the target
-    /// was last seen and needs a fresh path immediately.
+    /// Updates the pursuit path endpoint to the target's current position every frame.
+    /// Always does a full repath so the path endpoint exactly tracks the target —
+    /// this avoids the "stops short" issue caused by edge-slide heuristics.
     /// </summary>
-    private static bool PursuitPathExhausted(Movement movement)
+    private void UpdatePursuitTarget(Movement movement)
     {
-        if (!movement.Path.IsValid || movement.Path.WorldPoints.Count < 2)
-            return false;
-        return movement.SegmentIndex >= movement.Path.WorldPoints.Count - 1;
-    }
-
-    /// <summary>Repath only when the scheduled interval has elapsed.</summary>
-    private void TryRepathPursuit(Movement movement)
-    {
-        if (!_nextRepathTime.TryGetValue(movement.Id, out var nextRepath))
-        {
-            _nextRepathTime[movement.Id] = _world.Time + RepathInterval;
-            return;
-        }
-
-        if (_world.Time < nextRepath)
-            return;
-
-        RepathPursuit(movement);
-    }
-
-    /// <summary>Unconditionally repaths pursuit and resets the repath timer.</summary>
-    private void RepathPursuit(Movement movement)
-    {
-        _nextRepathTime[movement.Id] = _world.Time + RepathInterval;
-
         var target = movement.TargetCharacter;
         if (target == null)
             return;
@@ -267,7 +234,6 @@ public sealed class MovementSystem : ISimulationSystem
             return;
 
         _activeMovements.Remove(movement);
-        _nextRepathTime.Remove(movement.Id);
         _pursuitZone.Remove(movement.Id);
 
         if (movement.Character != null)
