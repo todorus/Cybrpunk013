@@ -30,7 +30,7 @@ public partial class LogNode : Container
         logEntryNode.WorldState = _simulationController.World;
         logEntryNode.PortraitCache = _portraitCache;
         logEntryNode.ResourceRegistry = _resourceRegistry;
-        logEntryNode.Observation = obj.Observation;
+        logEntryNode.SetObservation(obj.Observation);
         AddChild(logEntryNode);
         if (GetChildCount() > 1)
         {

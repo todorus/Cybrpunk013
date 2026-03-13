@@ -29,28 +29,24 @@ public partial class LogEntryNode : Control
     public PortraitCache PortraitCache;
     public ResourceRegistry ResourceRegistry;
 
-    public Observation Observation
+    public async void SetObservation(Observation value)
     {
-        set
+        var site = value?.SiteId != null ? WorldState.GetSite(value.SiteId) : null;
+        var character = value?.CharacterId != null ? WorldState.GetCharacter(value.CharacterId) : null;
+        if (character != null && ResourceRegistry.TryGetCharacter(character.Id, out var characterResource))
         {
-            var site = value?.SiteId != null ? WorldState.GetSite(value.SiteId) : null;
-            var character = value?.CharacterId != null ? WorldState.GetCharacter(value.CharacterId) : null;
-            if (ResourceRegistry.TryGetCharacter(character.Id, out var characterResource))
-            {
-                var avatar = PortraitCache.GetOrRenderAsync(characterResource).Result;
-                EmitSignalAvatar(avatar);
-            }
-
-            if (_observationTypeIcons.ContainsKey(value.ObservationType))
-            {
-                EmitSignalActionIcon(_observationTypeIcons[value.ObservationType]);
-            }
-
-
-            EmitSignalSiteLabel(site?.Label ?? "");
-            EmitSignalCharacterLabel(character?.DisplayName ?? "");
-            EmitSignalObservationLabel(DescribeObservation(value));
+            var avatar = await PortraitCache.GetOrRenderAsync(characterResource);
+            EmitSignalAvatar(avatar);
         }
+
+        if (_observationTypeIcons.ContainsKey(value.ObservationType))
+        {
+            EmitSignalActionIcon(_observationTypeIcons[value.ObservationType]);
+        }
+
+        EmitSignalSiteLabel(site?.Label ?? "");
+        EmitSignalCharacterLabel(character?.DisplayName ?? "");
+        EmitSignalObservationLabel(DescribeObservation(value));
     }
 
     private static string DescribeObservation(Observation? obs)
