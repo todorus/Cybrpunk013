@@ -1,32 +1,30 @@
 using Godot;
 using SurveillanceStategodot.scripts.authoring;
+using SurveillanceStategodot.scripts.presentation.portrait;
 
 namespace SurveillanceStategodot.scripts.presentation.operators;
 
 public partial class OperatorDisplay : Control
 {
     [Signal]
-    public delegate void OperatorChangedEventHandler(CharacterResource newOperator);
-        
+    public delegate void AvatarChangedEventHandler(Texture2D newAvatar);
+
+    [Export] 
+    private PortraitCache _portraitCache;
+
+    [Export] 
     private CharacterResource _operatorResource;
-    [Export]
-    public CharacterResource OperatorResource
-    {
-        get => _operatorResource;
-        set
-        {
-            if (value == _operatorResource || value == null) return;
-            _operatorResource = value;
-            EmitSignalOperatorChanged(value);
-        }
-    }
     
     public override void _Ready()
     {
-        // OperatorResource is assigned during scene deserialization, before signals
-        // are connected. Re-emit here so listeners receive the initial value once
-        // the scene is fully ready.
-        if (_operatorResource != null)
-            EmitSignalOperatorChanged(_operatorResource);
+        // Defer so that PortraitCache (and its PortraitStudio) have fully
+        // initialised their _Ready before we attempt the first render.
+        CallDeferred(MethodName.RefreshAvatar);
+    }
+
+    private async void RefreshAvatar()
+    {
+        var avatar = await _portraitCache.GetOrRenderAsync(_operatorResource);
+        EmitSignalAvatarChanged(avatar);
     }
 }

@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://ddji8gapmivir"]
+
+[ext_resource type="Script" uid="uid://ckrnkamxro2v1" path="res://scripts/presentation/operators/OperatorDisplay.cs" id="1_f3i85"]
+[ext_resource type="Texture2D" uid="uid://boqjxpft1sgs0" path="res://icon.svg" id="3_cn4ld"]
+
+[node name="OperatorDisplay" type="Control" unique_id=2132581372]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 3
+anchors_preset = 0
+size_flags_vertical = 3
+script = ExtResource("1_f3i85")
+
+[node name="Portrait" type="TextureRect" parent="." unique_id=493571029]
+layout_mode = 1
+offset_right = 199.0
+offset_bottom = 199.0
+texture = ExtResource("3_cn4ld")
+expand_mode = 5
+stretch_mode = 4
+
+[connection signal="AvatarChanged" from="." to="Portrait" method="set_texture" flags=3]

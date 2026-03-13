@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Godot;
 using SurveillanceStategodot.scripts.authoring;
@@ -21,14 +22,14 @@ public partial class PortraitCache : Node
 
     private readonly Dictionary<string, ImageTexture> _cache = new();
 
-    // Simple lock flag: prevents concurrent renders through the single studio.
-    private bool _rendering = false;
+    // Serialises access to the single studio — only one render at a time.
+    private readonly SemaphoreSlim _renderLock = new(1, 1);
 
     // ── Public API ───────────────────────────────────────────────────────────
 
     public async Task<ImageTexture?> GetOrRenderAsync(CharacterResource characterResource) =>
         await GetOrRenderAsync(characterResource.CharacterId, characterResource.AvatarScene);
-    
+
     /// <summary>
     /// Returns a cached portrait texture if available, otherwise renders one
     /// through the studio, caches it, and returns it.
@@ -51,17 +52,13 @@ public partial class PortraitCache : Node
         if (_cache.TryGetValue(key, out var cached))
             return cached;
 
-        // Wait if another render is in flight.
-        while (_rendering)
-            await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
-
-        // Re-check after waiting — another caller may have rendered the same key.
-        if (_cache.TryGetValue(key, out cached))
-            return cached;
-
-        _rendering = true;
+        await _renderLock.WaitAsync();
         try
         {
+            // Re-check after acquiring the lock — another caller may have rendered it.
+            if (_cache.TryGetValue(key, out cached))
+                return cached;
+
             _studio.SetSubject(avatarScene);
             var texture = await _studio.RenderSnapshotAsync();
             _studio.ClearSubject();
@@ -73,7 +70,7 @@ public partial class PortraitCache : Node
         }
         finally
         {
-            _rendering = false;
+            _renderLock.Release();
         }
     }
 
